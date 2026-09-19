@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Tay März — Software Engineer</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Tay März — freelance software engineer. Full-stack web, mobile, fintech-grade security. Custom apps built lean, fast, and private.">
+<meta name="theme-color" content="#0e0e13">
+<script>document.documentElement.classList.add('js')</script>
+<meta property="og:title" content="Tay März — Software Engineer">
+<meta property="og:description" content="Full-stack web, mobile & fintech-grade security. Custom apps built lean, fast, and private.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%237c5cff'/><text x='16' y='23' font-size='19' font-family='sans-serif' font-weight='700' fill='white' text-anchor='middle'>T</text></svg>">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0e0e13; --bg2:#16161f; --bg3:#1d1d29; --line:#2a2a3a; --line2:#3a3a50;
+  --txt:#eceaf4; --muted:#a09cb8; --dim:#847ea3;
+  --acc:#7c5cff; --acc2:#9b82ff; --acc-dim:#2a2350;
+  --ok:#4fae7e; --gold:#e0b654;
+  --sans:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  --radius:16px;
+}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:16px;line-height:1.6;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1080px;margin:0 auto;padding:0 1.2rem}
+section{padding:4.5rem 0}
+h1,h2,h3{line-height:1.15;letter-spacing:-.02em}
+.eyebrow{font-size:.72rem;letter-spacing:.24em;text-transform:uppercase;color:var(--acc2);font-weight:600;margin-bottom:.9rem}
+.sec-title{font-size:2rem;font-weight:800;margin-bottom:.6rem}
+.sec-sub{color:var(--muted);max-width:620px;margin-bottom:2.4rem}
+
+/* ── nav ── */
+.nav{position:sticky;top:0;z-index:50;background:rgba(14,14,19,.82);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;gap:1.4rem;height:60px}
+.brand{font-weight:800;letter-spacing:-.02em;font-size:1.05rem;display:flex;align-items:center;gap:.5rem}
+.brand .dot{width:26px;height:26px;border-radius:8px;background:var(--acc);display:grid;place-items:center;color:#fff;font-size:.9rem;font-weight:800}
+.nav-links{margin-left:auto;display:flex;gap:1.5rem;align-items:center}
+.nav-links a{font-size:.88rem;color:var(--muted);transition:color .15s}
+.nav-links a:hover{color:var(--txt)}
+.nav-cta{background:var(--acc);color:#fff!important;padding:.5rem .95rem;border-radius:10px;font-weight:600;font-size:.85rem!important}
+.nav-cta:hover{background:var(--acc2)}
+@media(max-width:720px){.nav-links a:not(.nav-cta){display:none}}
+
+/* ── hero ── */
+.hero{padding:5.5rem 0 4rem;position:relative}
+.hero::before{content:"";position:absolute;top:-20%;left:50%;transform:translateX(-50%);width:800px;height:600px;max-width:120vw;
+  background:radial-gradient(closest-side,rgba(124,92,255,.18),transparent 70%);z-index:0;pointer-events:none}
+.hero .wrap{position:relative;z-index:1}
+.status{display:inline-flex;align-items:center;gap:.5rem;background:var(--bg2);border:1px solid var(--line);border-radius:999px;padding:.35rem .8rem;font-size:.8rem;color:var(--muted);margin-bottom:1.6rem}
+.status .pulse{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 0 rgba(79,174,126,.6);animation:pulse 2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(79,174,126,.5)}70%{box-shadow:0 0 0 7px rgba(79,174,126,0)}100%{box-shadow:0 0 0 0 rgba(79,174,126,0)}}
+.hero h1{font-size:clamp(2.3rem,6vw,3.7rem);font-weight:800;margin-bottom:1.1rem}
+.hero h1 .grad{color:var(--acc2)}
+.hero .lead{font-size:clamp(1.05rem,2.2vw,1.25rem);color:var(--muted);max-width:640px;margin-bottom:2rem}
+.hero-cta{display:flex;gap:.8rem;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:.5rem;padding:.8rem 1.4rem;border-radius:12px;font-weight:600;font-size:.95rem;cursor:pointer;border:1px solid transparent;transition:all .15s;font-family:inherit}
+.btn-primary{background:var(--acc);color:#fff}
+.btn-primary:hover{background:var(--acc2);transform:translateY(-1px)}
+.btn-ghost{background:transparent;border-color:var(--line2);color:var(--txt)}
+.btn-ghost:hover{border-color:var(--acc);color:var(--acc2)}
+.hero-stats{display:flex;gap:2.4rem;margin-top:3rem;flex-wrap:wrap}
+.hero-stats .s b{display:block;font-size:1.8rem;font-weight:800;color:var(--txt)}
+.hero-stats .s span{font-size:.82rem;color:var(--dim)}
+
+/* ── marquee logos / stack ── */
+.stack-band{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--bg2);padding:1.6rem 0}
+.stack-band .wrap{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;justify-content:center}
+.chip{background:var(--bg3);border:1px solid var(--line);border-radius:999px;padding:.4rem .9rem;font-size:.82rem;color:var(--muted);font-weight:500}
+.chip b{color:var(--txt);font-weight:600}
+
+/* ── services grid ── */
+.grid{display:grid;gap:1.1rem}
+.services .grid{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.card{background:var(--bg2);border:1px solid var(--line);border-radius:var(--radius);padding:1.5rem;transition:border-color .15s,transform .15s}
+.card:hover{border-color:var(--line2);transform:translateY(-2px)}
+.card .ico{width:44px;height:44px;border-radius:11px;background:var(--acc-dim);display:grid;place-items:center;margin-bottom:1rem;color:var(--acc2)}
+.card h3{font-size:1.1rem;font-weight:700;margin-bottom:.5rem}
+.card p{font-size:.9rem;color:var(--muted)}
+svg.ic{width:1em;height:1em;display:inline-block;vertical-align:-.125em;fill:currentColor}
+
+/* ── projects ── */
+.proj-grid{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.proj{background:var(--bg2);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;transition:border-color .15s,transform .15s}
+.proj:hover{border-color:var(--acc);transform:translateY(-3px)}
+.proj-top{padding:1.4rem 1.4rem 0;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.proj-badge{font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;padding:.28rem .6rem;border-radius:7px}
+.b-fintech{background:rgba(224,182,84,.14);color:var(--gold)}
+.b-web{background:var(--acc-dim);color:var(--acc2)}
+.b-mobile{background:rgba(79,174,126,.15);color:var(--ok)}
+.proj-body{padding:1rem 1.4rem 1.5rem;flex:1;display:flex;flex-direction:column}
+.proj h3{font-size:1.2rem;font-weight:700;margin-bottom:.4rem}
+.proj .tagline{font-size:.86rem;color:var(--dim);margin-bottom:.8rem}
+.proj p{font-size:.9rem;color:var(--muted);margin-bottom:1rem}
+.proj .tags{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:auto}
+.proj .tags span{font-size:.72rem;background:var(--bg3);border:1px solid var(--line);border-radius:6px;padding:.2rem .5rem;color:var(--muted)}
+
+/* ── package builder ── */
+.builder{background:var(--bg2);border:1px solid var(--line);border-radius:20px;padding:0;overflow:hidden;display:grid;grid-template-columns:1fr 340px}
+@media(max-width:820px){.builder{grid-template-columns:1fr}}
+.builder-main{padding:1.8rem}
+.b-group{margin-bottom:1.8rem}
+.b-group>label.g-title{display:block;font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);font-weight:700;margin-bottom:.8rem}
+.opt-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.6rem}
+.opt{position:relative;cursor:pointer}
+.opt input{position:absolute;opacity:0;pointer-events:none}
+.opt .box{border:1px solid var(--line);background:var(--bg3);border-radius:11px;padding:.75rem .85rem;transition:all .15s;height:100%}
+.opt .box .t{font-weight:600;font-size:.9rem;display:flex;justify-content:space-between;gap:.5rem;align-items:baseline}
+.opt .box .t .pr{color:var(--acc2);font-size:.82rem;font-weight:700;white-space:nowrap}
+.opt .box .d{font-size:.76rem;color:var(--dim);margin-top:.2rem}
+.opt input:checked+.box{border-color:var(--acc);background:var(--acc-dim);box-shadow:0 0 0 1px var(--acc)}
+.opt input:focus-visible+.box{outline:2px solid var(--acc2);outline-offset:2px}
+.toggle-row{display:flex;align-items:center;gap:.7rem;background:var(--bg3);border:1px solid var(--line);border-radius:11px;padding:.75rem .9rem;cursor:pointer}
+.toggle-row input{width:18px;height:18px;accent-color:var(--acc);cursor:pointer}
+.toggle-row .tx{font-size:.9rem}
+.toggle-row .tx small{display:block;color:var(--dim);font-size:.76rem}
+.toggle-row .tx b{color:var(--acc2)}
+
+/* summary rail */
+.builder-side{background:var(--bg3);border-left:1px solid var(--line);padding:1.8rem;display:flex;flex-direction:column}
+@media(max-width:820px){.builder-side{border-left:none;border-top:1px solid var(--line)}}
+.sum-line{display:flex;justify-content:space-between;font-size:.86rem;padding:.4rem 0;color:var(--muted);gap:1rem}
+.sum-line.dim{color:var(--dim);font-size:.8rem}
+.sum-line.disc{color:var(--ok)}
+.sum-items{border-bottom:1px dashed var(--line2);padding-bottom:.6rem;margin-bottom:.6rem;min-height:1.5rem}
+.sum-total{margin-top:.4rem}
+.sum-total .big{font-size:2.1rem;font-weight:800;letter-spacing:-.02em}
+.sum-total .sub{font-size:.78rem;color:var(--dim)}
+.sum-monthly{margin-top:.6rem;font-size:.88rem;color:var(--gold)}
+.sum-eta{margin-top:.5rem;font-size:.8rem;color:var(--muted)}
+.builder-side .btn{margin-top:1.2rem;justify-content:center;width:100%}
+.disclaimer{font-size:.72rem;color:var(--dim);margin-top:.9rem;text-align:center}
+
+/* ── process ── */
+.steps{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.step{position:relative;padding-left:0}
+.step .n{font-size:.8rem;font-weight:800;color:var(--acc2);background:var(--acc-dim);width:32px;height:32px;border-radius:9px;display:grid;place-items:center;margin-bottom:.8rem}
+.step h3{font-size:1rem;margin-bottom:.35rem}
+.step p{font-size:.86rem;color:var(--muted)}
+
+/* ── contact ── */
+.contact-box{background:var(--bg2);border:1px solid var(--line);border-radius:20px;padding:2.2rem;display:grid;grid-template-columns:1fr 1fr;gap:2rem}
+@media(max-width:720px){.contact-box{grid-template-columns:1fr}}
+.field{margin-bottom:1rem}
+.field label{display:block;font-size:.76rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);font-weight:600;margin-bottom:.35rem}
+.field input,.field textarea{width:100%;background:var(--bg3);border:1px solid var(--line);border-radius:10px;color:var(--txt);font-family:inherit;font-size:.95rem;padding:.7rem .85rem;outline:none;transition:border-color .15s}
+.field input:focus,.field textarea:focus{border-color:var(--acc)}
+.field textarea{resize:vertical;min-height:110px}
+.contact-aside h3{font-size:1.3rem;margin-bottom:.6rem}
+.contact-aside p{color:var(--muted);font-size:.92rem;margin-bottom:1.2rem}
+.contact-aside .why{list-style:none;display:flex;flex-direction:column;gap:.7rem}
+.contact-aside .why li{display:flex;gap:.6rem;font-size:.9rem;color:var(--muted);align-items:flex-start}
+.contact-aside .why li svg{color:var(--ok);flex-shrink:0;margin-top:.2rem}
+.form-note{font-size:.8rem;padding:.7rem .9rem;border-radius:10px;margin-top:.5rem;display:none}
+.form-note.ok{display:block;background:rgba(79,174,126,.12);border:1px solid rgba(79,174,126,.4);color:#8fce8a}
+.form-note.err{display:block;background:rgba(210,74,58,.12);border:1px solid rgba(210,74,58,.4);color:#ef8577}
+
+/* ── footer ── */
+footer{border-top:1px solid var(--line);padding:2.4rem 0;color:var(--dim);font-size:.85rem}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+footer a{color:var(--muted)}footer a:hover{color:var(--acc2)}
+
+.reveal{transition:opacity .6s ease,transform .6s ease}
+html.js .reveal{opacity:0;transform:translateY(18px)}
+html.js .reveal.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){html.js .reveal{opacity:1;transform:none;transition:none}.pulse{animation:none}}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap">
+    <a class="brand" href="#top"><span class="dot">T</span>Tay März</a>
+    <div class="nav-links">
+      <a href="#services">Services</a>
+      <a href="#work">Work</a>
+      <a href="#builder">Pricing</a>
+      <a href="#process">Process</a>
+      <a class="nav-cta" href="#contact">Start a project</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <div class="status reveal"><span class="pulse"></span> Available for new projects</div>
+    <h1 class="reveal">Software that ships<br><span class="grad">lean, fast, and private.</span></h1>
+    <p class="lead reveal">I'm Tay — a full-stack engineer building custom web apps, mobile apps, and security-critical platforms. From banking-grade dashboards to installable PWAs, I turn ideas into production systems that don't cut corners on speed, privacy, or polish.</p>
+    <div class="hero-cta reveal">
+      <a class="btn btn-primary" href="#builder">Build your package <svg class="ic" viewBox="0 0 448 512"><path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z"/></svg></a>
+      <a class="btn btn-ghost" href="#work">See the work</a>
+    </div>
+    <div class="hero-stats reveal">
+      <div class="s"><b>15+</b><span>Production apps shipped</span></div>
+      <div class="s"><b>6</b><span>Live platforms maintained</span></div>
+      <div class="s"><b>0</b><span>Third-party trackers shipped</span></div>
+      <div class="s"><b>100%</b><span>Full-stack, solo-delivered</span></div>
+    </div>
+  </div>
+</header>
+
+<div class="stack-band">
+  <div class="wrap" id="stackChips"></div>
+</div>
+
+<section class="services" id="services">
+  <div class="wrap">
+    <div class="eyebrow reveal">What I do</div>
+    <h2 class="sec-title reveal">End-to-end, no hand-offs</h2>
+    <p class="sec-sub reveal">One engineer across the whole stack — design, frontend, backend, database, deployment, and security. You get a single point of contact and a system that fits together.</p>
+    <div class="grid" id="servicesGrid"></div>
+  </div>
+</section>
+
+<section id="work" style="background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="wrap">
+    <div class="eyebrow reveal">Selected work</div>
+    <h2 class="sec-title reveal">Real platforms, in production</h2>
+    <p class="sec-sub reveal">A sample of shipped systems — fintech, hospitality, mobile, and publishing. Each one built and maintained end-to-end.</p>
+    <div class="grid proj-grid" id="projGrid"></div>
+  </div>
+</section>
+
+<section id="builder">
+  <div class="wrap">
+    <div class="eyebrow reveal">Package builder</div>
+    <h2 class="sec-title reveal">Build your quote in real time</h2>
+    <p class="sec-sub reveal">Pick a project type, add what you need, and see an instant estimate. Prices are indicative starting points — every project gets a fixed quote after a short call.</p>
+    <div class="builder reveal">
+      <div class="builder-main">
+        <div class="b-group">
+          <label class="g-title">1 · Project type</label>
+          <div class="opt-row" id="baseRow"></div>
+        </div>
+        <div class="b-group">
+          <label class="g-title">2 · Add-ons</label>
+          <div class="opt-row" id="addonRow"></div>
+        </div>
+        <div class="b-group">
+          <label class="g-title">3 · Support plan</label>
+          <div class="opt-row" id="supportRow"></div>
+        </div>
+        <div class="b-group" style="margin-bottom:0">
+          <label class="g-title">4 · Timeline</label>
+          <label class="toggle-row"><input type="checkbox" id="rushToggle">
+            <span class="tx"><b>Rush delivery</b> — priority scheduling, ~40% faster <small>+25% on the one-off build</small></span>
+          </label>
+        </div>
+      </div>
+      <aside class="builder-side">
+        <div style="font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);font-weight:700;margin-bottom:1rem">Your estimate</div>
+        <div class="sum-items" id="sumItems"></div>
+        <div id="sumDiscount"></div>
+        <div class="sum-total">
+          <div class="sub">One-off build, from</div>
+          <div class="big" id="sumTotal">€0</div>
+        </div>
+        <div class="sum-monthly" id="sumMonthly" style="display:none"></div>
+        <div class="sum-eta" id="sumEta"></div>
+        <a class="btn btn-primary" href="#contact" id="sumCta">Request this quote</a>
+        <div class="disclaimer">Indicative only · fixed price after a free scoping call</div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<section id="process" style="background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="wrap">
+    <div class="eyebrow reveal">How it works</div>
+    <h2 class="sec-title reveal">From idea to live in four steps</h2>
+    <div class="grid steps reveal" id="stepsGrid"></div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap">
+    <div class="eyebrow reveal">Let's talk</div>
+    <h2 class="sec-title reveal">Start a project</h2>
+    <p class="sec-sub reveal">Tell me what you're building. I'll reply with a plan, a fixed quote, and honest timelines — usually within a day.</p>
+    <div class="contact-box reveal">
+      <form id="contactForm" novalidate>
+        <div class="field"><label for="cName">Name</label><input id="cName" name="name" autocomplete="name" required></div>
+        <div class="field"><label for="cEmail">Email</label><input id="cEmail" name="email" type="email" autocomplete="email" required></div>
+        <div class="field"><label for="cMsg">What do you want to build?</label><textarea id="cMsg" name="message" required></textarea></div>
+        <input type="text" name="company" id="cHoney" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
+        <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center">Send message</button>
+        <div class="form-note" id="formNote"></div>
+      </form>
+      <aside class="contact-aside">
+        <h3>Why work with me</h3>
+        <p>You get a senior full-stack engineer, not an agency markup — direct communication, fast iteration, and code you actually own.</p>
+        <ul class="why">
+          <li><svg class="ic" viewBox="0 0 448 512" width="16"><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg> Fixed quotes, no surprise invoices</li>
+          <li><svg class="ic" viewBox="0 0 448 512" width="16"><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg> Privacy & security built in by default</li>
+          <li><svg class="ic" viewBox="0 0 448 512" width="16"><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg> You own the code and the infrastructure</li>
+          <li><svg class="ic" viewBox="0 0 448 512" width="16"><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg> Ongoing support plans available</li>
+        </ul>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>© <span id="year"></span> Tay März · Software Engineer</div>
+    <div>Built from scratch · no frameworks · no trackers</div>
+  </div>
+</footer>
+
+<script src="pricing.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
