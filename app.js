@@ -1,49 +1,47 @@
 'use strict';
 const $ = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
 const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const P = window.Pricing;
+const { T, SERVICES, PROJECTS, STEPS, CT_LIST } = window.I18N;
 
-/* ── content data (first-person, specific, not marketing-generic) ── */
-const SERVICES = [
-  { h: 'Web apps & dashboards', p: 'Reactive UIs backed by real APIs and databases. No React-by-reflex — vanilla where it keeps things fast, a framework only when it earns its weight.' },
-  { h: 'Android apps', p: 'Native Kotlin and Jetpack Compose, Material design that doesn\u2019t look stock, CI that spits out signed APKs on every push.' },
-  { h: 'Login & security', p: 'The stuff that keeps you off the news: 2FA, brute-force lockouts, session hardening, and full audits. I\u2019ve pentested my own banking app and lived.' },
-  { h: 'PWAs & performance', p: 'Installable, offline-capable, loads before you blink. Privacy-first analytics if you want numbers, none if you don\u2019t.' },
-  { h: 'Booking & loyalty', p: 'QR check-ins, stamp cards, reservation flows, self-service admin panels. Real systems running in a real bar right now.' },
-  { h: 'Keeping it alive', p: 'Updates, backups, monitoring, and the 11pm \u201cit\u2019s down\u201d fix. Optional, but the reason clients stick around.' },
-];
+let lang = (localStorage.getItem('lang') || (navigator.language || 'en').slice(0, 2)) === 'de' ? 'de' : 'en';
+const t = k => (T[lang][k] ?? T.en[k] ?? k);
+const L = o => (o && typeof o === 'object' ? (o[lang] ?? o.en) : o);   // pick localized field
 
-const PROJECTS = [
-  { name: 'Foxledger', kind: 'personal finance · fintech', p: 'A self-hosted banking dashboard handling real account data. Encrypted at rest, hardened auth, and a UI clean enough to actually use daily. This is the one I lose sleep over so nobody else has to.', stack: ['Node.js', 'Auth + 2FA', 'encryption', 'dashboard'] },
-  { name: 'Déjà Vu', kind: 'bar platform · hospitality', p: 'Runs a Göttingen bar end to end: live status board, events and tournaments, menu editor, photo galleries, and an admin panel with per-account brute-force lockout I wrote and then tried to break.', stack: ['Python', 'SQLite/WAL', 'PWA', 'admin CMS'] },
-  { name: 'Stempelpass', kind: 'loyalty · privacy', p: 'A digital stamp card that knows nothing about you — no email, no name, no tracking. QR points, password-only login, and separate installable apps for guests and staff.', stack: ['PWA', 'QR', 'zero-PII', 'no trackers'] },
-  { name: 'FoundList', kind: 'productivity · android', p: 'A native Android app with a deliberately playful, hand-made feel — Compose UI, Hilt, Room, and a CI pipeline building signed releases without a local SDK in sight.', stack: ['Kotlin', 'Compose', 'Room', 'CI/CD'] },
-  { name: 'EasyThreads', kind: 'ops dashboard · client work', p: 'A production dashboard wired to a live external API, OAuth-gated, deployed under PM2 and maintained in the wild. Adapts to real endpoints handed over mid-build — because that\u2019s how it actually goes.', stack: ['API', 'OAuth', 'PM2', 'realtime'] },
-  { name: 'Faultline', kind: 'publishing · self-hosted', p: 'A news site where every byte is local — fonts, icons, images, all of it. No CDN, no third-party request, plus an automated editorial pipeline keeping it fed.', stack: ['self-hosted', 'automation', 'SEO', 'zero-CDN'] },
-];
+/* ── static string swap (data-i = text, data-i-html = innerHTML) ── */
+function applyStatic() {
+  document.documentElement.lang = lang;
+  $$('[data-i]').forEach(e => { e.textContent = t(e.dataset.i); });
+  $$('[data-i-html]').forEach(e => { e.innerHTML = t(e.dataset.iHtml); });
+  $$('.lang button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+}
 
-const STEPS = [
-  { h: 'We talk', p: 'A free call to figure out what you actually need — which is often not what the brief says. You leave with a plan and a fixed price.' },
-  { h: 'I build, you watch', p: 'Short iterations with live preview links. You steer as it takes shape instead of praying at the end.' },
-  { h: 'It goes live', p: 'Tested, hardened, deployed to your infrastructure, documented, and handed over. Keys included.' },
-  { h: 'I stick around', p: 'If you want. Updates, monitoring, and priority fixes on a plan — or a clean handoff and we part as friends.' },
-];
-
-/* ── render ── */
-function render() {
-  const sg = $('#servicesGrid');
+/* ── content sections ── */
+function renderContent() {
+  const sg = $('#servicesGrid'); sg.innerHTML = '';
   SERVICES.forEach((s, i) => sg.append(el('div', 'svc',
-    `<div class="ix mono">${String(i + 1).padStart(2, '0')}</div><div><h3>${esc(s.h)}</h3><p>${esc(s.p)}</p></div>`)));
+    `<div class="ix mono">${String(i + 1).padStart(2, '0')}</div><div><h3>${esc(L(s.h))}</h3><p>${esc(L(s.p))}</p></div>`)));
 
-  const pg = $('#projGrid');
-  PROJECTS.forEach(pr => pg.append(el('div', 'proj',
-    `<div class="proj-meta"><div class="name">${esc(pr.name)}</div><div class="kind mono">${esc(pr.kind)}</div></div>
-     <div class="proj-body"><p>${esc(pr.p)}</p><div class="stack mono">${pr.stack.map(t => `<span>${esc(t)}</span>`).join('')}</div></div>`)));
+  const pg = $('#projGrid'); pg.innerHTML = '';
+  PROJECTS.forEach(pr => {
+    const figure = pr.shot
+      ? `<div class="proj-figure"><img src="${esc(pr.shot)}" alt="${esc(pr.name)} — screenshot" loading="lazy" width="960"></div>`
+      : `<div class="proj-figure mock"><div class="bar"><i></i><i></i><i></i><span class="u">${esc(pr.mock.u)}</span></div>
+           <div class="body"><div class="big">${esc(pr.mock.big)}</div><div class="row m"></div><div class="row s"></div><div class="lock">${esc(L(pr.mock.lock))}</div></div></div>`;
+    pg.append(el('div', 'proj',
+      `${figure}
+       <div><div class="proj-meta"><div class="name">${esc(pr.name)}</div><div class="kind mono">${esc(L(pr.kind))}</div></div>
+       <div class="proj-body"><p>${esc(L(pr.p))}</p><div class="stack mono">${pr.stack.map(x => `<span>${esc(x)}</span>`).join('')}</div></div></div>`));
+  });
 
-  const st = $('#stepsGrid');
+  const st = $('#stepsGrid'); st.innerHTML = '';
   STEPS.forEach((s, i) => st.append(el('div', 'step',
-    `<div class="n mono">0${i + 1}</div><div><h3>${esc(s.h)}</h3><p>${esc(s.p)}</p></div>`)));
+    `<div class="n mono">0${i + 1}</div><div><h3>${esc(L(s.h))}</h3><p>${esc(L(s.p))}</p></div>`)));
+
+  const cl = $('#ctList'); cl.innerHTML = '';
+  CT_LIST[lang].forEach(x => cl.append(el('li', null, esc(x))));
 
   $('#year').textContent = new Date().getFullYear();
 }
@@ -52,64 +50,68 @@ function render() {
 const state = { base: 'webapp', addons: new Set(['auth', 'design']), support: 'basic', rush: false };
 
 function buildOptions() {
-  const baseRow = $('#baseRow');
+  const baseRow = $('#baseRow'); baseRow.innerHTML = '';
   Object.entries(P.BASES).forEach(([k, v]) => {
     const o = el('label', 'opt',
       `<input type="radio" name="base" value="${k}"${k === state.base ? ' checked' : ''}>
-       <div class="box"><div class="t">${esc(v.label)} <span class="pr">${P.eur(v.price)}</span></div><div class="d">from ${v.days} days</div></div>`);
+       <div class="box"><div class="t">${esc(L(v.label))} <span class="pr">${P.eur(v.price)}</span></div><div class="d">${t('b.days').replace('{n}', v.days)}</div></div>`);
     o.querySelector('input').addEventListener('change', () => { state.base = k; update(); });
     baseRow.append(o);
   });
 
-  const addonRow = $('#addonRow');
+  const addonRow = $('#addonRow'); addonRow.innerHTML = '';
   Object.entries(P.ADDONS).forEach(([k, v]) => {
     const o = el('label', 'opt',
       `<input type="checkbox" value="${k}"${state.addons.has(k) ? ' checked' : ''}>
-       <div class="box"><div class="t">${esc(v.label)} <span class="pr">+${P.eur(v.price)}</span></div></div>`);
+       <div class="box"><div class="t">${esc(L(v.label))} <span class="pr">+${P.eur(v.price)}</span></div></div>`);
     o.querySelector('input').addEventListener('change', e => { e.target.checked ? state.addons.add(k) : state.addons.delete(k); update(); });
     addonRow.append(o);
   });
 
-  const supRow = $('#supportRow');
+  const supRow = $('#supportRow'); supRow.innerHTML = '';
   Object.entries(P.SUPPORT).forEach(([k, v]) => {
     const o = el('label', 'opt',
       `<input type="radio" name="support" value="${k}"${k === state.support ? ' checked' : ''}>
-       <div class="box"><div class="t">${esc(v.label)} ${v.monthly ? `<span class="pr">${P.eur(v.monthly)}/mo</span>` : ''}</div></div>`);
+       <div class="box"><div class="t">${esc(L(v.label))} ${v.monthly ? `<span class="pr">${P.eur(v.monthly)}/mo</span>` : ''}</div></div>`);
     o.querySelector('input').addEventListener('change', () => { state.support = k; update(); });
     supRow.append(o);
   });
 
+  $('#rushToggle').checked = state.rush;
   $('#rushToggle').addEventListener('change', e => { state.rush = e.target.checked; update(); });
 }
 
 function update() {
   const q = P.quote({ base: state.base, addons: [...state.addons], support: state.support, rush: state.rush });
 
-  const items = $('#sumItems');
-  items.innerHTML = '';
-  items.append(el('div', 'sum-line', `<span>${esc(q.base.label)}</span><span>${P.eur(q.base.price)}</span>`));
-  q.addons.forEach(a => items.append(el('div', 'sum-line dim', `<span>+ ${esc(a.label)}</span><span>${P.eur(a.price)}</span>`)));
-  if (q.rush) items.append(el('div', 'sum-line dim', `<span>+ rush (+25%)</span><span></span>`));
+  const items = $('#sumItems'); items.innerHTML = '';
+  items.append(el('div', 'sum-line', `<span>${esc(L(q.base.label))}</span><span>${P.eur(q.base.price)}</span>`));
+  q.addons.forEach(a => items.append(el('div', 'sum-line dim', `<span>+ ${esc(L(a.label))}</span><span>${P.eur(a.price)}</span>`)));
+  if (q.rush) items.append(el('div', 'sum-line dim', `<span>${t('b.rushline')}</span><span></span>`));
 
   $('#sumDiscount').innerHTML = q.discount
-    ? `<div class="sum-line disc"><span>retainer (\u221210%)</span><span>\u2212${P.eur(q.discount)}</span></div>` : '';
+    ? `<div class="sum-line disc"><span>${t('b.retainer')}</span><span>\u2212${P.eur(q.discount)}</span></div>` : '';
 
   $('#sumTotal').textContent = P.eur(q.oneOff);
+  $('.sum-total .sub').textContent = t('b.buildfrom');
 
   const mo = $('#sumMonthly');
-  if (q.monthly) { mo.style.display = 'block'; mo.textContent = `+ ${P.eur(q.monthly)}/mo support`; }
+  if (q.monthly) { mo.style.display = 'block'; mo.textContent = `+ ${P.eur(q.monthly)}${t('b.mo')}`; }
   else mo.style.display = 'none';
 
-  $('#sumEta').textContent = `~${q.days} working days`;
+  $('#sumEta').textContent = t('b.eta').replace('{n}', q.days);
 
-  $('#sumCta').dataset.summary = `${q.base.label}${q.addons.length ? ' + ' + q.addons.map(a => a.label).join(', ') : ''}${q.rush ? ' (rush)' : ''} — ${P.eur(q.oneOff)}${q.monthly ? ' + ' + P.eur(q.monthly) + '/mo' : ''}`;
+  $('#sumCta').dataset.summary = `${L(q.base.label)}${q.addons.length ? ' + ' + q.addons.map(a => L(a.label)).join(', ') : ''}${q.rush ? ' (rush)' : ''} — ${P.eur(q.oneOff)}${q.monthly ? ' + ' + P.eur(q.monthly) + '/mo' : ''}`;
 }
 
+/* prefill contact message from the builder */
 document.addEventListener('click', e => {
   const cta = e.target.closest('#sumCta');
   if (!cta) return;
   const msg = $('#cMsg');
-  if (msg && !msg.value.trim()) msg.value = `Hi Tay — I'd like a quote for: ${cta.dataset.summary || ''}.\n\nA bit more about the project:\n`;
+  const intro = lang === 'de' ? 'Hi Tay — ich h\u00e4tte gern ein Angebot f\u00fcr' : "Hi Tay — I'd like a quote for";
+  const more = lang === 'de' ? '\n\nEtwas mehr zum Projekt:\n' : '\n\nA bit more about the project:\n';
+  if (msg && !msg.value.trim()) msg.value = `${intro}: ${cta.dataset.summary || ''}.${more}`;
 });
 
 /* ── contact form (front-end validation; POST target is a placeholder) ── */
@@ -121,33 +123,38 @@ function wireForm() {
     if ($('#cHoney').value) return;
     const name = $('#cName').value.trim(), email = $('#cEmail').value.trim(), msg = $('#cMsg').value.trim();
     const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    const M = lang === 'de'
+      ? { name: 'Ich brauche einen Namen f\u00fcr die Antwort.', email: 'Diese E-Mail sieht komisch aus.', msg: 'Erz\u00e4hl mir kurz vom Projekt.', ok: 'Bereit zum Senden — verbinde ein Formular-Backend, um es zuzustellen.' }
+      : { name: 'need a name to reply to.', email: 'that email looks off.', msg: 'tell me a bit about the project.', ok: 'ready to send — wire up a form endpoint to deliver it.' };
     if (!name || !emailOk || !msg) {
       note.className = 'form-note mono err';
-      note.textContent = !name ? 'need a name to reply to.' : !emailOk ? 'that email looks off.' : 'tell me a bit about the project.';
+      note.textContent = !name ? M.name : !emailOk ? M.email : M.msg;
       return;
     }
     // ponytail: no backend wired yet — placeholder success. Point form.action at a real
     // endpoint (mailto / Formspree / own handler) when deploying.
     note.className = 'form-note mono ok';
-    note.textContent = 'ready to send — wire up a form endpoint to deliver it.';
+    note.textContent = M.ok;
     form.reset();
   });
 }
 
-/* ── scroll reveal (subtle opacity only) ── */
-function wireReveal() {
-  if (!('IntersectionObserver' in window)) { document.querySelectorAll('.reveal').forEach(r => r.classList.add('in')); return; }
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(en => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
-  }, { threshold: 0.08 });
-  document.querySelectorAll('.reveal').forEach(r => io.observe(r));
-  setTimeout(() => document.querySelectorAll('.reveal:not(.in)').forEach(r => r.classList.add('in')), 2500);
+/* ── language toggle ── */
+function setLang(next) {
+  if (next === lang) return;
+  lang = next;
+  localStorage.setItem('lang', lang);
+  applyStatic();
+  renderContent();
+  buildOptions();
+  update();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  render();
+  $$('.lang button').forEach(b => b.addEventListener('click', () => setLang(b.dataset.lang)));
+  applyStatic();
+  renderContent();
   buildOptions();
   update();
   wireForm();
-  wireReveal();
 });
