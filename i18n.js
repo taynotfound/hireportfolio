@@ -80,19 +80,19 @@
 
   // compact projects — one-liner for the card, richer fields for the detail page
   const PROJECTS = [
-    { name: 'Boykisser Linux', slug: 'boykisser', emoji: '🐧', tilt: -2, year: 2025, link: 'https://boykisser.taymaerz.de/',
+    { name: 'Boykisser Linux', feat: 4, slug: 'boykisser', emoji: '🐧', tilt: -2, year: 2025, link: 'https://boykisser.taymaerz.de/',
       one: { en: 'A pink Debian spin I actually daily-drive. Privacy-first, XFCE/KDE, boots on ancient BIOS boxes.',
              de: 'Ein pinker Debian-Spin, den ich wirklich täglich nutze. Privacy-first, XFCE/KDE, läuft auf uralten BIOS-Kisten.' },
       long: { en: 'A full Debian-based distro I build and maintain end to end — custom ISO, theming, package selection and a privacy-hardened default config. XFCE and KDE flavours, works on ancient BIOS hardware, and it is genuinely my daily driver.',
               de: 'Eine komplette Debian-basierte Distro, die ich von A bis Z baue und pflege — eigenes ISO, Theming, Paketauswahl und privacy-gehärtete Defaults. XFCE- und KDE-Varianten, läuft auf uralter BIOS-Hardware, und ist wirklich mein täglicher Rechner.' },
       stack: ['Debian', 'Bash', 'live-build', 'XFCE', 'KDE'], tags: ['Debian', 'Linux', 'ISO'], shot: 'shots/boykisser.webp', tint: '#ff5c9e' },
-    { name: 'promptrouter', slug: 'promptrouter', emoji: '🧭', tilt: 1.5, year: 2025, link: 'https://prompt.taymaerz.de/',
+    { name: 'promptrouter', feat: 2, slug: 'promptrouter', emoji: '🧭', tilt: 1.5, year: 2025, link: 'https://prompt.taymaerz.de/',
       one: { en: 'Local-first coding router: scores each task, keeps the easy ones on your GPU, pays cloud only for the hard parts.',
              de: 'Local-first Coding-Router: bewertet jede Aufgabe, lässt die leichten auf deiner GPU, zahlt Cloud nur fürs Schwere.' },
       long: { en: 'A router that sits in front of your coding LLMs. It scores each request for difficulty, runs the easy majority on your own local GPU, and only spends money on a cloud model for the genuinely hard parts — cutting cost without dropping quality.',
               de: 'Ein Router vor deinen Coding-LLMs. Er bewertet jede Anfrage nach Schwierigkeit, lässt den leichten Großteil auf deiner lokalen GPU laufen und gibt nur für die wirklich harten Teile Geld für ein Cloud-Modell aus — spart Kosten ohne Qualitätsverlust.' },
       stack: ['Go', 'llama.cpp', 'OpenAI API', 'CLI'], tags: ['Go', 'LLM', 'CLI'], shot: 'shots/prompt.webp', tint: '#46c46a' },
-    { name: 'SkyFox', slug: 'skyfox', emoji: '✈️', tilt: -1.5, year: 2025, link: 'https://skyfox.taymaerz.de/',
+    { name: 'SkyFox', feat: 3, slug: 'skyfox', emoji: '✈️', tilt: -1.5, year: 2025, link: 'https://skyfox.taymaerz.de/',
       one: { en: 'Fast flight tracker for plane spotters — live aircraft nearby, alerts, saved planes. Native Android.',
              de: 'Schneller Flugtracker für Plane-Spotter — Flugzeuge in der Nähe, Alerts, Merkliste. Native Android.' },
       long: { en: 'A native Android app for plane spotters: live aircraft near you on a map, alerts when something interesting is inbound, and a saved-planes list. Built in Kotlin with Jetpack Compose, tuned to stay fast and battery-light.',
@@ -122,7 +122,7 @@
       long: { en: 'The website for a queer Pride march (CSD): bilingual DE/EN, an easy-language accessibility mode, event info and a warm editorial design. Fully tracker-free and built for everyone to read.',
               de: 'Die Website für einen CSD: zweisprachig DE/EN, ein Leichte-Sprache-Modus für Barrierefreiheit, Event-Infos und warmes editoriales Design. Komplett tracker-frei und für alle lesbar gebaut.' },
       stack: ['HTML', 'CSS', 'JS', 'i18n'], tags: ['web', 'a11y', 'i18n'], shot: 'shots/csdnom.webp', tint: '#e0518a' },
-    { name: 'EasyThreads', slug: 'easythreads', emoji: '🧵', tilt: -1.5, year: 2025, link: 'https://easythreads.dev/',
+    { name: 'EasyThreads', feat: 1, slug: 'easythreads', emoji: '🧵', tilt: -1.5, year: 2025, link: 'https://easythreads.dev/',
       one: { en: 'Live client dashboard on a real API. OAuth, PM2, running in the wild.',
              de: 'Live-Kunden-Dashboard an echter API. OAuth, PM2, im Betrieb.' },
       long: { en: 'A live client dashboard talking to a real production API. Discord OAuth login, Next.js frontend, Node/Express + MongoDB backend, deployed under PM2 and running in the wild for real users.',
@@ -141,6 +141,9 @@
               de: 'Eine native Android-Task-App, ADHS-freundlich gedacht: filtere Aufgaben nach deiner aktuellen Energie, tippe Fälligkeiten in normaler Sprache ("freitag", "in 3 Tagen"), zerlege Aufgaben in kleine Schritte, und schalte eine handgeschriebene Font für die ganze App an. Open-Source, mit Jetpack Compose und CI gebaut.' },
       stack: ['Kotlin', 'Jetpack Compose', 'Room', 'CI'], tags: ['Kotlin', 'Compose', 'CI'], shot: 'shots/foundlist.webp', tint: '#8b7bff' },
   ];
+
+  // featured (feat:1..4) float to the front, keeping original order otherwise
+  PROJECTS.sort((a, b) => (a.feat || 99) - (b.feat || 99));
 
   const STACK = [
     { k: 'stack.langs', items: ['JavaScript', 'Python', 'Kotlin', 'Go', 'SQL', 'Bash'] },
