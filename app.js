@@ -17,6 +17,63 @@ function applyStatic() {
   $$('.lang button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
 }
 
+function renderStack() {
+  const g = $('#stackgrid'); if (!g) return; g.innerHTML = '';
+  window.I18N.STACK.forEach(s => {
+    g.append(el('div', 'stackcard',
+      `<h3>${esc(t(s.k))}</h3><div class="chips">${s.items.map(x => `<span>${esc(x)}</span>`).join('')}</div>`));
+  });
+}
+
+// numbers: read same-origin SVGs (zero external requests) + derive the rest
+async function renderStats() {
+  const g = $('#statgrid'); if (!g) return;
+  let contrib = '—', hours = '—';
+  try {
+    const svg = await (await fetch('heatmap.svg?v=4')).text();
+    contrib = (svg.match(/([\d,]+)\s+GitHub contributions/) || svg.match(/>([\d,]+) contributions/) || [, '—'])[1];
+  } catch (e) {}
+  try {
+    const b = await (await fetch('waka-badge.svg?v=4')).text();
+    hours = (b.match(/([\d,]+)\s*hrs/) || [, '—'])[1];
+  } catch (e) {}
+  const years = new Date().getFullYear() - 2019;
+  const cards = [
+    { num: contrib, lab: t('stats.contrib'), sub: t('stats.contribl') },
+    { num: hours, lab: t('stats.hours'), sub: t('stats.hoursl') },
+    { num: String(years), lab: t('stats.years'), sub: t('stats.yearsl') },
+    { num: String(PROJECTS.length), lab: t('stats.projects'), sub: t('stats.projectsl') },
+  ];
+  g.innerHTML = '';
+  cards.forEach(c => g.append(el('div', 'statcard',
+    `<div class="num">${esc(c.num)}</div><div class="lab">${esc(c.lab)}</div><div class="sub">${esc(c.sub)}</div>`)));
+}
+
+/* ── project detail overlay ── */
+function openDetail(p) {
+  let d = $('#detail');
+  if (!d) { d = el('div', 'detail'); d.id = 'detail'; document.body.append(d); }
+  const shot = p.shot ? `<img class="hero-shot" src="${esc(p.shot)}" alt="${esc(p.name)}">` : '';
+  const visit = p.link ? `<a class="btn btn-primary" href="${esc(p.link)}" target="_blank" rel="noopener">${t('work.visit')}</a>` : '';
+  d.innerHTML =
+    `<button class="dclose" aria-label="close">✕</button>
+     <div class="box">${shot}
+       <div class="body">
+         <button class="dback">${t('work.back')}</button>
+         <div class="meta"><span>${p.emoji} ${esc(p.name)}</span><span>${t('work.year')}: ${p.year}</span></div>
+         <h2>${esc(p.name)}</h2>
+         <p class="lead">${esc(L(p.long || p.one))}</p>
+         <div class="meta">${(p.stack || p.tags).map(x => `<span>${esc(x)}</span>`).join('')}</div>
+         <div style="margin-top:1.2rem">${visit}</div>
+       </div></div>`;
+  d.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  const close = () => { d.classList.remove('open'); document.body.style.overflow = ''; };
+  d.querySelector('.dclose').onclick = close;
+  d.querySelector('.dback').onclick = close;
+  d.onclick = e => { if (e.target === d) close(); };
+}
+
 function renderCards() {
   const c = $('#cards'); c.innerHTML = '';
   PROJECTS.forEach(p => {
@@ -29,13 +86,17 @@ function renderCards() {
     const inner =
       `${top}<div class="b"><h3>${p.emoji ? `<span>${p.emoji}</span>` : ''}${esc(p.name)}${visit}</h3>
        <p>${esc(L(p.one))}</p>
-       <div class="tg">${p.tags.map(x => `<span>${esc(x)}</span>`).join('')}</div></div>`;
-    const card = p.link
-      ? el('a', 'card', inner)
-      : el('div', 'card', inner);
-    if (p.link) { card.href = p.link; card.target = '_blank'; card.rel = 'noopener'; }
+       <div class="tg">${p.tags.map(x => `<span>${esc(x)}</span>`).join('')}
+         <button class="detail-btn visit mono" type="button">${t('work.detail')} →</button></div></div>`;
+    const card = el('div', 'card', inner);
     card.style.setProperty('--tint', p.tint);
     card.style.transform = `rotate(${p.tilt}deg)`;
+    // clicking the card body opens detail; the visit chip still deep-links out
+    card.addEventListener('click', e => {
+      if (e.target.closest('.visit.mono:not(.detail-btn)') && p.link) { window.open(p.link, '_blank', 'noopener'); return; }
+      openDetail(p);
+    });
+    if (p.link) card.style.cursor = 'pointer';
     c.append(card);
   });
 }
@@ -95,24 +156,40 @@ document.addEventListener('click', e => {
 
 function wireForm() {
   const f = $('#cf'), n = $('#fn');
-  f.addEventListener('submit', e => {
+  // show town/availability/phone only when "in person" is picked
+  const meetFields = $('#meetFields');
+  $$('input[name="meet"]').forEach(r => r.addEventListener('change', () => {
+    meetFields.hidden = f.meet.value !== 'irl';
+  }));
+  f.addEventListener('submit', async e => {
     e.preventDefault(); n.className = 'fn mono';
-    if ($('#cH').value) return;
-    const name = $('#cN').value.trim(), email = $('#cE').value.trim(), msg = $('#cM').value.trim();
+    if ($('#cH').value) return; // honeypot
+    const name = $('#cN').value.trim(), email = $('#cE').value.trim(),
+          msg = $('#cM').value.trim(), ref = $('#cR').value.trim();
     const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    const irl = f.meet.value === 'irl';
+    const phone = $('#cP').value.trim();
     const M = lang === 'de'
-      ? { n: 'Name fehlt.', e: 'E-Mail sieht komisch aus.', m: 'Erzähl kurz vom Projekt.', ok: 'Bereit — verbinde ein Formular-Backend, um es zu senden.' }
-      : { n: 'need a name.', e: 'that email looks off.', m: 'tell me about the project.', ok: 'ready — wire a form endpoint to actually deliver it.' };
-    if (!name || !ok || !msg) { n.className = 'fn mono err'; n.textContent = !name ? M.n : !ok ? M.e : M.m; return; }
-    // ponytail: no backend yet — placeholder success. Point f.action at a real endpoint on deploy.
-    n.className = 'fn mono ok'; n.textContent = M.ok; f.reset();
+      ? { n: 'Name fehlt.', e: 'E-Mail sieht komisch aus.', m: 'Erzähl kurz vom Projekt.', r: 'Sag mir, wie du mich gefunden hast.', p: 'Für ein Treffen brauche ich deine Nummer.', ok: 'Danke! Ich melde mich meist am selben Tag.', err: 'Konnte nicht senden — schreib mir per Discord oder Mail.' }
+      : { n: 'need a name.', e: 'that email looks off.', m: 'tell me about the project.', r: 'tell me how you found me.', p: 'for a meet-up I need your number.', ok: 'thanks! I usually reply the same day.', err: "couldn't send — ping me on discord or email instead." };
+    if (!name) return fail(M.n); if (!ok) return fail(M.e);
+    if (!msg) return fail(M.m); if (!ref) return fail(M.r);
+    if (irl && !phone) return fail(M.p);
+    function fail(t) { n.className = 'fn mono err'; n.textContent = t; }
+    const payload = { name, email, message: msg, referral: ref, meet: f.meet.value,
+      city: irl ? $('#cC').value : '', availability: irl ? $('#cA').value.trim() : '', phone: irl ? phone : '' };
+    try {
+      const r = await fetch('/contact', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) });
+      if (!r.ok) throw new Error('bad status');
+      n.className = 'fn mono ok'; n.textContent = M.ok; f.reset(); meetFields.hidden = true;
+    } catch (err) { n.className = 'fn mono err'; n.textContent = M.err; }
   });
 }
 
-function setLang(x) { if (x === lang) return; lang = x; localStorage.setItem('lang', x); applyStatic(); renderCards(); buildOptions(); update(); }
+function setLang(x) { if (x === lang) return; lang = x; localStorage.setItem('lang', x); applyStatic(); renderCards(); renderStack(); renderStats(); buildOptions(); update(); }
 
 document.addEventListener('DOMContentLoaded', () => {
   $$('.lang button').forEach(b => b.addEventListener('click', () => setLang(b.dataset.lang)));
-  applyStatic(); renderCards(); buildOptions(); update(); wireForm();
+  applyStatic(); renderCards(); renderStack(); renderStats(); buildOptions(); update(); wireForm();
   $('#yr').textContent = new Date().getFullYear();
 });
