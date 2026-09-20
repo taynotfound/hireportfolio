@@ -23,10 +23,17 @@ function renderCards() {
     const top = p.shot
       ? `<div class="top"><img src="${esc(p.shot)}" alt="${esc(p.name)} screenshot" loading="lazy"></div>`
       : `<div class="top ph" style="background:${esc(p.tint)}22"><span>${p.emoji}</span></div>`;
-    const card = el('div', 'card',
-      `${top}<div class="b"><h3>${p.emoji ? `<span>${p.emoji}</span>` : ''}${esc(p.name)}</h3>
+    const visit = p.link
+      ? `<span class="visit mono">${lang === 'de' ? 'ansehen' : 'visit'} ↗</span>`
+      : `<span class="visit mono off">${lang === 'de' ? 'privat' : 'private'}</span>`;
+    const inner =
+      `${top}<div class="b"><h3>${p.emoji ? `<span>${p.emoji}</span>` : ''}${esc(p.name)}${visit}</h3>
        <p>${esc(L(p.one))}</p>
-       <div class="tg">${p.tags.map(x => `<span>${esc(x)}</span>`).join('')}</div></div>`);
+       <div class="tg">${p.tags.map(x => `<span>${esc(x)}</span>`).join('')}</div></div>`;
+    const card = p.link
+      ? el('a', 'card', inner)
+      : el('div', 'card', inner);
+    if (p.link) { card.href = p.link; card.target = '_blank'; card.rel = 'noopener'; }
     card.style.setProperty('--tint', p.tint);
     card.style.transform = `rotate(${p.tilt}deg)`;
     c.append(card);

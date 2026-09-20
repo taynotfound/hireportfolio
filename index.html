@@ -24,7 +24,7 @@
 html{-webkit-text-size-adjust:100%}
 body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:17px;line-height:1.6;overflow-x:hidden}
 a{color:inherit;text-decoration:none}
-.wrap{max-width:960px;margin:0 auto;padding:0 1.4rem}
+.wrap{max-width:1120px;margin:0 auto;padding:0 1.6rem}
 h1,h2,h3{line-height:1.08;letter-spacing:-.02em;font-weight:750}
 .mono{font-family:var(--mono)}
 ::selection{background:var(--coral);color:var(--bg)}
@@ -52,10 +52,8 @@ em::after{content:"";position:absolute;left:-2%;right:-2%;bottom:-.12em;height:.
 .hero .wrap{display:grid;grid-template-columns:1.25fr .85fr;gap:2.5rem;align-items:center}
 @media(max-width:720px){.hero .wrap{grid-template-columns:1fr;gap:1.8rem}.hero{padding:2rem 0}}
 .hero .tag{display:inline-flex;align-items:center;gap:.45rem;font-family:var(--mono);font-size:.8rem;color:var(--ok);border:1px solid var(--line2);border-radius:20px;padding:.28rem .75rem;margin-bottom:1.4rem}
-.hero .tag::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 0 var(--ok);animation:pulse 2.2s infinite}
-@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(92,194,106,.5)}70%{box-shadow:0 0 0 7px rgba(92,194,106,0)}100%{box-shadow:0 0 0 0 rgba(92,194,106,0)}}
-@media(prefers-reduced-motion:reduce){.hero .tag::before{animation:none}}
-.hero h1{font-size:clamp(2.1rem,6vw,3.3rem);margin-bottom:1.1rem}
+.hero .tag::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--ok)}
+.hero h1{font-size:clamp(2.3rem,4.4vw,3.5rem);margin-bottom:1.1rem;max-width:16ch}
 .hero .sub{font-size:1.05rem;color:var(--muted);max-width:44ch;margin-bottom:1.6rem}
 .hero-cta{display:flex;gap:.8rem;flex-wrap:wrap;align-items:center}
 .btn{display:inline-flex;align-items:center;gap:.4rem;padding:.7rem 1.15rem;border-radius:9px;font-weight:650;font-size:.95rem;cursor:pointer;border:2px solid transparent;font-family:inherit;transition:transform .12s,background .15s,border-color .15s}
@@ -67,7 +65,7 @@ em::after{content:"";position:absolute;left:-2%;right:-2%;bottom:-.12em;height:.
 .hero .kb{margin-top:1.6rem;font-family:var(--mono);font-size:.8rem;color:var(--dim)}
 
 /* photo with a hand-drawn frame + tape */
-.photo{position:relative;justify-self:center;width:min(300px,80vw);rotate:2.5deg}
+.photo{position:relative;justify-self:center;width:min(270px,72vw);rotate:2.5deg}
 .photo img{display:block;width:100%;border-radius:14px;border:3px solid var(--txt);box-shadow:8px 10px 0 rgba(255,92,102,.28)}
 .photo::before{content:"";position:absolute;inset:-9px;border:2px dashed var(--line2);border-radius:18px;rotate:-3deg;z-index:-1}
 .photo .tape{position:absolute;top:-14px;left:50%;translate:-50% 0;width:96px;height:26px;background:rgba(255,92,102,.35);border:1px dashed var(--coral2);rotate:-4deg;backdrop-filter:blur(1px)}
@@ -88,6 +86,10 @@ section{padding:3rem 0;border-top:1px dashed var(--line)}
 .card .top .peek{position:absolute;bottom:0;left:0;right:0;font-family:var(--mono);font-size:.66rem;color:var(--dim);padding:.3rem .5rem;background:linear-gradient(transparent,var(--bg3))}
 .card .b{padding:1rem 1.05rem;flex:1;display:flex;flex-direction:column}
 .card .b h3{font-size:1.15rem;font-weight:720;margin-bottom:.35rem;display:flex;align-items:center;gap:.4rem}
+.card .b h3 .visit{margin-left:auto;font-size:.68rem;color:var(--dim);border:1px solid var(--line2);border-radius:20px;padding:.08rem .5rem;transition:color .14s,border-color .14s}
+.card:hover .b h3 .visit:not(.off){color:var(--tint,var(--coral));border-color:var(--tint,var(--coral))}
+.card .b h3 .visit.off{opacity:.7}
+a.card{color:inherit}
 .card .b p{font-size:.9rem;color:var(--muted);flex:1;margin-bottom:.7rem}
 .card .b .tg{display:flex;gap:.35rem;flex-wrap:wrap}
 .card .b .tg span{font-family:var(--mono);font-size:.7rem;color:var(--dim);border:1px solid var(--line2);border-radius:20px;padding:.1rem .5rem}
@@ -241,11 +243,11 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:.6rem
     <h2 class="sh" data-i="stats.h">by the numbers</h2>
     <p class="mono" style="color:var(--dim);margin:-.4rem 0 1.2rem;font-size:.85rem" data-i="stats.sub">last 12 months on github · always-on since 2019</p>
     <div class="heatmap-wrap" style="overflow-x:auto;border:1px dashed var(--line);border-radius:10px;padding:1rem;background:var(--bg2)">
-      <img src="heatmap.svg" alt="GitHub contribution heatmap — last year" style="display:block;min-width:760px;height:auto">
+      <img src="heatmap.svg?v=2" alt="GitHub contribution heatmap — last year" style="display:block;min-width:760px;height:auto">
     </div>
     <div style="margin-top:1rem">
       <a href="https://wakatime.com/@c79782f6-783d-42c2-aa21-a35d975705b5" rel="noopener">
-        <img src="waka-badge.svg" alt="Total time coded since Nov 2019" style="height:20px">
+        <img src="waka-badge.svg?v=2" alt="881+ hrs coded since 2019 — WakaTime" style="height:26px">
       </a>
     </div>
   </div>
@@ -258,8 +260,8 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:.6rem
   </div>
 </footer>
 
-<script src="pricing.js"></script>
-<script src="i18n.js"></script>
-<script src="app.js"></script>
+<script src="pricing.js?v=2"></script>
+<script src="i18n.js?v=2"></script>
+<script src="app.js?v=2"></script>
 </body>
 </html>
