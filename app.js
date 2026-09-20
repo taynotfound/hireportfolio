@@ -19,8 +19,10 @@ function applyStatic() {
 
 function renderStack() {
   const g = $('#stackgrid'); if (!g) return; g.innerHTML = '';
-  window.I18N.STACK.forEach(s => g.append(el('div', 'stackcard',
-    `<h3>${esc(t(s.k))}</h3><div class="chips">${s.items.map(x => `<span>${esc(x)}</span>`).join('')}</div>`)));
+  // fixed category order: langs/front/back/mobile/ops/security
+  const ICO = ['\uf121', '\uf522', '\uf233', '\uf3cd', '\uf085', '\uf3ed'];
+  window.I18N.STACK.forEach((s, i) => g.append(el('div', 'stackcard',
+    `<h3><i class="ic fa-solid" aria-hidden="true">${ICO[i] || ''}</i>${esc(t(s.k))}</h3><div class="chips">${s.items.map(x => `<span>${esc(x)}</span>`).join('')}</div>`)));
 }
 
 // numbers: read same-origin SVGs (zero external requests) + derive the rest
@@ -28,23 +30,23 @@ async function renderStats() {
   const g = $('#statgrid'); if (!g) return;
   let contrib = '—', hours = '—';
   try {
-    const svg = await (await fetch('heatmap.svg?v=9')).text();
+    const svg = await (await fetch('heatmap.svg?v=10')).text();
     contrib = (svg.match(/([\d,]+)\s+GitHub contributions/) || svg.match(/>([\d,]+) contributions/) || [, '—'])[1];
   } catch (e) {}
   try {
-    const b = await (await fetch('waka-badge.svg?v=9')).text();
+    const b = await (await fetch('waka-badge.svg?v=10')).text();
     hours = (b.match(/([\d,]+)\s*hrs/) || [, '—'])[1];
   } catch (e) {}
   const years = new Date().getFullYear() - 2019;
   const cards = [
-    { num: contrib, lab: t('stats.contrib'), sub: t('stats.contribl') },
-    { num: hours, lab: t('stats.hours'), sub: t('stats.hoursl') },
-    { num: String(years), lab: t('stats.years'), sub: t('stats.yearsl') },
-    { num: String(PROJECTS.length), lab: t('stats.projects'), sub: t('stats.projectsl') },
+    { ic: '\uf1d8', num: contrib, lab: t('stats.contrib'), sub: t('stats.contribl') },
+    { ic: '\uf017', num: hours, lab: t('stats.hours'), sub: t('stats.hoursl') },
+    { ic: '\uf1da', num: String(years), lab: t('stats.years'), sub: t('stats.yearsl') },
+    { ic: '\uf135', num: String(PROJECTS.length), lab: t('stats.projects'), sub: t('stats.projectsl') },
   ];
   g.innerHTML = '';
   cards.forEach(c => g.append(el('div', 'statcard',
-    `<div class="num">${esc(c.num)}</div><div class="lab">${esc(c.lab)}</div><div class="sub">${esc(c.sub)}</div>`)));
+    `<div class="num"><i class="ic fa-solid" aria-hidden="true">${c.ic}</i>${esc(c.num)}</div><div class="lab">${esc(c.lab)}</div><div class="sub">${esc(c.sub)}</div>`)));
 }
 
 function renderCards() {

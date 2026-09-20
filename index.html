@@ -169,8 +169,8 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:.6rem
 .seg .segopt+.segopt{border-left:1px solid var(--line2)}
 .seg .segopt input{display:none}
 .seg .segopt:has(input:checked){background:var(--coral);color:var(--bg);font-weight:700}
-#cC{width:100%;padding:.6rem .7rem;border:1px solid var(--line2);border-radius:8px;background:var(--bg2);color:var(--txt);font:inherit}
-/* meet segmented + fields */
+#cC{width:100%;padding:.6rem .7rem;border:1px solid var(--line2);border-radius:8px;background:var(--bg2);color:var(--txt);font:inherit;transition:border-color .12s}
+#cC:focus{border-color:var(--coral);outline:none}
 /* collapsible "show more" */
 details.more{grid-column:1/-1;margin-top:.4rem}
 details.more>summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:.5rem;
@@ -182,6 +182,67 @@ details.more[open]>summary::after{transform:rotate(180deg)}
 details.more>summary:hover{border-color:var(--coral);color:var(--coral)}
 details.more[open]>summary{margin-bottom:1.2rem}
 details.more>.cards,details.more>.stackgrid{margin-top:0}
+
+/* ── polish pass: focus, motion, hover, rhythm ── */
+/* keyboard focus rings everywhere (mouse users unaffected) */
+:where(a,button,input,textarea,select,summary,.opt,.trow,.card):focus-visible{outline:2px solid var(--coral2);outline-offset:2px;border-radius:6px}
+.field input:focus-visible,.field textarea:focus-visible{outline:2px solid var(--coral2);outline-offset:1px}
+/* nav link underline grow */
+.nav-links a:not(.hi):not(.brand){position:relative}
+.nav-links a:not(.hi)::after{content:"";position:absolute;left:0;right:100%;bottom:-4px;height:2px;background:var(--coral);transition:right .18s}
+.nav-links a:not(.hi):hover::after{right:0}
+/* primary buttons lift a touch */
+.btn-primary:hover{transform:translateY(-1px)}
+/* stat + stack cards: subtle hover lift + accent border */
+.statcard,.stackcard{transition:transform .14s,border-color .14s}
+.statcard:hover,.stackcard:hover{transform:translateY(-3px);border-color:var(--coral)}
+.stackcard .chips span{transition:border-color .14s,color .14s}
+.stackcard:hover .chips span{border-color:var(--line2)}
+.card .b .tg span{transition:border-color .14s,color .14s}
+.card:hover .b .tg span{border-color:var(--tint,var(--coral));color:var(--muted)}
+/* builder options: hover feedback before selecting */
+.opt .box:hover{border-color:var(--coral2)}
+.trow{transition:border-color .12s,background .12s}
+.trow:hover{border-color:var(--coral2)}
+.seg .segopt:hover:not(:has(input:checked)){color:var(--txt);background:var(--bg3)}
+.ct-link i,.ct-link span{transition:transform .14s}
+/* ── FA icon accents via ::before (i18n-safe; data-i replaces textContent) ── */
+.fa-pre::before,.sh::before,.nav-links a:not(.hi):not(.brand)::before{
+  font-family:"Font Awesome 7 Free";font-weight:900;margin-right:.5em;color:var(--coral);
+  font-size:.85em;display:inline-block;vertical-align:baseline}
+.sh::before{margin-right:.55rem;opacity:.9}
+#work .sh::before{content:"\f0ae"}          /* list-check */
+#price .sh::before{content:"\f571"}         /* money-check-dollar */
+#stats .sh::before{content:"\e0e3"}         /* chart-simple */
+#stack .sh::before{content:"\f5fd"}         /* layer-group */
+#hi .sh::before{content:"\f0e0"}            /* envelope */
+.nav-links a:not(.hi):not(.brand)::before{font-size:.82em;margin-right:.4em;color:var(--dim);transition:color .14s}
+.nav-links a:not(.hi):hover::before{color:var(--coral)}
+.nav-links a[href="#work"]::before{content:"\f0ae"}
+.nav-links a[href="#stats"]::before{content:"\e0e3"}
+.nav-links a[href="#stack"]::before{content:"\f5fd"}
+.nav-links a[href="#price"]::before{content:"\f571"}
+/* CTA arrows/icons */
+.hero-cta .btn-primary::after{content:"\f061";font-family:"Font Awesome 7 Free";font-weight:900;font-size:.8em;margin-left:.15em}
+.hero-cta .btn-ghost::after{content:"\f30b";font-family:"Font Awesome 7 Free";font-weight:900;font-size:.8em;margin-left:.15em}
+/* stat cards + stack cards get a leading icon slot (added in JS via .ic) */
+.statcard .ic,.stackcard h3 .ic{color:var(--coral);margin-right:.45rem;font-size:.9em}
+/* consistent vertical rhythm + smooth anchor scroll offset for sticky nav */
+html{scroll-behavior:smooth}
+:where(section,footer)[id],#top{scroll-margin-top:72px}
+/* mobile rhythm: tighten section padding, single-col builder summary reads well */
+@media(max-width:600px){
+  body{font-size:16px}
+  section{padding:2.2rem 0}
+  .sh{font-size:1.45rem;margin-bottom:1.2rem}
+  .wrap{padding:0 1.15rem}
+  .hero-cta .btn{flex:1 1 auto;justify-content:center}
+  .seg{width:100%}.seg .segopt{flex:1}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+  .card:hover,a.card:hover,.statcard:hover,.stackcard:hover,.btn-primary:hover{transform:none}
+}
 </style>
 </head>
 <body>
@@ -306,11 +367,11 @@ details.more>.cards,details.more>.stackgrid{margin-top:0}
     <p class="mono" style="color:var(--dim);margin:-.4rem 0 1.2rem;font-size:.85rem" data-i="stats.sub">last 12 months on github · always-on since 2019</p>
     <div class="statgrid" id="statgrid"></div>
     <div class="heatmap-wrap" style="overflow-x:auto;border:1px dashed var(--line);border-radius:10px;padding:1rem;background:var(--bg2)">
-      <img src="heatmap.svg?v=9" alt="GitHub contribution heatmap — last year" style="display:block;min-width:760px;height:auto">
+      <img src="heatmap.svg?v=10" alt="GitHub contribution heatmap — last year" style="display:block;min-width:760px;height:auto">
     </div>
     <div style="margin-top:1rem">
       <a href="https://wakatime.com/@c79782f6-783d-42c2-aa21-a35d975705b5" rel="noopener">
-        <img src="waka-badge.svg?v=9" alt="881+ hrs coded since 2019 — WakaTime" style="height:26px">
+        <img src="waka-badge.svg?v=10" alt="881+ hrs coded since 2019 — WakaTime" style="height:26px">
       </a>
     </div>
   </div>
@@ -331,8 +392,8 @@ details.more>.cards,details.more>.stackgrid{margin-top:0}
   </div>
 </footer>
 
-<script src="pricing.js?v=9"></script>
-<script src="i18n.js?v=9"></script>
-<script src="app.js?v=9"></script>
+<script src="pricing.js?v=10"></script>
+<script src="i18n.js?v=10"></script>
+<script src="app.js?v=10"></script>
 </body>
 </html>
