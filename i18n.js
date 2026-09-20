@@ -175,6 +175,9 @@
   // Real client testimonials only. Add {quote:{en,de}, name, role:{en,de}} objects here.
   // Empty = the "what clients said" section stays hidden. NEVER fabricate quotes.
   const TESTIMONIALS = [
+    { quote: { en: "Tay is an engaged and motivated staff member of EasySystems. Their passion and experience is a really important part for the entire project. I can only recommend Tay for any collaboration — their experience and personality is a great addition for every team.",
+               de: "Tay ist ein engagiertes und motiviertes Mitglied von EasySystems. Ihre Leidenschaft und Erfahrung sind ein wirklich wichtiger Teil des gesamten Projekts. Ich kann Tay für jede Zusammenarbeit nur empfehlen — Erfahrung und Persönlichkeit sind eine große Bereicherung für jedes Team." },
+      name: 'Niklas', role: { en: 'CEO, EasySystems', de: 'CEO, EasySystems' }, link: 'https://thespacedev.com/' },
   ];
 
   const api = { T, PROJECTS, STACK, TESTIMONIALS };

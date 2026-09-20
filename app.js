@@ -30,11 +30,11 @@ async function renderStats() {
   const g = $('#statgrid'); if (!g) return;
   let contrib = '—', hours = '—';
   try {
-    const svg = await (await fetch('heatmap.svg?v=16')).text();
+    const svg = await (await fetch('heatmap.svg?v=17')).text();
     contrib = (svg.match(/([\d,]+)\s+GitHub contributions/) || svg.match(/>([\d,]+) contributions/) || [, '—'])[1];
   } catch (e) {}
   try {
-    const b = await (await fetch('waka-badge.svg?v=16')).text();
+    const b = await (await fetch('waka-badge.svg?v=17')).text();
     hours = (b.match(/([\d,]+)\s*hrs/) || [, '—'])[1];
   } catch (e) {}
   const years = new Date().getFullYear() - 2019;
@@ -75,9 +75,14 @@ function renderQuotes() {
   sec.hidden = list.length === 0;
   if (!list.length) return;
   g.innerHTML = '';
-  list.forEach(q => g.append(el('figure', 'quote',
-    `<blockquote>“${esc(L(q.quote))}”</blockquote>
-     <figcaption><strong>${esc(q.name)}</strong>${q.role ? ` · ${esc(L(q.role))}` : ''}</figcaption>`)));
+  list.forEach(q => {
+    const who = q.link
+      ? `<a href="${esc(q.link)}" target="_blank" rel="noopener"><strong>${esc(q.name)}</strong></a>`
+      : `<strong>${esc(q.name)}</strong>`;
+    g.append(el('figure', 'quote',
+      `<blockquote>“${esc(L(q.quote))}”</blockquote>
+       <figcaption>${who}${q.role ? ` · ${esc(L(q.role))}` : ''}</figcaption>`));
+  });
 }
 
 function renderCards() {
