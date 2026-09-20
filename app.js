@@ -30,11 +30,11 @@ async function renderStats() {
   const g = $('#statgrid'); if (!g) return;
   let contrib = '—', hours = '—';
   try {
-    const svg = await (await fetch('heatmap.svg?v=12')).text();
+    const svg = await (await fetch('heatmap.svg?v=13')).text();
     contrib = (svg.match(/([\d,]+)\s+GitHub contributions/) || svg.match(/>([\d,]+) contributions/) || [, '—'])[1];
   } catch (e) {}
   try {
-    const b = await (await fetch('waka-badge.svg?v=12')).text();
+    const b = await (await fetch('waka-badge.svg?v=13')).text();
     hours = (b.match(/([\d,]+)\s*hrs/) || [, '—'])[1];
   } catch (e) {}
   const years = new Date().getFullYear() - 2019;
@@ -49,6 +49,26 @@ async function renderStats() {
     `<div class="num"><i class="ic fa-solid" aria-hidden="true">${c.ic}</i>${esc(c.num)}</div><div class="lab">${esc(c.lab)}</div><div class="sub">${esc(c.sub)}</div>`)));
 }
 
+function openDetail(p) {
+  const dlg = $('#detail');
+  const shot = p.shot
+    ? `<div class="dtop"><img src="${esc(p.shot)}" alt="${esc(p.name)} screenshot"></div>`
+    : `<div class="dtop ph" style="background:${esc(p.tint)}22"><span>${p.emoji}</span></div>`;
+  const visit = p.link
+    ? `<a class="btn btn-primary" href="${esc(p.link)}" target="_blank" rel="noopener">${lang === 'de' ? 'live ansehen' : 'view live'} ↗</a>`
+    : `<span class="dpriv mono">${lang === 'de' ? 'privates Projekt' : 'private project'}</span>`;
+  dlg.innerHTML = `<form method="dialog"><button class="dclose" aria-label="close" value="x">✕</button></form>
+    ${shot}
+    <div class="dbody">
+      <h3>${p.emoji ? p.emoji + ' ' : ''}${esc(p.name)} <span class="dyear mono">${p.year || ''}</span></h3>
+      <p>${esc(L(p.long) || L(p.one))}</p>
+      <div class="dstack">${(p.stack || []).map(x => `<span>${esc(x)}</span>`).join('')}</div>
+      <div class="dacts">${visit}</div>
+    </div>`;
+  dlg.style.setProperty('--tint', p.tint);
+  dlg.showModal();
+}
+
 function renderCards() {
   const c = $('#cards'); c.innerHTML = '';
   const mk = p => {
@@ -61,9 +81,16 @@ function renderCards() {
     const inner =
       `${top}<div class="b"><h3>${p.emoji ? `<span>${p.emoji}</span>` : ''}${esc(p.name)}${visit}</h3>
        <p>${esc(L(p.one))}</p>
-       <div class="tg">${p.tags.map(x => `<span>${esc(x)}</span>`).join('')}</div></div>`;
-    const card = el(p.link ? 'a' : 'div', 'card', inner);
-    if (p.link) { card.href = p.link; card.target = '_blank'; card.rel = 'noopener'; }
+       <div class="tg">${p.tags.map(x => `<span>${esc(x)}</span>`).join('')}</div>
+       <span class="more-link mono">${lang === 'de' ? 'Details' : 'details'} →</span></div>`;
+    const card = el('div', 'card', inner);
+    card.tabIndex = 0; card.setAttribute('role', 'button');
+    card.setAttribute('aria-label', `${p.name} — ${lang === 'de' ? 'Details öffnen' : 'open details'}`);
+    const open = () => openDetail(p);
+    card.addEventListener('click', open);
+    card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+    // visit chip links out directly without triggering the dialog
+    if (p.link) card.querySelector('.visit').outerHTML = `<a class="visit mono" href="${esc(p.link)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${lang === 'de' ? 'ansehen' : 'visit'} ↗</a>`;
     card.style.setProperty('--tint', p.tint);
     card.style.transform = `rotate(${p.tilt}deg)`;
     return card;

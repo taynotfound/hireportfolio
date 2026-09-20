@@ -91,6 +91,30 @@ section{padding:3rem 0;border-top:1px dashed var(--line)}
 .card:hover .b h3 .visit:not(.off){color:var(--tint,var(--coral));border-color:var(--tint,var(--coral))}
 .card .b h3 .visit.off{opacity:.7}
 a.card{color:inherit;text-decoration:none}
+.card{cursor:pointer}
+.card .b .more-link{margin-top:.6rem;font-size:.72rem;color:var(--dim);align-self:flex-start;transition:color .14s,transform .14s}
+.card:hover .b .more-link{color:var(--tint,var(--coral));transform:translateX(3px)}
+/* project detail dialog (native <dialog>) */
+.detail{max-width:560px;width:calc(100% - 2rem);border:2px solid var(--tint,var(--line2));border-radius:16px;
+  background:var(--bg2);color:var(--txt);padding:0;overflow:hidden}
+.detail::backdrop{background:rgba(8,7,6,.72);backdrop-filter:blur(3px)}
+.detail .dclose{position:absolute;top:.6rem;right:.6rem;z-index:2;width:34px;height:34px;border-radius:9px;
+  background:rgba(18,16,15,.7);border:1px solid var(--line2);color:var(--txt);cursor:pointer;font-size:.9rem;
+  display:flex;align-items:center;justify-content:center;transition:border-color .14s,background .14s}
+.detail .dclose:hover{border-color:var(--coral);background:var(--bg3)}
+.detail .dtop{aspect-ratio:16/9;background:var(--bg3);overflow:hidden;border-bottom:2px solid var(--line)}
+.detail .dtop img{width:100%;height:100%;object-fit:cover;object-position:top}
+.detail .dtop.ph{display:flex;align-items:center;justify-content:center;font-size:4rem}
+.detail .dbody{padding:1.3rem 1.4rem 1.5rem}
+.detail .dbody h3{font-size:1.35rem;font-weight:750;margin-bottom:.6rem;display:flex;align-items:baseline;gap:.5rem;flex-wrap:wrap}
+.detail .dyear{font-size:.8rem;color:var(--dim);font-weight:400}
+.detail .dbody p{color:var(--muted);font-size:.95rem;line-height:1.6;margin-bottom:1rem}
+.detail .dstack{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1.2rem}
+.detail .dstack span{border:1px solid var(--line2);border-radius:999px;padding:.22rem .65rem;font-size:.78rem;font-family:var(--mono);color:var(--muted)}
+.detail .dacts{display:flex;align-items:center;gap:1rem}
+.detail .dpriv{color:var(--dim);font-size:.85rem}
+@media(prefers-reduced-motion:no-preference){.detail[open]{animation:dpop .18s ease}}
+@keyframes dpop{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
 a.card:hover{border-color:var(--tint,var(--coral));transform:translateY(-3px) rotate(0deg) !important}
 .card .b p{font-size:.9rem;color:var(--muted);flex:1;margin-bottom:.7rem}
 .card .b .tg{display:flex;gap:.35rem;flex-wrap:wrap}
@@ -377,7 +401,7 @@ html{scroll-behavior:smooth}
     <p class="mono" style="color:var(--dim);margin:-.4rem 0 1.2rem;font-size:.85rem" data-i="stats.sub">last 12 months on github · always-on since 2019</p>
     <div class="statgrid" id="statgrid"></div>
     <div class="heatmap-wrap" style="overflow-x:auto;border:1px dashed var(--line);border-radius:10px;padding:1rem;background:var(--bg2)">
-      <img src="heatmap.svg?v=12" alt="GitHub contribution heatmap — last year" style="display:block;min-width:760px;height:auto">
+      <img src="heatmap.svg?v=13" alt="GitHub contribution heatmap — last year" style="display:block;min-width:760px;height:auto">
     </div>
   </div>
 </section>
@@ -397,8 +421,9 @@ html{scroll-behavior:smooth}
   </div>
 </footer>
 
-<script src="pricing.js?v=12"></script>
-<script src="i18n.js?v=12"></script>
-<script src="app.js?v=12"></script>
+<dialog id="detail" class="detail"></dialog>
+<script src="pricing.js?v=13"></script>
+<script src="i18n.js?v=13"></script>
+<script src="app.js?v=13"></script>
 </body>
 </html>
