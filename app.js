@@ -28,11 +28,11 @@ async function renderStats() {
   const g = $('#statgrid'); if (!g) return;
   let contrib = '—', hours = '—';
   try {
-    const svg = await (await fetch('heatmap.svg?v=8')).text();
+    const svg = await (await fetch('heatmap.svg?v=9')).text();
     contrib = (svg.match(/([\d,]+)\s+GitHub contributions/) || svg.match(/>([\d,]+) contributions/) || [, '—'])[1];
   } catch (e) {}
   try {
-    const b = await (await fetch('waka-badge.svg?v=8')).text();
+    const b = await (await fetch('waka-badge.svg?v=9')).text();
     hours = (b.match(/([\d,]+)\s*hrs/) || [, '—'])[1];
   } catch (e) {}
   const years = new Date().getFullYear() - 2019;
@@ -84,7 +84,7 @@ function buildOptions() {
   Object.entries(P.BASES).forEach(([k, v]) => {
     const o = el('label', 'opt',
       `<input type="radio" name="base" value="${k}"${k === state.base ? ' checked' : ''}>
-       <div class="box"><div class="t">${esc(L(v.label))} <span class="pr">${P.eur(v.price)}</span></div><div class="d">${t('b.days').replace('{n}', v.days)}</div></div>`);
+       <div class="box"><div class="t"><span class="tt">${esc(L(v.label))}</span> <span class="pr">${P.eur(v.price)}</span></div><div class="d">${t('b.days').replace('{n}', v.days)}</div></div>`);
     o.querySelector('input').addEventListener('change', () => { state.base = k; update(); });
     bR.append(o);
   });
@@ -92,7 +92,7 @@ function buildOptions() {
   Object.entries(P.ADDONS).forEach(([k, v]) => {
     const o = el('label', 'opt',
       `<input type="checkbox" value="${k}"${state.addons.has(k) ? ' checked' : ''}>
-       <div class="box"><div class="t">${esc(L(v.label))} <span class="pr">+${P.eur(v.price)}</span></div></div>`);
+       <div class="box"><div class="t"><span class="tt">${esc(L(v.label))}</span> <span class="pr">+${P.eur(v.price)}</span></div></div>`);
     o.querySelector('input').addEventListener('change', e => { e.target.checked ? state.addons.add(k) : state.addons.delete(k); update(); });
     aR.append(o);
   });

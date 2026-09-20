@@ -11,7 +11,8 @@ const ROOT = __dirname;
 const PORT = process.env.PORT || 5700;
 const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8',
   '.css': 'text/css; charset=utf-8', '.svg': 'image/svg+xml', '.webp': 'image/webp',
-  '.png': 'image/png', '.jpg': 'image/jpeg', '.json': 'application/json', '.ico': 'image/x-icon' };
+  '.png': 'image/png', '.jpg': 'image/jpeg', '.json': 'application/json', '.ico': 'image/x-icon',
+  '.woff2': 'font/woff2', '.woff': 'font/woff', '.ttf': 'font/ttf' };
 
 function rebuild() {
   for (const s of ['build_heatmap.py', 'build_badge.py']) {
