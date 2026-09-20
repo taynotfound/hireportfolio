@@ -5,11 +5,12 @@
     en: {
       'nav.work': 'work', 'nav.stats': 'stats', 'nav.stack': 'stack', 'nav.price': 'pricing', 'nav.hi': 'say hi',
       'hero.tag': 'available now — can start this week',
-      'hero.h': "Hi, I'm Tay.<br>I build the web,<br>and I <em>break it</em> to make it safe.",
-      'hero.sub': 'Freelance dev. Coding since 2019, self-taught, one-person whole-stack. Web apps, Android, and the security bits nobody else wants to touch.',
+      'hero.h': "Hi, I'm Tay.<br>I build the web —<br>and I <em>secure</em> what I build.",
+      'hero.sub': 'Freelance whole-stack dev, self-taught, coding since 2019. I ship web apps, dashboards and Android — then pentest my own work so it holds up. One person, start to secured launch.',
       'hero.cta1': 'Build me a quote', 'hero.cta2': 'see the work',
       'hero.tags': 'JavaScript · Python · Kotlin · SQL · shipping since 2019',
       'work.h': 'stuff I actually shipped',
+      'words.h': 'what clients said',
       'work.detail': 'details', 'work.visit': 'visit live ↗', 'work.back': '← back to work',
       'work.stack': 'built with', 'work.does': 'what it does', 'work.year': 'year',
       'more.work': 'show {n} more projects', 'more.stack': 'more of my stack',
@@ -17,7 +18,7 @@
       'stats.contrib': 'contributions', 'stats.contribl': 'on GitHub, last 12 months',
       'stats.hours': 'hours coded', 'stats.hoursl': 'tracked on WakaTime since 2019',
       'stats.years': 'years shipping', 'stats.yearsl': 'self-taught, still going',
-      'stats.projects': 'projects live', 'stats.projectsl': 'apps, sites & tools in the wild',
+      'stats.projects': 'projects live', 'stats.projectsl': 'client & personal — apps, sites & tools in the wild',
       'stack.h': 'my working stack', 'stack.sub': 'what I reach for, day to day',
       'stack.langs': 'languages', 'stack.front': 'frontend', 'stack.back': 'backend & data',
       'stack.mobile': 'mobile', 'stack.ops': 'ops & tooling', 'stack.sec': 'security',
@@ -40,7 +41,7 @@
       'foot.impressum': 'Impressum',
       'impressum.body': '<h3>Impressum</h3><p class="mono" style="line-height:1.9">Angaben gemäß § 5 DDG (Digitale-Dienste-Gesetz)</p>'
         + '<p><strong>Tay März</strong><br>Am Steinsgraben 32<br>37085 Göttingen<br>Deutschland</p>'
-        + '<p><strong>Kontakt</strong><br>E-Mail: <a href="mailto:kommando@systemli.org">kommando@systemli.org</a></p>'
+        + '<p><strong>Kontakt</strong><br>E-Mail: <a href="mailto:tay@taymaerz.de">tay@taymaerz.de</a></p>'
         + '<p><strong>Verantwortlich für den Inhalt (§ 18 Abs. 2 MStV)</strong><br>Tay März, Anschrift wie oben.</p>'
         + '<p class="mono" style="color:var(--coral);font-size:.82rem;border:1px solid var(--line2);border-radius:8px;padding:.6rem .8rem"><strong>Hinweis:</strong> Diese Anschrift dient ausschließlich der gesetzlichen Impressumspflicht. Unangekündigte Besuche, unaufgeforderte Pakete oder Briefe sind nicht erwünscht. Jeder Verstoß wird konsequent zivil- und strafrechtlich verfolgt.</p>'
         + '<p class="mono" style="color:var(--dim);font-size:.82rem">Diese Website setzt keine Tracker und keine externen Dienste ein. Es werden keine personenbezogenen Daten zu Werbezwecken verarbeitet. Über das Kontaktformular übermittelte Angaben werden ausschließlich zur Bearbeitung deiner Anfrage genutzt.</p>',
@@ -50,11 +51,12 @@
     de: {
       'nav.work': 'projekte', 'nav.stats': 'zahlen', 'nav.stack': 'stack', 'nav.price': 'preise', 'nav.hi': 'hallo sagen',
       'hero.tag': 'sofort verfügbar — Start noch diese Woche',
-      'hero.h': "Hi, ich bin Tay.<br>Ich baue das Web —<br>und <em>zerlege es</em>, damit's sicher ist.",
-      'hero.sub': 'Freelance-Dev. Seit 2019 am Coden, autodidaktisch, Ein-Personen-Full-Stack. Web-Apps, Android und der Security-Kram, den sonst keiner anfassen will.',
+      'hero.h': "Hi, ich bin Tay.<br>Ich baue das Web —<br>und <em>sichere</em>, was ich baue.",
+      'hero.sub': 'Freelance-Full-Stack-Dev, autodidaktisch, seit 2019 am Coden. Ich baue Web-Apps, Dashboards und Android — und penteste meine eigene Arbeit, damit sie hält. Eine Person, vom Start bis zum sicheren Launch.',
       'hero.cta1': 'Angebot bauen', 'hero.cta2': 'zu den Projekten',
       'hero.tags': 'JavaScript · Python · Kotlin · SQL · seit 2019 am Ausliefern',
       'work.h': 'Sachen, die wirklich live sind',
+      'words.h': 'was Kunden gesagt haben',
       'work.detail': 'Details', 'work.visit': 'live ansehen ↗', 'work.back': '← zurück zu den Projekten',
       'work.stack': 'gebaut mit', 'work.does': 'was es macht', 'work.year': 'Jahr',
       'more.work': '{n} weitere Projekte zeigen', 'more.stack': 'mehr von meinem Stack',
@@ -62,7 +64,7 @@
       'stats.contrib': 'Contributions', 'stats.contribl': 'auf GitHub, letzte 12 Monate',
       'stats.hours': 'Stunden gecodet', 'stats.hoursl': 'via WakaTime getrackt seit 2019',
       'stats.years': 'Jahre am Ausliefern', 'stats.yearsl': 'autodidaktisch, immer noch dabei',
-      'stats.projects': 'Projekte live', 'stats.projectsl': 'Apps, Seiten & Tools im Einsatz',
+      'stats.projects': 'Projekte live', 'stats.projectsl': 'Kunden & eigene — Apps, Seiten & Tools im Einsatz',
       'stack.h': 'mein Arbeits-Stack', 'stack.sub': 'wonach ich täglich greife',
       'stack.langs': 'Sprachen', 'stack.front': 'Frontend', 'stack.back': 'Backend & Daten',
       'stack.mobile': 'Mobile', 'stack.ops': 'Ops & Tooling', 'stack.sec': 'Security',
@@ -85,7 +87,7 @@
       'foot.impressum': 'Impressum',
       'impressum.body': '<h3>Impressum</h3><p class="mono" style="line-height:1.9">Angaben gemäß § 5 DDG (Digitale-Dienste-Gesetz)</p>'
         + '<p><strong>Tay März</strong><br>Am Steinsgraben 32<br>37085 Göttingen<br>Deutschland</p>'
-        + '<p><strong>Kontakt</strong><br>E-Mail: <a href="mailto:kommando@systemli.org">kommando@systemli.org</a></p>'
+        + '<p><strong>Kontakt</strong><br>E-Mail: <a href="mailto:tay@taymaerz.de">tay@taymaerz.de</a></p>'
         + '<p><strong>Verantwortlich für den Inhalt (§ 18 Abs. 2 MStV)</strong><br>Tay März, Anschrift wie oben.</p>'
         + '<p class="mono" style="color:var(--coral);font-size:.82rem;border:1px solid var(--line2);border-radius:8px;padding:.6rem .8rem"><strong>Hinweis:</strong> Diese Anschrift dient ausschließlich der gesetzlichen Impressumspflicht. Unangekündigte Besuche, unaufgeforderte Pakete oder Briefe sind nicht erwünscht. Jeder Verstoß wird konsequent zivil- und strafrechtlich verfolgt.</p>'
         + '<p class="mono" style="color:var(--dim);font-size:.82rem">Diese Website setzt keine Tracker und keine externen Dienste ein. Es werden keine personenbezogenen Daten zu Werbezwecken verarbeitet. Über das Kontaktformular übermittelte Angaben werden ausschließlich zur Bearbeitung deiner Anfrage genutzt.</p>',
@@ -170,7 +172,12 @@
     { k: 'stack.sec', items: ['pentest', 'OAuth', 'hardening', 'zero-PII design'] },
   ];
 
-  const api = { T, PROJECTS, STACK };
+  // Real client testimonials only. Add {quote:{en,de}, name, role:{en,de}} objects here.
+  // Empty = the "what clients said" section stays hidden. NEVER fabricate quotes.
+  const TESTIMONIALS = [
+  ];
+
+  const api = { T, PROJECTS, STACK, TESTIMONIALS };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.I18N = api;
 })(typeof window !== 'undefined' ? window : globalThis);

@@ -4,7 +4,7 @@ const $$ = s => document.querySelectorAll(s);
 const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const P = window.Pricing;
-const { T, PROJECTS } = window.I18N;
+const { T, PROJECTS, TESTIMONIALS } = window.I18N;
 
 let lang = (localStorage.getItem('lang') || (navigator.language || 'en').slice(0, 2)) === 'de' ? 'de' : 'en';
 const t = k => (T[lang][k] ?? T.en[k] ?? k);
@@ -30,11 +30,11 @@ async function renderStats() {
   const g = $('#statgrid'); if (!g) return;
   let contrib = '—', hours = '—';
   try {
-    const svg = await (await fetch('heatmap.svg?v=15')).text();
+    const svg = await (await fetch('heatmap.svg?v=16')).text();
     contrib = (svg.match(/([\d,]+)\s+GitHub contributions/) || svg.match(/>([\d,]+) contributions/) || [, '—'])[1];
   } catch (e) {}
   try {
-    const b = await (await fetch('waka-badge.svg?v=15')).text();
+    const b = await (await fetch('waka-badge.svg?v=16')).text();
     hours = (b.match(/([\d,]+)\s*hrs/) || [, '—'])[1];
   } catch (e) {}
   const years = new Date().getFullYear() - 2019;
@@ -67,6 +67,17 @@ function openDetail(p) {
     </div>`;
   dlg.style.setProperty('--tint', p.tint);
   dlg.showModal();
+}
+
+function renderQuotes() {
+  const sec = $('#words'), g = $('#quotes');
+  const list = TESTIMONIALS || [];
+  sec.hidden = list.length === 0;
+  if (!list.length) return;
+  g.innerHTML = '';
+  list.forEach(q => g.append(el('figure', 'quote',
+    `<blockquote>“${esc(L(q.quote))}”</blockquote>
+     <figcaption><strong>${esc(q.name)}</strong>${q.role ? ` · ${esc(L(q.role))}` : ''}</figcaption>`)));
 }
 
 function renderCards() {
@@ -190,11 +201,11 @@ function wireForm() {
   });
 }
 
-function setLang(x) { if (x === lang) return; lang = x; localStorage.setItem('lang', x); applyStatic(); renderCards(); renderStack(); renderStats(); buildOptions(); update(); }
+function setLang(x) { if (x === lang) return; lang = x; localStorage.setItem('lang', x); applyStatic(); renderCards(); renderStack(); renderStats(); renderQuotes(); buildOptions(); update(); }
 
 document.addEventListener('DOMContentLoaded', () => {
   $$('.lang button').forEach(b => b.addEventListener('click', () => setLang(b.dataset.lang)));
-  applyStatic(); renderCards(); renderStack(); renderStats(); buildOptions(); update(); wireForm();
+  applyStatic(); renderCards(); renderStack(); renderStats(); renderQuotes(); buildOptions(); update(); wireForm();
   $('#impressumLink').addEventListener('click', e => { e.preventDefault(); $('#impressum').showModal(); });
   $('#yr').textContent = new Date().getFullYear();
 });
