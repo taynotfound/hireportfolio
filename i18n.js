@@ -37,6 +37,13 @@
       'ct.phone': 'phone number', 'ct.phoneph': 'so I can call to set it up',
       'ct.meetnote': 'in-person only around Göttingen · Hannover · Duderstadt · Northeim · Nörten-Hardenberg',
       'foot': 'hand-coded · no frameworks · no trackers · privacy first',
+      'foot.impressum': 'Impressum',
+      'impressum.body': '<h3>Impressum</h3><p class="mono" style="line-height:1.9">Angaben gemäß § 5 DDG (Digitale-Dienste-Gesetz)</p>'
+        + '<p><strong>Tay März</strong><br>Am Steinsgraben 32<br>37085 Göttingen<br>Deutschland</p>'
+        + '<p><strong>Kontakt</strong><br>E-Mail: <a href="mailto:kommando@systemli.org">kommando@systemli.org</a></p>'
+        + '<p><strong>Verantwortlich für den Inhalt (§ 18 Abs. 2 MStV)</strong><br>Tay März, Anschrift wie oben.</p>'
+        + '<p class="mono" style="color:var(--coral);font-size:.82rem;border:1px solid var(--line2);border-radius:8px;padding:.6rem .8rem"><strong>Hinweis:</strong> Diese Anschrift dient ausschließlich der gesetzlichen Impressumspflicht. Unangekündigte Besuche, unaufgeforderte Pakete oder Briefe sind nicht erwünscht. Jeder Verstoß wird konsequent zivil- und strafrechtlich verfolgt.</p>'
+        + '<p class="mono" style="color:var(--dim);font-size:.82rem">Diese Website setzt keine Tracker und keine externen Dienste ein. Es werden keine personenbezogenen Daten zu Werbezwecken verarbeitet. Über das Kontaktformular übermittelte Angaben werden ausschließlich zur Bearbeitung deiner Anfrage genutzt.</p>',
       'b.days': 'from {n}d', 'b.rush': '+ rush (+20%)', 'b.ret': 'plan discount (−10%)',
       'b.mo': '/mo', 'b.eta': '~{n} working days',
     },
@@ -75,6 +82,13 @@
       'ct.phone': 'Telefonnummer', 'ct.phoneph': 'damit ich zum Abstimmen anrufen kann',
       'ct.meetnote': 'persönlich nur rund um Göttingen · Hannover · Duderstadt · Northeim · Nörten-Hardenberg',
       'foot': 'handgecodet · keine Frameworks · keine Tracker · Privacy first',
+      'foot.impressum': 'Impressum',
+      'impressum.body': '<h3>Impressum</h3><p class="mono" style="line-height:1.9">Angaben gemäß § 5 DDG (Digitale-Dienste-Gesetz)</p>'
+        + '<p><strong>Tay März</strong><br>Am Steinsgraben 32<br>37085 Göttingen<br>Deutschland</p>'
+        + '<p><strong>Kontakt</strong><br>E-Mail: <a href="mailto:kommando@systemli.org">kommando@systemli.org</a></p>'
+        + '<p><strong>Verantwortlich für den Inhalt (§ 18 Abs. 2 MStV)</strong><br>Tay März, Anschrift wie oben.</p>'
+        + '<p class="mono" style="color:var(--coral);font-size:.82rem;border:1px solid var(--line2);border-radius:8px;padding:.6rem .8rem"><strong>Hinweis:</strong> Diese Anschrift dient ausschließlich der gesetzlichen Impressumspflicht. Unangekündigte Besuche, unaufgeforderte Pakete oder Briefe sind nicht erwünscht. Jeder Verstoß wird konsequent zivil- und strafrechtlich verfolgt.</p>'
+        + '<p class="mono" style="color:var(--dim);font-size:.82rem">Diese Website setzt keine Tracker und keine externen Dienste ein. Es werden keine personenbezogenen Daten zu Werbezwecken verarbeitet. Über das Kontaktformular übermittelte Angaben werden ausschließlich zur Bearbeitung deiner Anfrage genutzt.</p>',
       'b.days': 'ab {n}T', 'b.rush': '+ Express (+20%)', 'b.ret': 'Plan-Rabatt (−10%)',
       'b.mo': '/Mon.', 'b.eta': '~{n} Arbeitstage',
     },

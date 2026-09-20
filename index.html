@@ -113,6 +113,12 @@ a.card{color:inherit;text-decoration:none}
 .detail .dstack span{border:1px solid var(--line2);border-radius:999px;padding:.22rem .65rem;font-size:.78rem;font-family:var(--mono);color:var(--muted)}
 .detail .dacts{display:flex;align-items:center;gap:1rem}
 .detail .dpriv{color:var(--dim);font-size:.85rem}
+.detail.imp{max-width:520px}
+.detail.imp .dbody{padding-top:2.6rem}
+.detail.imp .dbody h3{font-size:1.4rem;margin-bottom:.8rem}
+.detail.imp .dbody p{margin-bottom:.8rem}
+footer a{color:var(--coral2);border-bottom:1px solid var(--line2);cursor:pointer}
+footer a:hover{border-color:var(--coral)}
 @media(prefers-reduced-motion:no-preference){.detail[open]{animation:dpop .18s ease}}
 @keyframes dpop{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
 a.card:hover{border-color:var(--tint,var(--coral));transform:translateY(-3px) rotate(0deg) !important}
@@ -401,7 +407,7 @@ html{scroll-behavior:smooth}
     <p class="mono" style="color:var(--dim);margin:-.4rem 0 1.2rem;font-size:.85rem" data-i="stats.sub">last 12 months on github · always-on since 2019</p>
     <div class="statgrid" id="statgrid"></div>
     <div class="heatmap-wrap" style="overflow-x:auto;border:1px dashed var(--line);border-radius:10px;padding:1rem;background:var(--bg2)">
-      <img src="heatmap.svg?v=13" alt="GitHub contribution heatmap — last year" style="display:block;min-width:760px;height:auto">
+      <img src="heatmap.svg?v=15" alt="GitHub contribution heatmap — last year" style="display:block;min-width:760px;height:auto">
     </div>
   </div>
 </section>
@@ -416,14 +422,18 @@ html{scroll-behavior:smooth}
 
 <footer>
   <div class="wrap">
-    <div>© <span id="yr"></span> Tay März</div>
-    <div data-i="foot">hand-coded · no frameworks · no trackers · lots of coffee</div>
+    <div>© <span id="yr"></span> Tay März · <a href="#" id="impressumLink" data-i="foot.impressum">Impressum</a></div>
+    <div data-i="foot">hand-coded · no frameworks · no trackers · privacy first</div>
   </div>
 </footer>
 
 <dialog id="detail" class="detail"></dialog>
-<script src="pricing.js?v=13"></script>
-<script src="i18n.js?v=13"></script>
-<script src="app.js?v=13"></script>
+<dialog id="impressum" class="detail imp">
+  <form method="dialog"><button class="dclose" aria-label="close" value="x">✕</button></form>
+  <div class="dbody" data-i-html="impressum.body"></div>
+</dialog>
+<script src="pricing.js?v=15"></script>
+<script src="i18n.js?v=15"></script>
+<script src="app.js?v=15"></script>
 </body>
 </html>

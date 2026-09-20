@@ -30,11 +30,11 @@ async function renderStats() {
   const g = $('#statgrid'); if (!g) return;
   let contrib = '—', hours = '—';
   try {
-    const svg = await (await fetch('heatmap.svg?v=13')).text();
+    const svg = await (await fetch('heatmap.svg?v=15')).text();
     contrib = (svg.match(/([\d,]+)\s+GitHub contributions/) || svg.match(/>([\d,]+) contributions/) || [, '—'])[1];
   } catch (e) {}
   try {
-    const b = await (await fetch('waka-badge.svg?v=13')).text();
+    const b = await (await fetch('waka-badge.svg?v=15')).text();
     hours = (b.match(/([\d,]+)\s*hrs/) || [, '—'])[1];
   } catch (e) {}
   const years = new Date().getFullYear() - 2019;
@@ -60,7 +60,7 @@ function openDetail(p) {
   dlg.innerHTML = `<form method="dialog"><button class="dclose" aria-label="close" value="x">✕</button></form>
     ${shot}
     <div class="dbody">
-      <h3>${p.emoji ? p.emoji + ' ' : ''}${esc(p.name)} <span class="dyear mono">${p.year || ''}</span></h3>
+      <h3>${p.emoji ? p.emoji + ' ' : ''}${esc(p.name)}</h3>
       <p>${esc(L(p.long) || L(p.one))}</p>
       <div class="dstack">${(p.stack || []).map(x => `<span>${esc(x)}</span>`).join('')}</div>
       <div class="dacts">${visit}</div>
@@ -195,5 +195,6 @@ function setLang(x) { if (x === lang) return; lang = x; localStorage.setItem('la
 document.addEventListener('DOMContentLoaded', () => {
   $$('.lang button').forEach(b => b.addEventListener('click', () => setLang(b.dataset.lang)));
   applyStatic(); renderCards(); renderStack(); renderStats(); buildOptions(); update(); wireForm();
+  $('#impressumLink').addEventListener('click', e => { e.preventDefault(); $('#impressum').showModal(); });
   $('#yr').textContent = new Date().getFullYear();
 });
