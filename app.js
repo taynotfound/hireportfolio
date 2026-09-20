@@ -19,10 +19,17 @@ function applyStatic() {
 
 function renderStack() {
   const g = $('#stackgrid'); if (!g) return; g.innerHTML = '';
-  window.I18N.STACK.forEach(s => {
-    g.append(el('div', 'stackcard',
-      `<h3>${esc(t(s.k))}</h3><div class="chips">${s.items.map(x => `<span>${esc(x)}</span>`).join('')}</div>`));
-  });
+  const S = window.I18N.STACK;
+  const card = s => el('div', 'stackcard',
+    `<h3>${esc(t(s.k))}</h3><div class="chips">${s.items.map(x => `<span>${esc(x)}</span>`).join('')}</div>`);
+  S.slice(0, 1).forEach(s => g.append(card(s)));           // languages, always visible
+  if (S.length > 1) {
+    const d = el('details', 'more');
+    d.innerHTML = `<summary>${t('more.stack')}</summary>`;
+    const grid = el('div', 'stackgrid');
+    S.slice(1).forEach(s => grid.append(card(s)));
+    d.append(grid); g.append(d);
+  }
 }
 
 // numbers: read same-origin SVGs (zero external requests) + derive the rest
@@ -30,11 +37,11 @@ async function renderStats() {
   const g = $('#statgrid'); if (!g) return;
   let contrib = '—', hours = '—';
   try {
-    const svg = await (await fetch('heatmap.svg?v=4')).text();
+    const svg = await (await fetch('heatmap.svg?v=5')).text();
     contrib = (svg.match(/([\d,]+)\s+GitHub contributions/) || svg.match(/>([\d,]+) contributions/) || [, '—'])[1];
   } catch (e) {}
   try {
-    const b = await (await fetch('waka-badge.svg?v=4')).text();
+    const b = await (await fetch('waka-badge.svg?v=5')).text();
     hours = (b.match(/([\d,]+)\s*hrs/) || [, '—'])[1];
   } catch (e) {}
   const years = new Date().getFullYear() - 2019;
@@ -76,7 +83,7 @@ function openDetail(p) {
 
 function renderCards() {
   const c = $('#cards'); c.innerHTML = '';
-  PROJECTS.forEach(p => {
+  const mk = p => {
     const top = p.shot
       ? `<div class="top"><img src="${esc(p.shot)}" alt="${esc(p.name)} screenshot" loading="lazy"></div>`
       : `<div class="top ph" style="background:${esc(p.tint)}22"><span>${p.emoji}</span></div>`;
@@ -91,14 +98,21 @@ function renderCards() {
     const card = el('div', 'card', inner);
     card.style.setProperty('--tint', p.tint);
     card.style.transform = `rotate(${p.tilt}deg)`;
-    // clicking the card body opens detail; the visit chip still deep-links out
     card.addEventListener('click', e => {
       if (e.target.closest('.visit.mono:not(.detail-btn)') && p.link) { window.open(p.link, '_blank', 'noopener'); return; }
       openDetail(p);
     });
     if (p.link) card.style.cursor = 'pointer';
-    c.append(card);
-  });
+    return card;
+  };
+  PROJECTS.slice(0, 4).forEach(p => c.append(mk(p)));       // 4 headliners
+  if (PROJECTS.length > 4) {
+    const d = el('details', 'more');
+    d.innerHTML = `<summary>${t('more.work').replace('{n}', PROJECTS.length - 4)}</summary>`;
+    const grid = el('div', 'cards');
+    PROJECTS.slice(4).forEach(p => grid.append(mk(p)));
+    d.append(grid); c.append(d);
+  }
 }
 
 /* ── builder ── */
