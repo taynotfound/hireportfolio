@@ -136,8 +136,12 @@ a.card:hover{border-color:var(--tint,var(--coral));transform:translateY(-3px) ro
 @media(max-width:640px){.ct{grid-template-columns:1fr}}
 .field{margin-bottom:.8rem}
 .field label{display:block;font-family:var(--mono);font-size:.76rem;color:var(--dim);margin-bottom:.28rem}
-.field input,.field textarea{width:100%;background:var(--bg2);border:2px solid var(--line);border-radius:9px;color:var(--txt);font-family:inherit;font-size:.95rem;padding:.6rem .75rem;outline:none;transition:border-color .12s}
-.field input:focus,.field textarea:focus{border-color:var(--coral)}
+.field input,.field textarea,.field select{width:100%;background:var(--bg2);border:2px solid var(--line);border-radius:9px;color:var(--txt);font-family:inherit;font-size:.95rem;padding:.6rem .75rem;outline:none;transition:border-color .12s}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--coral)}
+.field select{-webkit-appearance:none;appearance:none;cursor:pointer;padding-right:2.2rem;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23b0a49c' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right .75rem center;background-size:1.1em}
+.field select option{background:var(--bg2);color:var(--txt)}
 .field textarea{resize:vertical;min-height:110px}
 .ct-aside{font-family:var(--mono);font-size:.9rem;color:var(--muted);line-height:2}
 .ct-aside a{color:var(--coral2);border-bottom:1px solid var(--line2)}
@@ -164,13 +168,11 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:.6rem
 .stackcard .chips{display:flex;flex-wrap:wrap;gap:.4rem}
 .stackcard .chips span{border:1px solid var(--line2);border-radius:999px;padding:.2rem .6rem;font-size:.82rem;font-family:var(--mono)}
 /* meet segmented + fields */
-.seg{display:inline-flex;border:1px solid var(--line2);border-radius:10px;overflow:hidden;background:var(--bg2)}
-.seg .segopt{margin:0;display:flex;align-items:center;justify-content:center;padding:.55rem 1rem;cursor:pointer;font-size:.9rem;line-height:1;color:var(--muted);transition:background .14s,color .14s}
+.seg{display:flex;width:100%;border:1px solid var(--line2);border-radius:10px;overflow:hidden;background:var(--bg2)}
+.seg .segopt{flex:1;margin:0;display:flex;align-items:center;justify-content:center;padding:.55rem 1rem;cursor:pointer;font-size:.9rem;line-height:1;color:var(--muted);transition:background .14s,color .14s;text-align:center}
 .seg .segopt+.segopt{border-left:1px solid var(--line2)}
 .seg .segopt input{display:none}
 .seg .segopt:has(input:checked){background:var(--coral);color:var(--bg);font-weight:700}
-#cC{width:100%;padding:.6rem .7rem;border:1px solid var(--line2);border-radius:8px;background:var(--bg2);color:var(--txt);font:inherit;transition:border-color .12s}
-#cC:focus{border-color:var(--coral);outline:none}
 /* collapsible "show more" */
 details.more{grid-column:1/-1;margin-top:.4rem}
 details.more>summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:.5rem;
@@ -375,10 +377,7 @@ html{scroll-behavior:smooth}
     <p class="mono" style="color:var(--dim);margin:-.4rem 0 1.2rem;font-size:.85rem" data-i="stats.sub">last 12 months on github · always-on since 2019</p>
     <div class="statgrid" id="statgrid"></div>
     <div class="heatmap-wrap" style="overflow-x:auto;border:1px dashed var(--line);border-radius:10px;padding:1rem;background:var(--bg2)">
-      <img src="heatmap.svg?v=11" alt="GitHub contribution heatmap — last year" style="display:block;min-width:760px;height:auto">
-    </div>
-    <div style="margin-top:1rem">
-      <img src="waka-badge.svg?v=11" alt="881+ hrs coded since 2019 — WakaTime" style="height:26px">
+      <img src="heatmap.svg?v=12" alt="GitHub contribution heatmap — last year" style="display:block;min-width:760px;height:auto">
     </div>
   </div>
 </section>
@@ -398,8 +397,8 @@ html{scroll-behavior:smooth}
   </div>
 </footer>
 
-<script src="pricing.js?v=11"></script>
-<script src="i18n.js?v=11"></script>
-<script src="app.js?v=11"></script>
+<script src="pricing.js?v=12"></script>
+<script src="i18n.js?v=12"></script>
+<script src="app.js?v=12"></script>
 </body>
 </html>

@@ -124,7 +124,7 @@
       long: { en: 'The website for a queer Pride march (CSD): bilingual DE/EN, an easy-language accessibility mode, event info and a warm editorial design. Fully tracker-free and built for everyone to read.',
               de: 'Die Website für einen CSD: zweisprachig DE/EN, ein Leichte-Sprache-Modus für Barrierefreiheit, Event-Infos und warmes editoriales Design. Komplett tracker-frei und für alle lesbar gebaut.' },
       stack: ['HTML', 'CSS', 'JS', 'i18n'], tags: ['web', 'a11y', 'i18n'], shot: 'shots/csdnom.webp', tint: '#e0518a' },
-    { name: 'EasyThreads', feat: 1, slug: 'easythreads', emoji: '🧵', tilt: -1.5, year: 2025, link: 'https://easythreads.dev/',
+    { name: 'EasyThreads', feat: 1, slug: 'easythreads', emoji: '🧵', tilt: -1.5, year: 2025, link: 'https://dashboard.easythreads.dev/',
       one: { en: 'Live client dashboard on a real API. OAuth, PM2, running in the wild.',
              de: 'Live-Kunden-Dashboard an echter API. OAuth, PM2, im Betrieb.' },
       long: { en: 'A live client dashboard talking to a real production API. Discord OAuth login, Next.js frontend, Node/Express + MongoDB backend, deployed under PM2 and running in the wild for real users.',
