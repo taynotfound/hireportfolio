@@ -3,13 +3,14 @@
   'use strict';
   const T = {
     en: {
-      'nav.work': 'work', 'nav.price': 'pricing', 'nav.hi': 'say hi',
+      'nav.work': 'work', 'nav.stats': 'stats', 'nav.price': 'pricing', 'nav.hi': 'say hi',
       'hero.tag': 'available now — can start this week',
       'hero.h': "Hi, I'm Tay.<br>I build the web,<br>and I <em>break it</em> to make it safe.",
       'hero.sub': 'Freelance dev. Coding since 2019, self-taught, one-person whole-stack. Web apps, Android, and the security bits nobody else wants to touch.',
       'hero.cta1': 'Build me a quote', 'hero.cta2': 'see the work',
       'hero.tags': 'JavaScript · Python · Kotlin · SQL · way too much coffee',
       'work.h': 'stuff I actually shipped',
+      'stats.h': 'by the numbers', 'stats.sub': 'last 12 months on github · always-on since 2019',
       'price.h': 'what it costs',
       'price.sub': 'Drag the pieces together, watch the number. Real fixed price after we talk — this is just a ballpark.',
       'price.g1': 'start with', 'price.g2': 'add', 'price.g3': 'after launch', 'price.g4': 'in a rush?',
@@ -24,13 +25,14 @@
       'b.mo': '/mo', 'b.eta': '~{n} working days',
     },
     de: {
-      'nav.work': 'projekte', 'nav.price': 'preise', 'nav.hi': 'hallo sagen',
+      'nav.work': 'projekte', 'nav.stats': 'zahlen', 'nav.price': 'preise', 'nav.hi': 'hallo sagen',
       'hero.tag': 'sofort verfügbar — Start noch diese Woche',
       'hero.h': "Hi, ich bin Tay.<br>Ich baue das Web —<br>und <em>zerlege es</em>, damit's sicher ist.",
       'hero.sub': 'Freelance-Dev. Seit 2019 am Coden, autodidaktisch, Ein-Personen-Full-Stack. Web-Apps, Android und der Security-Kram, den sonst keiner anfassen will.',
       'hero.cta1': 'Angebot bauen', 'hero.cta2': 'zu den Projekten',
       'hero.tags': 'JavaScript · Python · Kotlin · SQL · viel zu viel Kaffee',
       'work.h': 'Sachen, die wirklich live sind',
+      'stats.h': 'in Zahlen', 'stats.sub': 'letzte 12 Monate auf GitHub · dauerhaft seit 2019',
       'price.h': 'was es kostet',
       'price.sub': 'Bau dir was zusammen, sieh der Zahl zu. Festpreis nach dem Gespräch — das hier ist nur ein Richtwert.',
       'price.g1': 'starte mit', 'price.g2': 'dazu', 'price.g3': 'nach dem Launch', 'price.g4': 'eilig?',
