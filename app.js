@@ -19,17 +19,8 @@ function applyStatic() {
 
 function renderStack() {
   const g = $('#stackgrid'); if (!g) return; g.innerHTML = '';
-  const S = window.I18N.STACK;
-  const card = s => el('div', 'stackcard',
-    `<h3>${esc(t(s.k))}</h3><div class="chips">${s.items.map(x => `<span>${esc(x)}</span>`).join('')}</div>`);
-  S.slice(0, 1).forEach(s => g.append(card(s)));           // languages, always visible
-  if (S.length > 1) {
-    const d = el('details', 'more');
-    d.innerHTML = `<summary>${t('more.stack')}</summary>`;
-    const grid = el('div', 'stackgrid');
-    S.slice(1).forEach(s => grid.append(card(s)));
-    d.append(grid); g.append(d);
-  }
+  window.I18N.STACK.forEach(s => g.append(el('div', 'stackcard',
+    `<h3>${esc(t(s.k))}</h3><div class="chips">${s.items.map(x => `<span>${esc(x)}</span>`).join('')}</div>`)));
 }
 
 // numbers: read same-origin SVGs (zero external requests) + derive the rest
@@ -37,11 +28,11 @@ async function renderStats() {
   const g = $('#statgrid'); if (!g) return;
   let contrib = '—', hours = '—';
   try {
-    const svg = await (await fetch('heatmap.svg?v=5')).text();
+    const svg = await (await fetch('heatmap.svg?v=8')).text();
     contrib = (svg.match(/([\d,]+)\s+GitHub contributions/) || svg.match(/>([\d,]+) contributions/) || [, '—'])[1];
   } catch (e) {}
   try {
-    const b = await (await fetch('waka-badge.svg?v=5')).text();
+    const b = await (await fetch('waka-badge.svg?v=8')).text();
     hours = (b.match(/([\d,]+)\s*hrs/) || [, '—'])[1];
   } catch (e) {}
   const years = new Date().getFullYear() - 2019;
@@ -56,31 +47,6 @@ async function renderStats() {
     `<div class="num">${esc(c.num)}</div><div class="lab">${esc(c.lab)}</div><div class="sub">${esc(c.sub)}</div>`)));
 }
 
-/* ── project detail overlay ── */
-function openDetail(p) {
-  let d = $('#detail');
-  if (!d) { d = el('div', 'detail'); d.id = 'detail'; document.body.append(d); }
-  const shot = p.shot ? `<img class="hero-shot" src="${esc(p.shot)}" alt="${esc(p.name)}">` : '';
-  const visit = p.link ? `<a class="btn btn-primary" href="${esc(p.link)}" target="_blank" rel="noopener">${t('work.visit')}</a>` : '';
-  d.innerHTML =
-    `<button class="dclose" aria-label="close">✕</button>
-     <div class="box">${shot}
-       <div class="body">
-         <button class="dback">${t('work.back')}</button>
-         <div class="meta"><span>${p.emoji} ${esc(p.name)}</span><span>${t('work.year')}: ${p.year}</span></div>
-         <h2>${esc(p.name)}</h2>
-         <p class="lead">${esc(L(p.long || p.one))}</p>
-         <div class="meta">${(p.stack || p.tags).map(x => `<span>${esc(x)}</span>`).join('')}</div>
-         <div style="margin-top:1.2rem">${visit}</div>
-       </div></div>`;
-  d.classList.add('open');
-  document.body.style.overflow = 'hidden';
-  const close = () => { d.classList.remove('open'); document.body.style.overflow = ''; };
-  d.querySelector('.dclose').onclick = close;
-  d.querySelector('.dback').onclick = close;
-  d.onclick = e => { if (e.target === d) close(); };
-}
-
 function renderCards() {
   const c = $('#cards'); c.innerHTML = '';
   const mk = p => {
@@ -93,24 +59,19 @@ function renderCards() {
     const inner =
       `${top}<div class="b"><h3>${p.emoji ? `<span>${p.emoji}</span>` : ''}${esc(p.name)}${visit}</h3>
        <p>${esc(L(p.one))}</p>
-       <div class="tg">${p.tags.map(x => `<span>${esc(x)}</span>`).join('')}
-         <button class="detail-btn visit mono" type="button">${t('work.detail')} →</button></div></div>`;
-    const card = el('div', 'card', inner);
+       <div class="tg">${p.tags.map(x => `<span>${esc(x)}</span>`).join('')}</div></div>`;
+    const card = el(p.link ? 'a' : 'div', 'card', inner);
+    if (p.link) { card.href = p.link; card.target = '_blank'; card.rel = 'noopener'; }
     card.style.setProperty('--tint', p.tint);
     card.style.transform = `rotate(${p.tilt}deg)`;
-    card.addEventListener('click', e => {
-      if (e.target.closest('.visit.mono:not(.detail-btn)') && p.link) { window.open(p.link, '_blank', 'noopener'); return; }
-      openDetail(p);
-    });
-    if (p.link) card.style.cursor = 'pointer';
     return card;
   };
-  PROJECTS.slice(0, 4).forEach(p => c.append(mk(p)));       // 4 headliners
-  if (PROJECTS.length > 4) {
+  PROJECTS.slice(0, 6).forEach(p => c.append(mk(p)));       // 6 headliners
+  if (PROJECTS.length > 6) {
     const d = el('details', 'more');
-    d.innerHTML = `<summary>${t('more.work').replace('{n}', PROJECTS.length - 4)}</summary>`;
+    d.innerHTML = `<summary>${t('more.work').replace('{n}', PROJECTS.length - 6)}</summary>`;
     const grid = el('div', 'cards');
-    PROJECTS.slice(4).forEach(p => grid.append(mk(p)));
+    PROJECTS.slice(6).forEach(p => grid.append(mk(p)));
     d.append(grid); c.append(d);
   }
 }
