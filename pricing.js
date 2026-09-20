@@ -1,4 +1,4 @@
-/* Package builder pricing — pure functions, no DOM. Placeholder € prices (edit freely).
+/* Package builder pricing, pure functions, no DOM. Placeholder € prices (edit freely).
    Shared by the page (browser) and the self-check (node).
    Pricing tuned junior/competitive: hundreds, not thousands. Fast turnaround. */
 (function (root) {
@@ -30,8 +30,8 @@
   // Support plans are recurring (monthly), shown separately from one-off build.
   const SUPPORT = {
     none:  { label: { en: 'No plan (hand-off)',        de: 'Kein Plan (\u00dcbergabe)' },       monthly: 0  },
-    basic: { label: { en: 'Basic — updates & backups', de: 'Basis — Updates & Backups' },      monthly: 25 },
-    pro:   { label: { en: 'Pro — priority + monitoring', de: 'Pro — Priorit\u00e4t + Monitoring' }, monthly: 70 },
+    basic: { label: { en: 'Basic, updates & backups', de: 'Basis, Updates & Backups' },      monthly: 25 },
+    pro:   { label: { en: 'Pro, priority + monitoring', de: 'Pro, Priorit\u00e4t + Monitoring' }, monthly: 70 },
   };
 
   const RUSH_MULT = 1.20;          // +20% for rush delivery

@@ -30,11 +30,11 @@ async function renderStats() {
   const g = $('#statgrid'); if (!g) return;
   let contrib = '—', hours = '—';
   try {
-    const svg = await (await fetch('heatmap.svg?v=17')).text();
+    const svg = await (await fetch('heatmap.svg?v=18')).text();
     contrib = (svg.match(/([\d,]+)\s+GitHub contributions/) || svg.match(/>([\d,]+) contributions/) || [, '—'])[1];
   } catch (e) {}
   try {
-    const b = await (await fetch('waka-badge.svg?v=17')).text();
+    const b = await (await fetch('waka-badge.svg?v=18')).text();
     hours = (b.match(/([\d,]+)\s*hrs/) || [, '—'])[1];
   } catch (e) {}
   const years = new Date().getFullYear() - 2019;
@@ -101,7 +101,7 @@ function renderCards() {
        <span class="more-link mono">${lang === 'de' ? 'Details' : 'details'} →</span></div>`;
     const card = el('div', 'card', inner);
     card.tabIndex = 0; card.setAttribute('role', 'button');
-    card.setAttribute('aria-label', `${p.name} — ${lang === 'de' ? 'Details öffnen' : 'open details'}`);
+    card.setAttribute('aria-label', `${p.name}, ${lang === 'de' ? 'Details öffnen' : 'open details'}`);
     const open = () => openDetail(p);
     card.addEventListener('click', open);
     card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
@@ -164,13 +164,13 @@ function update() {
   const mo = $('#smo');
   if (q.monthly) { mo.style.display = 'block'; mo.textContent = `+ ${P.eur(q.monthly)}${t('b.mo')}`; } else mo.style.display = 'none';
   $('#seta').textContent = t('b.eta').replace('{n}', q.days);
-  $('#scta').dataset.summary = `${L(q.base.label)}${q.addons.length ? ' + ' + q.addons.map(a => L(a.label)).join(', ') : ''}${q.rush ? ' (rush)' : ''} — ${P.eur(q.oneOff)}${q.monthly ? ' + ' + P.eur(q.monthly) + '/mo' : ''}`;
+  $('#scta').dataset.summary = `${L(q.base.label)}${q.addons.length ? ' + ' + q.addons.map(a => L(a.label)).join(', ') : ''}${q.rush ? ' (rush)' : ''}, ${P.eur(q.oneOff)}${q.monthly ? ' + ' + P.eur(q.monthly) + '/mo' : ''}`;
 }
 
 document.addEventListener('click', e => {
   const cta = e.target.closest('#scta'); if (!cta) return;
   const m = $('#cM');
-  const intro = lang === 'de' ? 'Hi Tay — Angebot für' : "Hi Tay — quote for";
+  const intro = lang === 'de' ? 'Hi Tay, Angebot für' : "Hi Tay, quote for";
   if (m && !m.value.trim()) m.value = `${intro}: ${cta.dataset.summary || ''}\n\n`;
 });
 
@@ -190,8 +190,8 @@ function wireForm() {
     const irl = f.meet.value === 'irl';
     const phone = $('#cP').value.trim();
     const M = lang === 'de'
-      ? { n: 'Name fehlt.', e: 'E-Mail sieht komisch aus.', m: 'Erzähl kurz vom Projekt.', r: 'Sag mir, wie du mich gefunden hast.', p: 'Für ein Treffen brauche ich deine Nummer.', ok: 'Danke! Ich melde mich meist am selben Tag.', err: 'Konnte nicht senden — schreib mir per Discord oder Mail.' }
-      : { n: 'need a name.', e: 'that email looks off.', m: 'tell me about the project.', r: 'tell me how you found me.', p: 'for a meet-up I need your number.', ok: 'thanks! I usually reply the same day.', err: "couldn't send — ping me on discord or email instead." };
+      ? { n: 'Name fehlt.', e: 'E-Mail sieht komisch aus.', m: 'Erzähl kurz vom Projekt.', r: 'Sag mir, wie du mich gefunden hast.', p: 'Für ein Treffen brauche ich deine Nummer.', ok: 'Danke! Ich melde mich meist am selben Tag.', err: 'Konnte nicht senden, schreib mir per Discord oder Mail.' }
+      : { n: 'need a name.', e: 'that email looks off.', m: 'tell me about the project.', r: 'tell me how you found me.', p: 'for a meet-up I need your number.', ok: 'thanks! I usually reply the same day.', err: "couldn't send, ping me on discord or email instead." };
     if (!name) return fail(M.n); if (!ok) return fail(M.e);
     if (!msg) return fail(M.m); if (!ref) return fail(M.r);
     if (irl && !phone) return fail(M.p);
