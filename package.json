@@ -1,0 +1,16 @@
+{
+  "name": "tay-portfolio",
+  "version": "1.0.0",
+  "description": "Single-page freelance portfolio with a live, interactive package builder. Zero external requests, no frameworks, no build step, no trackers.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "web-push": "^3.6.7"
+  }
+}

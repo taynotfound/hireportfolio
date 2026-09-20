@@ -30,11 +30,11 @@ async function renderStats() {
   const g = $('#statgrid'); if (!g) return;
   let contrib = '—', hours = '—';
   try {
-    const svg = await (await fetch('heatmap.svg?v=10')).text();
+    const svg = await (await fetch('heatmap.svg?v=11')).text();
     contrib = (svg.match(/([\d,]+)\s+GitHub contributions/) || svg.match(/>([\d,]+) contributions/) || [, '—'])[1];
   } catch (e) {}
   try {
-    const b = await (await fetch('waka-badge.svg?v=10')).text();
+    const b = await (await fetch('waka-badge.svg?v=11')).text();
     hours = (b.match(/([\d,]+)\s*hrs/) || [, '—'])[1];
   } catch (e) {}
   const years = new Date().getFullYear() - 2019;
@@ -153,7 +153,7 @@ function wireForm() {
     if (!msg) return fail(M.m); if (!ref) return fail(M.r);
     if (irl && !phone) return fail(M.p);
     function fail(t) { n.className = 'fn mono err'; n.textContent = t; }
-    const payload = { name, email, message: msg, referral: ref, meet: f.meet.value,
+    const payload = { name, email, message: msg, referral: ref, channel: $('#cCh').value, company: $('#cH').value, meet: f.meet.value,
       city: irl ? $('#cC').value : '', availability: irl ? $('#cA').value.trim() : '', phone: irl ? phone : '' };
     try {
       const r = await fetch('/contact', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) });

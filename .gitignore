@@ -2,3 +2,5 @@ node_modules/
 shots/me_raw.png
 contacts.jsonl
 shots/_*.png
+admin-config.json
+push-subs.json
