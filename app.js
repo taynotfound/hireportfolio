@@ -30,11 +30,11 @@ async function renderStats() {
   const g = $('#statgrid'); if (!g) return;
   let contrib = '—', hours = '—';
   try {
-    const svg = await (await fetch('heatmap.svg?v=22')).text();
+    const svg = await (await fetch('heatmap.svg?v=23')).text();
     contrib = (svg.match(/([\d,]+)\s+GitHub contributions/) || svg.match(/>([\d,]+) contributions/) || [, '—'])[1];
   } catch (e) {}
   try {
-    const b = await (await fetch('waka-badge.svg?v=22')).text();
+    const b = await (await fetch('waka-badge.svg?v=23')).text();
     hours = (b.match(/([\d,]+)\s*hrs/) || [, '—'])[1];
   } catch (e) {}
   const years = new Date().getFullYear() - 2019;
@@ -125,8 +125,11 @@ function renderCards() {
     const visit = p.link
       ? `<span class="visit mono">${lang === 'de' ? 'ansehen' : 'visit'} ↗</span>`
       : `<span class="visit mono off">${lang === 'de' ? 'privat' : 'private'}</span>`;
+    const badge = p.story
+      ? `<span class="cbadge mono"><i class="ic fa-solid" aria-hidden="true">&#xf0eb;</i>${lang === 'de' ? 'Case Study' : 'case study'}</span>`
+      : '';
     const inner =
-      `${top}<div class="b"><h3>${p.emoji ? `<span>${p.emoji}</span>` : ''}${esc(p.name)}${visit}</h3>
+      `${top}${badge}<div class="b"><h3>${p.emoji ? `<span>${p.emoji}</span>` : ''}${esc(p.name)}${visit}</h3>
        <p>${esc(L(p.one))}</p>
        <div class="tg">${p.tags.map(x => `<span>${esc(x)}</span>`).join('')}</div>
        <span class="more-link mono">${lang === 'de' ? 'Details' : 'details'} →</span></div>`;
@@ -139,12 +142,16 @@ function renderCards() {
     card.style.transform = `rotate(${p.tilt}deg)`;
     return card;
   };
-  PROJECTS.slice(0, 6).forEach(p => c.append(mk(p)));       // 6 headliners
-  if (PROJECTS.length > 6) {
+  // case studies (projects with a story) float to the front, order otherwise preserved
+  const ordered = PROJECTS.map((p, i) => [p, i])
+    .sort((a, b) => (b[0].story ? 1 : 0) - (a[0].story ? 1 : 0) || a[1] - b[1])
+    .map(x => x[0]);
+  ordered.slice(0, 6).forEach(p => c.append(mk(p)));       // 6 headliners, case studies first
+  if (ordered.length > 6) {
     const d = el('details', 'more');
-    d.innerHTML = `<summary>${t('more.work').replace('{n}', PROJECTS.length - 6)}</summary>`;
+    d.innerHTML = `<summary>${t('more.work').replace('{n}', ordered.length - 6)}</summary>`;
     const grid = el('div', 'cards');
-    PROJECTS.slice(6).forEach(p => grid.append(mk(p)));
+    ordered.slice(6).forEach(p => grid.append(mk(p)));
     d.append(grid); c.append(d);
   }
 }
