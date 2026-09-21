@@ -127,8 +127,33 @@ a.card{color:inherit;text-decoration:none}
 .detail .dstack span,.ppage .dstack span{border:1px solid var(--line2);border-radius:999px;padding:.22rem .65rem;font-size:.78rem;font-family:var(--mono);color:var(--muted)}
 .detail .dacts,.ppage .dacts{display:flex;align-items:center;gap:1rem}
 .detail .dpriv,.ppage .dpriv{color:var(--dim);font-size:.85rem}
-#sec .sec-lead{color:var(--muted);max-width:640px;line-height:1.6;margin:0 0 1.4rem}
-#sec .secw{max-width:760px;border-left-color:var(--coral)}
+#sec .sec-lead{color:var(--muted);max-width:680px;line-height:1.6;margin:0 0 1.6rem}
+#sec .sec-target{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;margin-bottom:2rem}
+#sec .sec-target .stl{color:var(--dim);font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;margin-right:.3rem}
+#sec .tchip{display:inline-flex;align-items:center;gap:.45rem;border:1px solid var(--line2);border-radius:999px;padding:.3rem .8rem;font-size:.82rem;color:var(--txt);background:var(--bg2)}
+#sec .tchip .ic{color:var(--coral);font-size:.85rem}
+#sec .findings{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-bottom:2rem}
+@media(max-width:640px){#sec .findings{grid-template-columns:1fr}}
+#sec .fcard{border:1px solid var(--line2);border-radius:14px;padding:1.2rem 1.3rem;background:var(--bg2);position:relative;overflow:hidden}
+#sec .fcard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--fc,var(--coral))}
+#sec .fcard:nth-child(1){--fc:#e05151}#sec .fcard:nth-child(2){--fc:#46a758}
+#sec .fcard:nth-child(3){--fc:#4a9eff}#sec .fcard:nth-child(4){--fc:#a77bff}
+#sec .fhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:.7rem}
+#sec .fhead .ic{font-size:1.4rem;color:var(--fc,var(--coral))}
+#sec .fbadge{font-family:var(--mono);font-size:.66rem;text-transform:uppercase;letter-spacing:.06em;padding:.22rem .55rem;border-radius:6px;font-weight:600}
+#sec .b-verified{background:#e0515122;color:#f0918f}
+#sec .b-fixed{background:#46a75822;color:#7fd39a}
+#sec .b-hard{background:#4a9eff22;color:#8fc3ff}
+#sec .b-added{background:#a77bff22;color:#c3a8ff}
+#sec .fcard h3{font-size:1.02rem;font-weight:700;margin:0 0 .45rem}
+#sec .fcard p{color:var(--muted);font-size:.9rem;line-height:1.55;margin:0}
+#sec .sec-out{display:flex;gap:1rem;align-items:flex-start;border-left:3px solid var(--coral);background:var(--bg2);border-radius:0 12px 12px 0;padding:1.1rem 1.3rem;margin-bottom:2rem;max-width:760px}
+#sec .sec-out .ic{color:var(--coral);font-size:1.5rem;margin-top:.1rem}
+#sec .sec-out p{margin:0;color:var(--fg);line-height:1.6;font-size:.98rem}
+#sec .sec-check h3{font-family:var(--mono);font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;color:var(--dim);margin:0 0 .8rem}
+#sec .sec-check ul{list-style:none;margin:0;padding:0;display:grid;gap:.55rem;max-width:680px}
+#sec .sec-check li{display:flex;gap:.7rem;align-items:baseline;color:var(--txt);font-size:.92rem;line-height:1.5}
+#sec .sec-check li .ic{color:var(--coral);font-size:.8rem;flex:none}
 .detail.imp{max-width:520px}
 .detail.imp .dbody{padding-top:2.6rem}
 .detail.imp .dbody h3{font-size:1.4rem;margin-bottom:.8rem}
@@ -405,10 +430,51 @@ html{scroll-behavior:smooth}
   <div class="wrap">
     <h2 class="sh" data-i="sec.h">a security write-up</h2>
     <p class="sec-lead" data-i="sec.lead"></p>
-    <div class="dstory secw">
-      <div><span data-i="sec.p">the problem</span><p data-i="sec.pb"></p></div>
-      <div><span data-i="sec.d">what I found &amp; fixed</span><p data-i="sec.db"></p></div>
-      <div><span data-i="sec.o">the outcome</span><p data-i="sec.ob"></p></div>
+
+    <div class="sec-target">
+      <span class="stl mono" data-i="sec.tl">the target</span>
+      <span class="tchip"><i class="ic fa-solid" aria-hidden="true">&#xf023;</i><span data-i="sec.t1">login</span></span>
+      <span class="tchip"><i class="ic fa-solid" aria-hidden="true">&#xf0c0;</i><span data-i="sec.t2">staff-only area</span></span>
+      <span class="tchip"><i class="ic fa-solid" aria-hidden="true">&#xf007;</i><span data-i="sec.t3">real customer data</span></span>
+    </div>
+
+    <div class="findings">
+      <article class="fcard">
+        <div class="fhead"><i class="ic fa-solid" aria-hidden="true">&#xf3ed;</i><span class="fbadge b-verified" data-i="sec.b1">verified</span></div>
+        <h3 data-i="sec.f1t">hidden isn&rsquo;t protected</h3>
+        <p data-i="sec.f1"></p>
+      </article>
+      <article class="fcard">
+        <div class="fhead"><i class="ic fa-solid" aria-hidden="true">&#xf254;</i><span class="fbadge b-fixed" data-i="sec.b2">fixed</span></div>
+        <h3 data-i="sec.f2t">brute-force welcome mat</h3>
+        <p data-i="sec.f2"></p>
+      </article>
+      <article class="fcard">
+        <div class="fhead"><i class="ic fa-solid" aria-hidden="true">&#xf084;</i><span class="fbadge b-hard" data-i="sec.b3">hardened</span></div>
+        <h3 data-i="sec.f3t">auth &amp; sessions</h3>
+        <p data-i="sec.f3"></p>
+      </article>
+      <article class="fcard">
+        <div class="fhead"><i class="ic fa-solid" aria-hidden="true">&#xf06e;</i><span class="fbadge b-added" data-i="sec.b4">added</span></div>
+        <h3 data-i="sec.f4t">eyes on the door</h3>
+        <p data-i="sec.f4"></p>
+      </article>
+    </div>
+
+    <div class="sec-out">
+      <i class="ic fa-solid" aria-hidden="true">&#xf560;</i>
+      <p data-i="sec.ob"></p>
+    </div>
+
+    <div class="sec-check">
+      <h3 class="mono" data-i="sec.ch">what it became: my login checklist</h3>
+      <ul>
+        <li><i class="ic fa-solid" aria-hidden="true">&#xf00c;</i><span data-i="sec.c1"></span></li>
+        <li><i class="ic fa-solid" aria-hidden="true">&#xf00c;</i><span data-i="sec.c2"></span></li>
+        <li><i class="ic fa-solid" aria-hidden="true">&#xf00c;</i><span data-i="sec.c3"></span></li>
+        <li><i class="ic fa-solid" aria-hidden="true">&#xf00c;</i><span data-i="sec.c4"></span></li>
+        <li><i class="ic fa-solid" aria-hidden="true">&#xf00c;</i><span data-i="sec.c5"></span></li>
+      </ul>
     </div>
   </div>
 </section>
@@ -471,7 +537,7 @@ html{scroll-behavior:smooth}
     <p class="mono" style="color:var(--dim);margin:-.4rem 0 1.2rem;font-size:.85rem" data-i="stats.sub">last 12 months on github · always-on since 2019</p>
     <div class="statgrid" id="statgrid"></div>
     <div class="heatmap-wrap" style="overflow-x:auto;border:1px dashed var(--line);border-radius:10px;padding:1rem;background:var(--bg2)">
-      <img src="heatmap.svg?v=21" alt="GitHub contribution heatmap, last year" style="display:block;min-width:760px;height:auto">
+      <img src="heatmap.svg?v=22" alt="GitHub contribution heatmap, last year" style="display:block;min-width:760px;height:auto">
     </div>
   </div>
 </section>
@@ -496,8 +562,8 @@ html{scroll-behavior:smooth}
   <form method="dialog"><button class="dclose" aria-label="close" value="x">✕</button></form>
   <div class="dbody" data-i-html="impressum.body"></div>
 </dialog>
-<script src="pricing.js?v=21"></script>
-<script src="i18n.js?v=21"></script>
-<script src="app.js?v=21"></script>
+<script src="pricing.js?v=22"></script>
+<script src="i18n.js?v=22"></script>
+<script src="app.js?v=22"></script>
 </body>
 </html>
