@@ -126,6 +126,14 @@ footer a:hover{border-color:var(--coral)}
 .quote figcaption strong{color:var(--muted)}
 .quote figcaption a{color:var(--coral2)}
 .quote figcaption a:hover strong{color:var(--coral)}
+#how .steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;counter-reset:s}
+@media(max-width:900px){#how .steps{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){#how .steps{grid-template-columns:1fr}}
+#how .steps li{position:relative;background:var(--bg2);border:2px solid var(--line);border-radius:12px;padding:1.2rem 1.2rem 1.1rem}
+#how .steps .sn{font-family:var(--mono);font-size:.8rem;color:var(--coral);display:block;margin-bottom:.5rem}
+#how .steps b{display:block;margin-bottom:.4rem;font-size:1rem}
+#how .steps p{margin:0;font-size:.9rem;color:var(--muted);line-height:1.55}
+@media(min-width:901px){#how .steps li:not(:last-child)::after{content:"→";position:absolute;right:-.85rem;top:50%;transform:translateY(-50%);color:var(--line2);font-size:1rem;z-index:1}}
 @media(prefers-reduced-motion:no-preference){.detail[open]{animation:dpop .18s ease}}
 @keyframes dpop{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
 a.card:hover{border-color:var(--tint,var(--coral));transform:translateY(-3px) rotate(0deg) !important}
@@ -363,6 +371,18 @@ html{scroll-behavior:smooth}
   </div>
 </section>
 
+<section id="how">
+  <div class="wrap">
+    <h2 class="sh" data-i="how.h">how working with me goes</h2>
+    <ol class="steps">
+      <li><span class="sn">01</span><b data-i="how.s1t">you send the gist</b><p data-i="how.s1">A few lines about what you need. No login, no sales funnel. I usually reply the same day.</p></li>
+      <li><span class="sn">02</span><b data-i="how.s2t">we talk, you get a real price</b><p data-i="how.s2">A short call or chat to nail the scope, then a fixed quote and an honest timeline. No surprise invoices.</p></li>
+      <li><span class="sn">03</span><b data-i="how.s3t">I build in the open</b><p data-i="how.s3">Small, working increments you can see and try. You are never left guessing what stage it is at.</p></li>
+      <li><span class="sn">04</span><b data-i="how.s4t">launch, secured</b><p data-i="how.s4">I test my own work, harden it, hand it over self-hosted and tracker-free. Optional plan for updates and backups after.</p></li>
+    </ol>
+  </div>
+</section>
+
 <section id="hi">
   <div class="wrap">
     <h2 class="sh" data-i="ct.h">got something to build?</h2>
@@ -421,7 +441,7 @@ html{scroll-behavior:smooth}
     <p class="mono" style="color:var(--dim);margin:-.4rem 0 1.2rem;font-size:.85rem" data-i="stats.sub">last 12 months on github · always-on since 2019</p>
     <div class="statgrid" id="statgrid"></div>
     <div class="heatmap-wrap" style="overflow-x:auto;border:1px dashed var(--line);border-radius:10px;padding:1rem;background:var(--bg2)">
-      <img src="heatmap.svg?v=18" alt="GitHub contribution heatmap, last year" style="display:block;min-width:760px;height:auto">
+      <img src="heatmap.svg?v=20" alt="GitHub contribution heatmap, last year" style="display:block;min-width:760px;height:auto">
     </div>
   </div>
 </section>
@@ -446,8 +466,8 @@ html{scroll-behavior:smooth}
   <form method="dialog"><button class="dclose" aria-label="close" value="x">✕</button></form>
   <div class="dbody" data-i-html="impressum.body"></div>
 </dialog>
-<script src="pricing.js?v=18"></script>
-<script src="i18n.js?v=18"></script>
-<script src="app.js?v=18"></script>
+<script src="pricing.js?v=20"></script>
+<script src="i18n.js?v=20"></script>
+<script src="app.js?v=20"></script>
 </body>
 </html>
