@@ -138,15 +138,15 @@ a.card{color:inherit;text-decoration:none}
 @media(max-width:640px){#sec .findings{grid-template-columns:1fr}}
 #sec .fcard{border:1px solid var(--line2);border-radius:14px;padding:1.2rem 1.3rem;background:var(--bg2);position:relative;overflow:hidden}
 #sec .fcard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--fc,var(--coral))}
-#sec .fcard:nth-child(1){--fc:#e05151}#sec .fcard:nth-child(2){--fc:#46a758}
-#sec .fcard:nth-child(3){--fc:#4a9eff}#sec .fcard:nth-child(4){--fc:#a77bff}
+#sec .fcard:nth-child(1){--fc:#e0453f}#sec .fcard:nth-child(2){--fc:#f08a3c}
+#sec .fcard:nth-child(3){--fc:#e3c04a}#sec .fcard:nth-child(4){--fc:#4a9eff}
 #sec .fhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:.7rem}
 #sec .fhead .ic{font-size:1.4rem;color:var(--fc,var(--coral))}
 #sec .fbadge{font-family:var(--mono);font-size:.66rem;text-transform:uppercase;letter-spacing:.06em;padding:.22rem .55rem;border-radius:6px;font-weight:600}
-#sec .b-verified{background:#e0515122;color:#f0918f}
-#sec .b-fixed{background:#46a75822;color:#7fd39a}
-#sec .b-hard{background:#4a9eff22;color:#8fc3ff}
-#sec .b-added{background:#a77bff22;color:#c3a8ff}
+#sec .b-verified{background:#e0453f22;color:#f0918f;border:1px solid #e0453f55}
+#sec .b-fixed{background:#f08a3c22;color:#f5b478;border:1px solid #f08a3c55}
+#sec .b-hard{background:#e3c04a22;color:#ecd583;border:1px solid #e3c04a55}
+#sec .b-added{background:#4a9eff22;color:#8fc3ff;border:1px solid #4a9eff55}
 #sec .fcard h3{font-size:1.02rem;font-weight:700;margin:0 0 .45rem}
 #sec .fcard p{color:var(--muted);font-size:.9rem;line-height:1.55;margin:0}
 #sec .sec-out{display:flex;gap:1rem;align-items:flex-start;border-left:3px solid var(--coral);background:var(--bg2);border-radius:0 12px 12px 0;padding:1.1rem 1.3rem;margin-bottom:2rem;max-width:760px}
@@ -539,7 +539,7 @@ html{scroll-behavior:smooth}
     <p class="mono" style="color:var(--dim);margin:-.4rem 0 1.2rem;font-size:.85rem" data-i="stats.sub">last 12 months on github · always-on since 2019</p>
     <div class="statgrid" id="statgrid"></div>
     <div class="heatmap-wrap" style="overflow-x:auto;border:1px dashed var(--line);border-radius:10px;padding:1rem;background:var(--bg2)">
-      <img src="heatmap.svg?v=23" alt="GitHub contribution heatmap, last year" style="display:block;min-width:760px;height:auto">
+      <img src="heatmap.svg?v=24" alt="GitHub contribution heatmap, last year" style="display:block;min-width:760px;height:auto">
     </div>
   </div>
 </section>
@@ -564,8 +564,8 @@ html{scroll-behavior:smooth}
   <form method="dialog"><button class="dclose" aria-label="close" value="x">✕</button></form>
   <div class="dbody" data-i-html="impressum.body"></div>
 </dialog>
-<script src="pricing.js?v=23"></script>
-<script src="i18n.js?v=23"></script>
-<script src="app.js?v=23"></script>
+<script src="pricing.js?v=24"></script>
+<script src="i18n.js?v=24"></script>
+<script src="app.js?v=24"></script>
 </body>
 </html>
