@@ -30,11 +30,11 @@ async function renderStats() {
   const g = $('#statgrid'); if (!g) return;
   let contrib = '—', hours = '—';
   try {
-    const svg = await (await fetch('heatmap.svg?v=20')).text();
+    const svg = await (await fetch('heatmap.svg?v=21')).text();
     contrib = (svg.match(/([\d,]+)\s+GitHub contributions/) || svg.match(/>([\d,]+) contributions/) || [, '—'])[1];
   } catch (e) {}
   try {
-    const b = await (await fetch('waka-badge.svg?v=20')).text();
+    const b = await (await fetch('waka-badge.svg?v=21')).text();
     hours = (b.match(/([\d,]+)\s*hrs/) || [, '—'])[1];
   } catch (e) {}
   const years = new Date().getFullYear() - 2019;
@@ -49,25 +49,56 @@ async function renderStats() {
     `<div class="num"><i class="ic fa-solid" aria-hidden="true">${c.ic}</i>${esc(c.num)}</div><div class="lab">${esc(c.lab)}</div><div class="sub">${esc(c.sub)}</div>`)));
 }
 
-function openDetail(p) {
-  const dlg = $('#detail');
+function renderProject(p) {
+  const wrap = $('#proj');
   const shot = p.shot
-    ? `<div class="dtop"><img src="${esc(p.shot)}" alt="${esc(p.name)} screenshot"></div>`
-    : `<div class="dtop ph" style="background:${esc(p.tint)}22"><span>${p.emoji}</span></div>`;
+    ? `<div class="ptop"><img src="${esc(p.shot)}" alt="${esc(p.name)} screenshot"></div>`
+    : `<div class="ptop ph" style="background:${esc(p.tint)}22"><span>${p.emoji}</span></div>`;
   const visit = p.link
     ? `<a class="btn btn-primary" href="${esc(p.link)}" target="_blank" rel="noopener">${lang === 'de' ? 'live ansehen' : 'view live'} ↗</a>`
     : `<span class="dpriv mono">${lang === 'de' ? 'privates Projekt' : 'private project'}</span>`;
-  dlg.innerHTML = `<form method="dialog"><button class="dclose" aria-label="close" value="x">✕</button></form>
+  const sl = lang === 'de'
+    ? { p: 'das Problem', d: 'was ich gemacht habe', o: 'das Ergebnis' }
+    : { p: 'the problem', d: 'what I did', o: 'the outcome' };
+  const story = p.story ? `<div class="dstory">
+      <div><span>${sl.p}</span><p>${esc(L(p.story.why))}</p></div>
+      <div><span>${sl.d}</span><p>${esc(L(p.story.did))}</p></div>
+      <div><span>${sl.o}</span><p>${esc(L(p.story.out))}</p></div>
+    </div>` : '';
+  const back = lang === 'de' ? '← zurück zu den Projekten' : '← back to work';
+  wrap.style.setProperty('--tint', p.tint);
+  wrap.innerHTML = `<div class="wrap ppage">
+    <a class="pback mono" href="#/">${back}</a>
     ${shot}
-    <div class="dbody">
-      <h3>${p.emoji ? p.emoji + ' ' : ''}${esc(p.name)}</h3>
-      <p>${esc(L(p.long) || L(p.one))}</p>
-      <div class="dstack">${(p.stack || []).map(x => `<span>${esc(x)}</span>`).join('')}</div>
-      <div class="dacts">${visit}</div>
-    </div>`;
-  dlg.style.setProperty('--tint', p.tint);
-  dlg.showModal();
+    <h1>${p.emoji ? p.emoji + ' ' : ''}${esc(p.name)}</h1>
+    <p class="plead">${esc(L(p.long) || L(p.one))}</p>
+    ${story}
+    <div class="dstack">${(p.stack || []).map(x => `<span>${esc(x)}</span>`).join('')}</div>
+    <div class="dacts">${visit}</div>
+  </div>`;
+  document.title = `${p.name} · Tay März`;
 }
+
+// hash router: #/p/<slug> shows a project page, anything else shows home
+function route() {
+  const m = location.hash.match(/^#\/p\/([\w-]+)/);
+  const p = m && PROJECTS.find(x => x.slug === m[1]);
+  const proj = $('#proj'), home = $('#home');
+  if (p) {
+    renderProject(p);
+    proj.hidden = false; home.hidden = true;
+    window.scrollTo(0, 0);
+  } else {
+    proj.hidden = true; home.hidden = false;
+    document.title = 'Tay März · dev for hire';
+    // in-page anchor (e.g. #work) still scrolls after showing home
+    if (location.hash && location.hash.length > 1 && !location.hash.startsWith('#/')) {
+      const target = document.querySelector(location.hash);
+      if (target) target.scrollIntoView();
+    }
+  }
+}
+
 
 function renderQuotes() {
   const sec = $('#words'), g = $('#quotes');
@@ -99,13 +130,10 @@ function renderCards() {
        <p>${esc(L(p.one))}</p>
        <div class="tg">${p.tags.map(x => `<span>${esc(x)}</span>`).join('')}</div>
        <span class="more-link mono">${lang === 'de' ? 'Details' : 'details'} →</span></div>`;
-    const card = el('div', 'card', inner);
-    card.tabIndex = 0; card.setAttribute('role', 'button');
+    const card = el('a', 'card', inner);
+    card.href = `#/p/${p.slug}`;
     card.setAttribute('aria-label', `${p.name}, ${lang === 'de' ? 'Details öffnen' : 'open details'}`);
-    const open = () => openDetail(p);
-    card.addEventListener('click', open);
-    card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
-    // visit chip links out directly without triggering the dialog
+    // visit chip links out directly without navigating to the project page
     if (p.link) card.querySelector('.visit').outerHTML = `<a class="visit mono" href="${esc(p.link)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${lang === 'de' ? 'ansehen' : 'visit'} ↗</a>`;
     card.style.setProperty('--tint', p.tint);
     card.style.transform = `rotate(${p.tilt}deg)`;
@@ -206,11 +234,15 @@ function wireForm() {
   });
 }
 
-function setLang(x) { if (x === lang) return; lang = x; localStorage.setItem('lang', x); applyStatic(); renderCards(); renderStack(); renderStats(); renderQuotes(); buildOptions(); update(); }
+function setLang(x) { if (x === lang) return; lang = x; localStorage.setItem('lang', x); applyStatic(); renderCards(); renderStack(); renderStats(); renderQuotes(); buildOptions(); update(); route(); }
 
 document.addEventListener('DOMContentLoaded', () => {
   $$('.lang button').forEach(b => b.addEventListener('click', () => setLang(b.dataset.lang)));
   applyStatic(); renderCards(); renderStack(); renderStats(); renderQuotes(); buildOptions(); update(); wireForm();
   $('#impressumLink').addEventListener('click', e => { e.preventDefault(); $('#impressum').showModal(); });
+  // Impressum dialog: click backdrop to close
+  $('#impressum').addEventListener('click', e => { if (e.target === e.currentTarget) e.currentTarget.close(); });
   $('#yr').textContent = new Date().getFullYear();
+  window.addEventListener('hashchange', route);
+  route();
 });
