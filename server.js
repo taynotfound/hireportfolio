@@ -157,6 +157,17 @@ const server = http.createServer(async (req, res) => {
       pricing: { BASES: Pr.BASES, ADDONS: Pr.ADDONS, SUPPORT: Pr.SUPPORT, RATES: Pr.RATES },
       projects: I.PROJECTS,
       testimonials: I.TESTIMONIALS,
+      sections: [
+        { id: 'work', label: 'Projects / Work' },
+        { id: 'words', label: 'Testimonials' },
+        { id: 'price', label: 'Package builder / Pricing' },
+        { id: 'how', label: 'How it works' },
+        { id: 'more', label: 'More / services' },
+        { id: 'hi', label: 'About / intro' },
+      ],
+      timeline: ['r1', 'r2', 'r3', 'r4', 'r5', 'r6'].map(r => ({
+        year: I.T.en['path.' + r + 'y'], en: I.T.en['path.' + r], de: I.T.de['path.' + r], now: r === 'r6',
+      })),
     };
     return json(res, 200, { defaults, overrides: readJSON(OVERRIDES, {}) });
   }

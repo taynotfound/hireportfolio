@@ -146,8 +146,10 @@ function renderCards() {
     const badge = p.story
       ? `<span class="cbadge mono"><i class="ic fa-solid" aria-hidden="true">&#xf0eb;</i>${lang === 'de' ? 'Case Study' : 'case study'}</span>`
       : '';
+    const price = p.price
+      ? `<span class="cprice mono">${lang === 'de' ? 'ab ' : 'from '}${esc(p.price)}</span>` : '';
     const inner =
-      `${top}${badge}<div class="b"><h3>${p.emoji ? `<span>${p.emoji}</span>` : ''}${esc(p.name)}${visit}</h3>
+      `${top}${badge}${price}<div class="b"><h3>${p.emoji ? `<span>${p.emoji}</span>` : ''}${esc(p.name)}${visit}</h3>
        <p>${esc(L(p.one))}</p>
        <div class="tg">${p.tags.map(x => `<span>${esc(x)}</span>`).join('')}</div>
        <span class="more-link mono">${lang === 'de' ? 'Details' : 'details'} →</span></div>`;
@@ -176,6 +178,13 @@ function renderCards() {
 
 /* ── builder ── */
 const state = { base: 'webapp', addons: new Set(['auth']), support: 'basic', rush: false };
+
+// keep state valid even if admin removed the base/support/addon it defaulted to
+function clampState() {
+  if (!P.BASES[state.base]) state.base = Object.keys(P.BASES)[0];
+  if (!P.SUPPORT[state.support]) state.support = Object.keys(P.SUPPORT)[0];
+  for (const a of [...state.addons]) if (!P.ADDONS[a]) state.addons.delete(a);
+}
 
 function buildOptions() {
   const bR = $('#baseRow'); bR.innerHTML = '';
@@ -259,7 +268,7 @@ function wireForm() {
   });
 }
 
-function setLang(x) { if (x === lang) return; lang = x; localStorage.setItem('lang', x); applyStatic(); renderCards(); renderStack(); renderStats(); renderQuotes(); buildOptions(); update(); route(); }
+function setLang(x) { if (x === lang) return; lang = x; localStorage.setItem('lang', x); applyStatic(); renderCards(); renderStack(); renderStats(); renderQuotes(); buildOptions(); update(); applyCms(); route(); }
 
 // Merge admin overrides (text + pricing) over the built-in defaults, in place.
 async function applyOverrides() {
@@ -291,13 +300,95 @@ async function applyOverrides() {
     const clean = ov.testimonials.filter(t => t && t.quote && (t.quote.en || t.quote.de) && t.name);
     TESTIMONIALS.splice(0, TESTIMONIALS.length, ...clean);
   }
+  // ── CMS: full project list (add / remove / reorder / price) replaces PROJECTS in place ──
+  if (Array.isArray(ov.projectsFull) && ov.projectsFull.length) {
+    const norm = ov.projectsFull.map(p => normProject(p)).filter(Boolean);
+    if (norm.length) PROJECTS.splice(0, PROJECTS.length, ...norm);
+  }
+  // ── CMS: full pricing replace (add / remove base types, add-ons, support plans) ──
+  if (ov.pricingFull && typeof ov.pricingFull === 'object') {
+    for (const grp of ['BASES', 'ADDONS', 'SUPPORT']) {
+      const g = ov.pricingFull[grp];
+      if (g && typeof g === 'object' && !Array.isArray(g)) { for (const k in P[grp]) delete P[grp][k]; Object.assign(P[grp], g); }
+    }
+    if (ov.pricingFull.RATES) for (const r of ['rush', 'retainer']) {
+      const v = ov.pricingFull.RATES[r]; if (typeof v === 'number' && v > 0) P.RATES[r] = v;
+    }
+  }
+  // sections/timeline/blocks are applied after the DOM renders — stash for later
+  window.__CMS = { sections: ov.sections, timeline: ov.timeline, blocks: ov.blocks };
+}
+
+// give an override project object all fields the renderer expects, so partial adds never crash
+function normProject(p) {
+  if (!p || !p.slug || !p.name) return null;
+  const bi = (o, d) => (o && typeof o === 'object') ? { en: o.en || o.de || d, de: o.de || o.en || d } : { en: o || d, de: o || d };
+  return {
+    name: String(p.name), slug: String(p.slug).replace(/[^a-z0-9_-]/gi, '').toLowerCase() || 'p',
+    emoji: p.emoji || '📦', tilt: typeof p.tilt === 'number' ? p.tilt : 0,
+    year: p.year || new Date().getFullYear(), link: p.link || '',
+    tint: /^#[0-9a-f]{3,8}$/i.test(p.tint || '') ? p.tint : '#8a7dff',
+    price: (typeof p.price === 'string' || typeof p.price === 'number') ? String(p.price) : '',
+    shot: p.shot || '', feat: p.feat,
+    one: bi(p.one, ''), long: bi(p.long, ''),
+    stack: Array.isArray(p.stack) ? p.stack.slice(0, 12).map(String) : [],
+    tags: Array.isArray(p.tags) ? p.tags.slice(0, 8).map(String) : [],
+    story: p.story && (p.story.why || p.story.did || p.story.out)
+      ? { why: bi(p.story.why, ''), did: bi(p.story.did, ''), out: bi(p.story.out, '') } : null,
+  };
+}
+
+// apply section enable/reorder, custom timeline, and custom blocks to the live DOM
+function applyCms() {
+  const cms = window.__CMS || {};
+  const home = $('#home'); if (!home) return;
+  // timeline rebuild
+  if (Array.isArray(cms.timeline) && cms.timeline.length) {
+    const ol = $('#path .timeline');
+    if (ol) ol.innerHTML = cms.timeline.map(r =>
+      `<li${r.now ? ' class="now"' : ''}><span class="ty mono">${esc(r.year || '')}</span><p>${esc(L({ en: r.en, de: r.de }))}</p></li>`).join('');
+  }
+  // custom blocks: append to a container after existing sections
+  if (Array.isArray(cms.blocks) && cms.blocks.length) {
+    let host = $('#cms-blocks');
+    if (!host) { host = el('div'); host.id = 'cms-blocks'; home.append(host); }
+    host.innerHTML = '';
+    cms.blocks.filter(b => b && b.on !== false).forEach(b => host.append(renderBlock(b)));
+  }
+  // section enable + reorder (applied last so it also orders any cms-blocks host)
+  if (Array.isArray(cms.sections) && cms.sections.length) {
+    const secs = [...cms.sections].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+    secs.forEach(s => {
+      const node = document.getElementById(s.id);
+      if (!node) return;
+      node.hidden = s.on === false;
+      home.append(node); // re-appending in sorted order reorders them
+    });
+  }
+}
+
+function renderBlock(b) {
+  const w = el('section', 'cms-block wrap');
+  w.style.cssText = 'padding:3rem 0;max-width:820px;margin:0 auto';
+  const title = L({ en: b.title_en, de: b.title_de });
+  const bodyT = L({ en: b.body_en, de: b.body_de });
+  let html = '';
+  if (title) html += `<h2 class="sh">${esc(title)}</h2>`;
+  if (b.image) html += `<img src="${esc(b.image)}" alt="${esc(title || '')}" style="max-width:100%;border-radius:14px;margin:1rem 0">`;
+  if (bodyT) html += `<p style="color:var(--muted);line-height:1.6;white-space:pre-wrap">${esc(bodyT)}</p>`;
+  w.innerHTML = html;
+  return w;
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
   $$('.lang button').forEach(b => b.addEventListener('click', () => setLang(b.dataset.lang)));
   await applyOverrides();
-  applyStatic(); renderCards(); renderStack(); renderStats(); renderQuotes(); buildOptions(); update(); wireForm();
+  clampState();
+  applyStatic(); renderCards(); renderStack(); renderStats(); renderQuotes(); buildOptions();
+  try { update(); } catch (e) { console.error('builder update failed', e); }
+  wireForm();
   relocateSubpages();
+  applyCms();
   $('#impressumLink').addEventListener('click', e => { e.preventDefault(); $('#impressum').showModal(); });
   // Impressum dialog: click backdrop to close
   $('#impressum').addEventListener('click', e => { if (e.target === e.currentTarget) e.currentTarget.close(); });
