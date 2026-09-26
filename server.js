@@ -152,7 +152,7 @@ const server = http.createServer(async (req, res) => {
   // ── static files ──
   let p = decodeURIComponent(url);
   if (p === '/') p = '/index.html';
-  if (p === '/admin' || p === '/admin/') p = '/admin.html';
+  if (p === '/admin' || p === '/admin/' || p === '/panel' || p === '/panel/') p = '/admin.html';
   const fp = path.normalize(path.join(ROOT, p));
   if (!fp.startsWith(ROOT)) { res.writeHead(403); return res.end('nope'); }
   // never serve submissions, config, source scripts, dotfiles, node_modules
@@ -163,6 +163,7 @@ const server = http.createServer(async (req, res) => {
     if (err) { res.writeHead(404, { 'content-type': 'text/plain' }); return res.end('404'); }
     const h = { 'content-type': MIME[path.extname(fp)] || 'application/octet-stream' };
     if (p === '/sw.js') { h['Service-Worker-Allowed'] = '/'; h['cache-control'] = 'no-cache'; }
+    if (p === '/admin.html' || p === '/admin.js') h['cache-control'] = 'no-store';
     res.writeHead(200, h);
     res.end(buf);
   });
