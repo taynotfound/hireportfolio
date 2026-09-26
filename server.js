@@ -60,6 +60,8 @@ async function pushAll(payload) {
 
 const server = http.createServer(async (req, res) => {
   const url = req.url.split('?')[0];
+  const _t = Date.now();
+  res.on('finish', () => console.log(`[req] ${req.method} ${req.url} -> ${res.statusCode} ${Date.now() - _t}ms`));
 
   // ── contact intake → append + push notify ──
   if (req.method === 'POST' && url === '/contact') {
@@ -96,7 +98,7 @@ const server = http.createServer(async (req, res) => {
     if (!tokenOK(d.token)) return json(res, 401, { error: 'nope' });
     const sid = newSession();
     res.writeHead(200, { 'content-type': 'application/json',
-      'set-cookie': `sid=${sid}; HttpOnly; SameSite=Strict; Path=/; Max-Age=2592000` });
+      'set-cookie': `sid=${sid}; HttpOnly; SameSite=Lax; Path=/; Max-Age=2592000` });
     return res.end('{"ok":true}');
   }
 

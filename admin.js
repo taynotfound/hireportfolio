@@ -26,9 +26,15 @@ async function login() {
   const token = $('#tok').value.trim(); if (!token) { $('#gerr').textContent = 'Enter your token.'; return; }
   $('#gerr').textContent = 'Checking…';
   let r;
-  try { r = await api('/api/login', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ token }), signal: AbortSignal.timeout(8000) }); }
+  const opts = { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ token }) };
+  try { opts.signal = AbortSignal.timeout(8000); } catch (e) { /* old browser: no timeout, fine */ }
+  try { r = await api('/api/login', opts); }
   catch (e) { $('#gerr').textContent = e.name === 'TimeoutError' ? 'Timed out — old app cache? Fully close & reopen the tab.' : 'Network error: ' + e.message; return; }
-  if (r.ok) { $('#gerr').textContent = ''; $('#gate').hidden = true; $('#app').hidden = false; start(); }
+  if (r.ok) {
+    $('#gerr').textContent = '';
+    $('#gate').hidden = true; $('#app').hidden = false;
+    try { start(); } catch (e) { $('#gerr').textContent = 'Loaded, but: ' + e.message; console.error('start()', e); }
+  }
   else { $('#gerr').textContent = r.status === 401 ? 'Wrong token.' : 'Login failed (' + r.status + ')'; $('#tok').select(); }
 }
 
