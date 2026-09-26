@@ -106,6 +106,29 @@ const server = http.createServer(async (req, res) => {
   const adminApi = url.startsWith('/api/') && url !== '/api/vapid';
   if (adminApi && !isAuthed(req)) return json(res, 401, { error: 'auth' });
 
+  // ── admin: upload an image → optimize to webp under /uploads, return its path ──
+  if (req.method === 'POST' && url === '/api/upload') {
+    const chunks = [];
+    let size = 0, tooBig = false;
+    req.on('data', c => { size += c.length; if (size > 12 * 1024 * 1024) { tooBig = true; req.destroy(); } else chunks.push(c); });
+    req.on('end', async () => {
+      if (tooBig) return json(res, 413, { error: 'too big (12MB max)' });
+      try {
+        const sharp = require('sharp');
+        const buf = Buffer.concat(chunks);
+        const out = await sharp(buf).rotate().resize(1600, 1600, { fit: 'inside', withoutEnlargement: true }).webp({ quality: 82 }).toBuffer();
+        const dir = path.join(ROOT, 'uploads');
+        fs.mkdirSync(dir, { recursive: true });
+        const name = crypto.randomBytes(8).toString('hex') + '.webp';
+        fs.writeFileSync(path.join(dir, name), out);
+        console.log(`[upload] ${name} ${out.length}b`);
+        return json(res, 200, { ok: true, path: 'uploads/' + name });
+      } catch (e) { console.error('[upload]', e.message); return json(res, 500, { error: 'process failed: ' + e.message }); }
+    });
+    req.on('error', () => json(res, 400, { error: 'stream' }));
+    return;
+  }
+
   if (url === '/api/me') return json(res, 200, { ok: true });
 
   if (req.method === 'POST' && url === '/api/subscribe') {
@@ -147,6 +170,12 @@ const server = http.createServer(async (req, res) => {
     if (d.pricing && typeof d.pricing === 'object') clean.pricing = d.pricing;
     if (d.projects && typeof d.projects === 'object') clean.projects = d.projects;   // { slug: {field:val | {en,de}} }
     if (Array.isArray(d.testimonials)) clean.testimonials = d.testimonials.slice(0, 50);
+    // ── CMS additions ──
+    if (Array.isArray(d.projectsFull)) clean.projectsFull = d.projectsFull.slice(0, 60);   // full ordered replacement (add/remove/reorder/price)
+    if (d.pricingFull && typeof d.pricingFull === 'object') clean.pricingFull = d.pricingFull; // { BASES:{}, ADDONS:{}, SUPPORT:{}, RATES:{} } full replace
+    if (Array.isArray(d.sections)) clean.sections = d.sections.slice(0, 40);   // [{id, on, order}] enable + reorder
+    if (Array.isArray(d.timeline)) clean.timeline = d.timeline.slice(0, 60);   // [{year, en, de, now}]
+    if (Array.isArray(d.blocks)) clean.blocks = d.blocks.slice(0, 40);         // custom page-builder blocks
     fs.writeFileSync(OVERRIDES, JSON.stringify(clean, null, 2));
     return json(res, 200, { ok: true });
   }

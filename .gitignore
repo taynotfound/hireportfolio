@@ -5,3 +5,4 @@ shots/_*.png
 admin-config.json
 push-subs.json
 overrides.json
+uploads/
