@@ -14,6 +14,7 @@ const PORT = process.env.PORT || 5700;
 const CFG = JSON.parse(fs.readFileSync(path.join(ROOT, 'admin-config.json'), 'utf8'));
 const SUBS_FILE = path.join(ROOT, 'push-subs.json');
 const CONTACTS = path.join(ROOT, 'contacts.jsonl');
+const OVERRIDES = path.join(ROOT, 'overrides.json');
 webpush.setVapidDetails(CFG.subject, CFG.vapidPublic, CFG.vapidPrivate);
 
 const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8',
@@ -43,7 +44,7 @@ function rebuild() {
 
 function body(req) {
   return new Promise((resolve, reject) => {
-    let b = ''; req.on('data', c => { b += c; if (b.length > 20000) req.destroy(); });
+    let b = ''; req.on('data', c => { b += c; if (b.length > 300000) req.destroy(); });
     req.on('end', () => resolve(b)); req.on('error', reject);
   });
 }
@@ -83,6 +84,12 @@ const server = http.createServer(async (req, res) => {
   // ── public VAPID key (needed to subscribe) ──
   if (url === '/api/vapid') return json(res, 200, { key: CFG.vapidPublic });
 
+  // ── public: saved content/pricing overrides (merged over defaults by the page) ──
+  if (url === '/api/public-overrides') {
+    res.writeHead(200, { 'content-type': 'application/json', 'cache-control': 'no-cache' });
+    return res.end(JSON.stringify(readJSON(OVERRIDES, {})));
+  }
+
   // ── admin login: exchange token for session cookie ──
   if (req.method === 'POST' && url === '/api/login') {
     let d; try { d = JSON.parse(await body(req)); } catch { return json(res, 400, { error: 'bad json' }); }
@@ -113,6 +120,29 @@ const server = http.createServer(async (req, res) => {
     const lines = fs.existsSync(CONTACTS) ? fs.readFileSync(CONTACTS, 'utf8').trim().split('\n').filter(Boolean) : [];
     const items = lines.map(l => { try { return JSON.parse(l); } catch { return null; } }).filter(Boolean).reverse();
     return json(res, 200, { items });
+  }
+
+  // ── admin: full defaults + saved overrides, for the editor forms ──
+  if (url === '/api/admin-content') {
+    delete require.cache[require.resolve('./i18n.js')];
+    delete require.cache[require.resolve('./pricing.js')];
+    const I = require('./i18n.js'), Pr = require('./pricing.js');
+    const defaults = {
+      text: I.T,
+      pricing: { BASES: Pr.BASES, ADDONS: Pr.ADDONS, SUPPORT: Pr.SUPPORT, RATES: Pr.RATES },
+    };
+    return json(res, 200, { defaults, overrides: readJSON(OVERRIDES, {}) });
+  }
+
+  // ── admin: save overrides (validated shape, capped size) ──
+  if (req.method === 'POST' && url === '/api/overrides') {
+    let d; try { d = JSON.parse(await body(req)); } catch { return json(res, 400, { error: 'bad json' }); }
+    if (!d || typeof d !== 'object' || Array.isArray(d)) return json(res, 422, { error: 'shape' });
+    const clean = {};
+    if (d.text && typeof d.text === 'object') clean.text = d.text;      // { en:{k:v}, de:{k:v} }
+    if (d.pricing && typeof d.pricing === 'object') clean.pricing = d.pricing;
+    fs.writeFileSync(OVERRIDES, JSON.stringify(clean, null, 2));
+    return json(res, 200, { ok: true });
   }
 
   // ── static files ──

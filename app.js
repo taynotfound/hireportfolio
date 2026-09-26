@@ -79,19 +79,37 @@ function renderProject(p) {
   document.title = `${p.name} · Tay März`;
 }
 
-// hash router: #/p/<slug> shows a project page, anything else shows home
+// hash router: #/p/<slug> project page, #/about, #/security, else home
+const SUBPAGES = ['page-about', 'page-security'];
+function hideAll() {
+  $('#home').hidden = true; $('#proj').hidden = true;
+  SUBPAGES.forEach(id => { const e = document.getElementById(id); if (e) e.hidden = true; });
+}
+function relocateSubpages() {
+  const mk = (host, backKey, titleKey, ids) => {
+    const h = document.getElementById(host); if (!h || h.dataset.built) return;
+    const back = el('a', 'pback mono'); back.href = '#/'; back.dataset.i = 'sub.back'; back.textContent = t('sub.back');
+    const wrap = el('div', 'wrap subwrap');
+    wrap.append(back);
+    ids.forEach(id => { const s = document.getElementById(id); if (s) wrap.append(s); });
+    h.append(wrap); h.dataset.built = '1';
+  };
+  mk('page-about', 'sub.back', null, ['path', 'stats', 'stack']);
+  mk('page-security', 'sub.back', null, ['sec']);
+}
 function route() {
   const m = location.hash.match(/^#\/p\/([\w-]+)/);
   const p = m && PROJECTS.find(x => x.slug === m[1]);
-  const proj = $('#proj'), home = $('#home');
+  hideAll();
   if (p) {
-    renderProject(p);
-    proj.hidden = false; home.hidden = true;
-    window.scrollTo(0, 0);
+    renderProject(p); $('#proj').hidden = false; window.scrollTo(0, 0);
+  } else if (location.hash === '#/about') {
+    $('#page-about').hidden = false; document.title = t('nav.about') + ' · Tay März'; window.scrollTo(0, 0);
+  } else if (location.hash === '#/security') {
+    $('#page-security').hidden = false; document.title = t('nav.security') + ' · Tay März'; window.scrollTo(0, 0);
   } else {
-    proj.hidden = true; home.hidden = false;
+    $('#home').hidden = false;
     document.title = 'Tay März · dev for hire';
-    // in-page anchor (e.g. #work) still scrolls after showing home
     if (location.hash && location.hash.length > 1 && !location.hash.startsWith('#/')) {
       const target = document.querySelector(location.hash);
       if (target) target.scrollIntoView();
@@ -243,9 +261,30 @@ function wireForm() {
 
 function setLang(x) { if (x === lang) return; lang = x; localStorage.setItem('lang', x); applyStatic(); renderCards(); renderStack(); renderStats(); renderQuotes(); buildOptions(); update(); route(); }
 
-document.addEventListener('DOMContentLoaded', () => {
+// Merge admin overrides (text + pricing) over the built-in defaults, in place.
+async function applyOverrides() {
+  let ov; try { ov = await (await fetch('/api/public-overrides')).json(); } catch { return; }
+  if (!ov || typeof ov !== 'object') return;
+  if (ov.text) for (const L of ['en', 'de']) if (ov.text[L]) for (const k in ov.text[L]) {
+    const v = ov.text[L][k]; if (typeof v === 'string' && v.trim() && T[L] && k in T[L]) T[L][k] = v;
+  }
+  if (ov.pricing) {
+    for (const grp of ['BASES', 'ADDONS', 'SUPPORT']) if (ov.pricing[grp]) for (const key in ov.pricing[grp]) {
+      if (!P[grp][key]) continue;                       // only known keys, never inject new
+      const src = ov.pricing[grp][key];
+      for (const f of ['price', 'days', 'monthly']) if (typeof src[f] === 'number' && src[f] >= 0) P[grp][key][f] = src[f];
+    }
+    if (ov.pricing.RATES) for (const r of ['rush', 'retainer']) {
+      const v = ov.pricing.RATES[r]; if (typeof v === 'number' && v > 0) P.RATES[r] = v;
+    }
+  }
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
   $$('.lang button').forEach(b => b.addEventListener('click', () => setLang(b.dataset.lang)));
+  await applyOverrides();
   applyStatic(); renderCards(); renderStack(); renderStats(); renderQuotes(); buildOptions(); update(); wireForm();
+  relocateSubpages();
   $('#impressumLink').addEventListener('click', e => { e.preventDefault(); $('#impressum').showModal(); });
   // Impressum dialog: click backdrop to close
   $('#impressum').addEventListener('click', e => { if (e.target === e.currentTarget) e.currentTarget.close(); });

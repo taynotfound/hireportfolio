@@ -1,6 +1,7 @@
 'use strict';
 // märz admin PWA logic: auth gate, lead list, push subscription.
 const $ = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
 const api = (u, opt) => fetch(u, Object.assign({ credentials: 'same-origin' }, opt));
 let LEADS = [];
 
@@ -20,7 +21,7 @@ function ago(iso) {
 
 // ── auth ──
 async function authed() { const r = await api('/api/me'); return r.ok; }
-function showGate() { $('#gate').hidden = false; $('#app').hidden = true; $('#tok').focus(); }
+function showGate() { $('#gate').hidden = false; $('#app').hidden = true; $('#tabs').hidden = true; $('#tok').focus(); }
 async function login() {
   const token = $('#tok').value.trim(); if (!token) return;
   const r = await api('/api/login', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ token }) });
@@ -95,8 +96,149 @@ async function enablePush() {
   pushState();
 }
 
+// ── content editor (text + pricing) ──
+let DEFAULTS = null, OV = { text: {}, pricing: {} };
+const deepGet = (o, ...ks) => ks.reduce((x, k) => (x == null ? x : x[k]), o);
+
+async function loadContent() {
+  if (DEFAULTS) return;
+  const r = await api('/api/admin-content'); if (!r.ok) return;
+  const d = await r.json();
+  DEFAULTS = d.defaults;
+  OV = { text: (d.overrides && d.overrides.text) || {}, pricing: (d.overrides && d.overrides.pricing) || {} };
+  renderText(); renderPricing();
+}
+
+// group text keys by prefix before first dot
+function renderText() {
+  const groups = {};
+  Object.keys(DEFAULTS.text.en).forEach(k => { const g = k.split('.')[0]; (groups[g] ||= []).push(k); });
+  const host = $('#textGroups'); host.innerHTML = '';
+  Object.entries(groups).forEach(([g, keys]) => {
+    const det = document.createElement('details'); det.className = 'grp'; det.dataset.group = g;
+    det.innerHTML = `<summary>${esc(g)} <span class="badge">${keys.length}</span></summary><div class="body"></div>`;
+    const body = det.querySelector('.body');
+    keys.forEach(k => {
+      const fld = document.createElement('div'); fld.className = 'fld'; fld.dataset.key = k;
+      const mk = L => {
+        const def = DEFAULTS.text[L][k] ?? '';
+        const cur = deepGet(OV, 'text', L, k);
+        const val = cur != null ? cur : def;
+        return `<div><span class="tag">${L}</span><textarea data-lang="${L}" rows="1" placeholder="${esc(def)}">${esc(val)}</textarea></div>`;
+      };
+      fld.innerHTML = `<label>${esc(k)}</label><div class="langrow">${mk('en')}${mk('de')}</div>`;
+      body.append(fld);
+    });
+    host.append(det);
+  });
+  host.querySelectorAll('#textGroups textarea').forEach(ta => {
+    autoGrow(ta);
+    ta.addEventListener('input', () => { autoGrow(ta); markText(ta); });
+  });
+  textDirty();
+}
+function markText(ta) {
+  const fld = ta.closest('.fld'), k = fld.dataset.key, L = ta.dataset.lang;
+  const def = DEFAULTS.text[L][k] ?? '';
+  const v = ta.value;
+  if (v === def) { (OV.text[L] ||= {}); delete OV.text[L][k]; }
+  else { (OV.text[L] ||= {})[k] = v; }
+  fld.classList.toggle('changed', v !== def);
+  textDirty();
+}
+function textDirty() {
+  const n = ['en', 'de'].reduce((s, L) => s + Object.keys(OV.text[L] || {}).length, 0);
+  const st = $('#textSt'); st.textContent = n ? `${n} field${n === 1 ? '' : 's'} changed` : 'no changes';
+  st.classList.toggle('dirty', n > 0);
+}
+
+function renderPricing() {
+  const P = DEFAULTS.pricing;
+  const host = $('#priceGroups'); host.innerHTML = '';
+  const groupDefs = [
+    ['BASES', 'project types', ['price', 'days']],
+    ['ADDONS', 'add-ons', ['price']],
+    ['SUPPORT', 'support plans', ['monthly']],
+  ];
+  groupDefs.forEach(([grp, title, fields]) => {
+    const det = document.createElement('details'); det.className = 'grp'; det.open = true;
+    det.innerHTML = `<summary>${title} <span class="badge">${Object.keys(P[grp]).length}</span></summary><div class="body"></div>`;
+    const body = det.querySelector('.body');
+    Object.entries(P[grp]).forEach(([key, v]) => {
+      const row = document.createElement('div'); row.className = 'prow'; row.dataset.grp = grp; row.dataset.key = key;
+      const nums = fields.map(f => {
+        const def = v[f], cur = deepGet(OV, 'pricing', grp, key, f);
+        const val = cur != null ? cur : def;
+        const lbl = f === 'price' ? '€' : f === 'days' ? 'days' : '€/mo';
+        return `<div class="num"><label>${lbl}</label><input type="number" min="0" step="1" data-f="${f}" value="${val}"></div>`;
+      }).join('');
+      row.innerHTML = `<div class="nm">${esc(v.label.en)}<small>${esc(key)}</small></div>${nums}`;
+      body.append(row);
+    });
+    host.append(det);
+  });
+  // rates
+  const rd = document.createElement('details'); rd.className = 'grp'; rd.open = true;
+  rd.innerHTML = `<summary>multipliers <span class="badge">2</span></summary><div class="body"></div>`;
+  const rbody = rd.querySelector('.body');
+  [['rush', 'rush ×', 'Rush delivery surcharge (1.20 = +20%)'], ['retainer', 'retainer ×', 'One-off discount w/ support plan (0.10 = 10% off)']].forEach(([r, lbl, hint]) => {
+    const def = DEFAULTS.pricing.RATES[r], cur = deepGet(OV, 'pricing', 'RATES', r);
+    const val = cur != null ? cur : def;
+    const row = document.createElement('div'); row.className = 'prow'; row.dataset.grp = 'RATES'; row.dataset.key = r;
+    row.innerHTML = `<div class="nm">${lbl}<small>${esc(hint)}</small></div><div class="num"><label>factor</label><input type="number" min="0" step="0.01" data-f="_" value="${val}"></div>`;
+    rbody.append(row);
+  });
+  host.append(rd);
+  host.querySelectorAll('#priceGroups input').forEach(inp => inp.addEventListener('input', () => markPrice(inp)));
+  priceDirty();
+}
+function markPrice(inp) {
+  const row = inp.closest('.prow'), grp = row.dataset.grp, key = row.dataset.key, f = inp.dataset.f;
+  const num = Number(inp.value);
+  if (grp === 'RATES') {
+    const def = DEFAULTS.pricing.RATES[key];
+    if (num === def || !(num > 0)) { delete (OV.pricing.RATES || {})[key]; }
+    else { (OV.pricing.RATES ||= {})[key] = num; }
+  } else {
+    const def = DEFAULTS.pricing[grp][key][f];
+    (OV.pricing[grp] ||= {}); (OV.pricing[grp][key] ||= {});
+    if (num === def || !(num >= 0) || inp.value === '') delete OV.pricing[grp][key][f];
+    else OV.pricing[grp][key][f] = num;
+    if (!Object.keys(OV.pricing[grp][key]).length) delete OV.pricing[grp][key];
+    if (!Object.keys(OV.pricing[grp]).length) delete OV.pricing[grp];
+  }
+  row.classList.toggle('changed', inp.value !== '' && Number(inp.value) !== (grp === 'RATES' ? DEFAULTS.pricing.RATES[key] : DEFAULTS.pricing[grp][key][f]));
+  priceDirty();
+}
+function priceDirty() {
+  let n = 0; const p = OV.pricing || {};
+  for (const grp of ['BASES', 'ADDONS', 'SUPPORT']) for (const k in (p[grp] || {})) n += Object.keys(p[grp][k]).length;
+  n += Object.keys(p.RATES || {}).length;
+  const st = $('#priceSt'); st.textContent = n ? `${n} value${n === 1 ? '' : 's'} changed` : 'no changes';
+  st.classList.toggle('dirty', n > 0);
+}
+
+async function saveOverrides(which) {
+  // prune empty containers before sending
+  for (const L of ['en', 'de']) if (OV.text[L] && !Object.keys(OV.text[L]).length) delete OV.text[L];
+  const r = await api('/api/overrides', { method: 'POST', headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ text: OV.text, pricing: OV.pricing }) });
+  toast(r.ok ? 'Saved ✓ — live now' : 'Save failed');
+}
+
+function autoGrow(ta) { ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 'px'; }
+
+// ── tabs ──
+function switchTab(name) {
+  $$('#tabs button').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === name)));
+  ['leads', 'text', 'pricing'].forEach(p => $('#panel-' + p).hidden = p !== name);
+  if (name !== 'leads') loadContent();
+}
+
+
 // ── boot ──
-function start() { load(); pushState(); }
+function start() { load(); pushState(); $('#tabs').hidden = false; }
+
 async function main() {
   if ('serviceWorker' in navigator) { try { await navigator.serviceWorker.register('/sw.js', { scope: '/admin/' }); } catch (e) { console.warn('sw', e); } }
   $('#login').onclick = login;
@@ -105,6 +247,19 @@ async function main() {
   $('#refresh').onclick = () => { load(); toast('Refreshed'); };
   $('#enablePush').onclick = enablePush;
   $('#bell').onclick = enablePush;
-  if (await authed()) { $('#app').hidden = false; start(); } else showGate();
+  $$('#tabs button').forEach(b => b.onclick = () => switchTab(b.dataset.tab));
+  $('#textSave').onclick = () => saveOverrides('text');
+  $('#priceSave').onclick = () => saveOverrides('pricing');
+  $('#textReset').onclick = () => { OV.text = {}; renderText(); toast('Text edits cleared — save to apply'); };
+  $('#priceReset').onclick = () => { OV.pricing = {}; renderPricing(); toast('Pricing edits cleared — save to apply'); };
+  $('#tq').addEventListener('input', e => {
+    const q = e.target.value.toLowerCase().trim();
+    $$('#textGroups .fld').forEach(f => {
+      const hit = !q || f.dataset.key.toLowerCase().includes(q) || f.textContent.toLowerCase().includes(q);
+      f.style.display = hit ? '' : 'none';
+    });
+    $$('#textGroups .grp').forEach(g => { if (q) g.open = true; });
+  });
+  if (await authed()) { $('#app').hidden = false; $('#tabs').hidden = false; start(); } else showGate();
 }
 main();

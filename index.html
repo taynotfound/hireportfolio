@@ -163,6 +163,8 @@ a.card{color:inherit;text-decoration:none}
 footer a{color:var(--coral2);border-bottom:1px solid var(--line2);cursor:pointer}
 footer a:hover{border-color:var(--coral)}
 #words .quotes{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+#words .quotes:has(.quote:only-child){max-width:640px}
+.quote:only-child{border-left-width:4px}
 .quote{margin:0;background:var(--bg2);border:2px solid var(--line);border-left:3px solid var(--coral);border-radius:12px;padding:1.2rem 1.3rem}
 .quote blockquote{margin:0 0 .8rem;font-size:1rem;line-height:1.6;color:var(--txt)}
 .quote figcaption{font-size:.85rem;color:var(--dim)}
@@ -173,10 +175,29 @@ footer a:hover{border-color:var(--coral)}
 @media(max-width:900px){#how .steps{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:520px){#how .steps{grid-template-columns:1fr}}
 #how .steps li{position:relative;background:var(--bg2);border:2px solid var(--line);border-radius:12px;padding:1.2rem 1.2rem 1.1rem}
-#how .steps .sn{font-family:var(--mono);font-size:.8rem;color:var(--coral);display:block;margin-bottom:.5rem}
+#how .steps .sn{font-family:var(--mono);font-size:1.4rem;font-weight:700;color:var(--coral);display:block;margin-bottom:.5rem;line-height:1;letter-spacing:-.02em}
 #how .steps b{display:block;margin-bottom:.4rem;font-size:1rem}
 #how .steps p{margin:0;font-size:.9rem;color:var(--muted);line-height:1.55}
 @media(min-width:901px){#how .steps li:not(:last-child)::after{content:"→";position:absolute;right:-.85rem;top:50%;transform:translateY(-50%);color:var(--line2);font-size:1rem;z-index:1}}
+#path .timeline{list-style:none;margin:0;padding:0;position:relative}
+#path .timeline li{position:relative;padding:0 0 1.3rem 5.6rem;min-height:1.5rem}
+#path .timeline li:not(:last-child)::before{content:"";position:absolute;left:4.15rem;top:.55rem;bottom:-.35rem;width:2px;background:var(--line2)}
+#path .timeline li::after{content:"";position:absolute;left:3.75rem;top:.35rem;width:11px;height:11px;border-radius:50%;background:var(--bg2);border:2px solid var(--line2)}
+#path .timeline li.now::after{background:var(--coral);border-color:var(--coral)}
+#path .timeline .ty{position:absolute;left:0;top:.2rem;width:3.6rem;text-align:right;font-size:.8rem;color:var(--coral);white-space:nowrap}
+#path .timeline p{margin:0;font-size:.94rem;color:var(--muted);line-height:1.55}
+#path .timeline li.now p{color:var(--text)}
+.morecards{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:720px){.morecards{grid-template-columns:1fr}}
+.morecard{display:flex;flex-direction:column;gap:.4rem;padding:1.4rem;border:1px solid var(--line2);border-radius:10px;background:var(--bg2);transition:border-color .15s,color .15s}
+.morecard:hover{border-color:var(--coral)}
+.morecard .ic{color:var(--coral);font-size:1.3rem}
+.morecard b{font-size:1.05rem}
+.morecard span{color:var(--muted);font-size:.9rem;line-height:1.5}
+.subpage{padding-top:2rem}
+.subpage .subwrap>.pback{display:inline-block;margin-bottom:1.5rem}
+.subpage section{padding-top:0}
+.subpage section+section{margin-top:2.5rem}
 @media(prefers-reduced-motion:no-preference){.detail[open]{animation:dpop .18s ease}}
 @keyframes dpop{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
 a.card:hover{border-color:var(--tint,var(--coral));transform:translateY(-3px) rotate(0deg) !important}
@@ -272,6 +293,10 @@ details.more[open]>summary::after{transform:rotate(180deg)}
 details.more>summary:hover{border-color:var(--coral);color:var(--coral)}
 details.more[open]>summary{margin-bottom:1.2rem}
 details.more>.cards,details.more>.stackgrid{margin-top:0}
+details.pricebuilder{margin-top:0}
+details.pricebuilder>summary{font-size:.95rem;padding:.7rem 1.3rem;border-color:var(--coral);color:var(--coral)}
+details.pricebuilder>summary::before{content:"\f155";font-family:"Font Awesome 6 Free";font-weight:900;font-size:.85rem}
+details.pricebuilder[open]>.builder{margin-top:1.4rem}
 
 /* ── polish pass: focus, motion, hover, rhythm ── */
 /* keyboard focus rings everywhere (mouse users unaffected) */
@@ -311,6 +336,7 @@ details.more>.cards,details.more>.stackgrid{margin-top:0}
 .nav-links a[href="#work"]::before{content:"\f0ae"}
 .nav-links a[href="#stats"]::before{content:"\e0e3"}
 .nav-links a[href="#stack"]::before{content:"\f5fd"}
+.nav-links a[href="#path"]::before{content:"\f1b0"}
 .nav-links a[href="#price"]::before{content:"\f571"}
 /* CTA arrows/icons */
 .hero-cta .btn-primary::after{content:"\f061";font-family:"Font Awesome 7 Free";font-weight:900;font-size:.8em;margin-left:.15em}
@@ -342,8 +368,8 @@ html{scroll-behavior:smooth}
     <a class="brand" href="#top">tay<b>.</b>märz</a>
     <div class="nav-links">
       <a href="#work" data-i="nav.work">work</a>
-      <a href="#stats" data-i="nav.stats">stats</a>
-      <a href="#stack" data-i="nav.stack">stack</a>
+      <a href="#/about" data-i="nav.about">about</a>
+      <a href="#/security" data-i="nav.security">security</a>
       <a href="#price" data-i="nav.price">pricing</a>
       <a href="#hi" class="hi" data-i="nav.hi">say hi</a>
       <div class="lang" role="group" aria-label="Language">
@@ -355,6 +381,8 @@ html{scroll-behavior:smooth}
 </nav>
 
 <main id="proj" hidden></main>
+<main id="page-about" class="subpage" hidden></main>
+<main id="page-security" class="subpage" hidden></main>
 <div id="home">
 <header class="hero" id="top">
   <div class="wrap">
@@ -394,7 +422,9 @@ html{scroll-behavior:smooth}
   <div class="wrap">
     <h2 class="sh" data-i="price.h">what it costs</h2>
     <p class="sub mono" style="color:var(--muted);max-width:52ch;margin-bottom:1.5rem;font-size:.9rem" data-i="price.sub"></p>
-    <div class="builder">
+    <details class="more pricebuilder">
+      <summary data-i="price.open">build a quote</summary>
+      <div class="builder">
       <div class="bm">
         <div class="bg"><label class="gt"><b>01</b> · <span data-i="price.g1">start with</span></label><div class="orow" id="baseRow"></div></div>
         <div class="bg"><label class="gt"><b>02</b> · <span data-i="price.g2">add</span></label><div class="orow" id="addonRow"></div></div>
@@ -413,6 +443,7 @@ html{scroll-behavior:smooth}
         <div class="disc mono" data-i="price.note"></div>
       </aside>
     </div>
+    </details>
   </div>
 </section>
 
@@ -425,6 +456,23 @@ html{scroll-behavior:smooth}
       <li><span class="sn">03</span><b data-i="how.s3t">I build in the open</b><p data-i="how.s3">Small, working increments you can see and try. You are never left guessing what stage it is at.</p></li>
       <li><span class="sn">04</span><b data-i="how.s4t">launch, secured</b><p data-i="how.s4">I test my own work, harden it, hand it over self-hosted and tracker-free. Optional plan for updates and backups after.</p></li>
     </ol>
+  </div>
+</section>
+
+<section id="more">
+  <div class="wrap">
+    <div class="morecards">
+      <a class="morecard" href="#/about">
+        <i class="ic fa-solid" aria-hidden="true">&#xf007;</i>
+        <b data-i="more.about.t">about me</b>
+        <span data-i="more.about.s">the path here, my stack, the numbers.</span>
+      </a>
+      <a class="morecard" href="#/security">
+        <i class="ic fa-solid" aria-hidden="true">&#xf3ed;</i>
+        <b data-i="more.sec.t">a security write-up</b>
+        <span data-i="more.sec.s">I pentested my own client app. Here is what I found.</span>
+      </a>
+    </div>
   </div>
 </section>
 
@@ -539,7 +587,7 @@ html{scroll-behavior:smooth}
     <p class="mono" style="color:var(--dim);margin:-.4rem 0 1.2rem;font-size:.85rem" data-i="stats.sub">last 12 months on github · always-on since 2019</p>
     <div class="statgrid" id="statgrid"></div>
     <div class="heatmap-wrap" style="overflow-x:auto;border:1px dashed var(--line);border-radius:10px;padding:1rem;background:var(--bg2)">
-      <img src="heatmap.svg?v=24" alt="GitHub contribution heatmap, last year" style="display:block;min-width:760px;height:auto">
+      <img src="heatmap.svg?v=26" alt="GitHub contribution heatmap, last year" style="display:block;min-width:760px;height:auto">
     </div>
   </div>
 </section>
@@ -549,6 +597,21 @@ html{scroll-behavior:smooth}
     <h2 class="sh" data-i="stack.h">my working stack</h2>
     <p class="mono" style="color:var(--dim);margin:-.4rem 0 1.4rem;font-size:.85rem" data-i="stack.sub">what I reach for, day to day</p>
     <div class="stackgrid" id="stackgrid"></div>
+  </div>
+</section>
+
+<section id="path">
+  <div class="wrap">
+    <h2 class="sh" data-i="path.h">how I got here</h2>
+    <p class="mono" style="color:var(--dim);margin:-.4rem 0 1.4rem;font-size:.85rem" data-i="path.sub">school, training, and the self-taught bit in between</p>
+    <ol class="timeline">
+      <li><span class="ty mono" data-i="path.r1y">2018</span><p data-i="path.r1"></p></li>
+      <li><span class="ty mono" data-i="path.r2y">2021–23</span><p data-i="path.r2"></p></li>
+      <li><span class="ty mono" data-i="path.r3y">2023–24</span><p data-i="path.r3"></p></li>
+      <li><span class="ty mono" data-i="path.r4y">2024–25</span><p data-i="path.r4"></p></li>
+      <li><span class="ty mono" data-i="path.r5y">2025–26</span><p data-i="path.r5"></p></li>
+      <li class="now"><span class="ty mono" data-i="path.r6y">now</span><p data-i="path.r6"></p></li>
+    </ol>
   </div>
 </section>
 </div><!-- /#home -->
@@ -564,8 +627,8 @@ html{scroll-behavior:smooth}
   <form method="dialog"><button class="dclose" aria-label="close" value="x">✕</button></form>
   <div class="dbody" data-i-html="impressum.body"></div>
 </dialog>
-<script src="pricing.js?v=24"></script>
-<script src="i18n.js?v=24"></script>
-<script src="app.js?v=24"></script>
+<script src="pricing.js?v=26"></script>
+<script src="i18n.js?v=26"></script>
+<script src="app.js?v=26"></script>
 </body>
 </html>

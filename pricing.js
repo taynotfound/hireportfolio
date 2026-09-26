@@ -34,8 +34,7 @@
     pro:   { label: { en: 'Pro, priority + monitoring', de: 'Pro, Priorit\u00e4t + Monitoring' }, monthly: 70 },
   };
 
-  const RUSH_MULT = 1.20;          // +20% for rush delivery
-  const RETAINER_DISCOUNT = 0.10;  // 10% off one-off when a support plan is taken
+  const RATES = { rush: 1.20, retainer: 0.10 }; // mutable so admin overrides apply live
 
   function eur(n) { return '\u20ac' + Math.round(n).toLocaleString('de-DE'); }
 
@@ -52,8 +51,8 @@
 
     let oneOff = base.price + addons.reduce((s, a) => s + a.price, 0);
     let days = base.days + addons.length;   // ~1 day per add-on
-    if (opts.rush) { oneOff *= RUSH_MULT; days = Math.ceil(days * 0.6); }
-    const discount = support.monthly > 0 ? oneOff * RETAINER_DISCOUNT : 0;
+    if (opts.rush) { oneOff *= RATES.rush; days = Math.ceil(days * 0.6); }
+    const discount = support.monthly > 0 ? oneOff * RATES.retainer : 0;
     oneOff -= discount;
 
     return {
@@ -66,7 +65,7 @@
     };
   }
 
-  const api = { BASES, ADDONS, SUPPORT, RUSH_MULT, RETAINER_DISCOUNT, eur, quote };
+  const api = { BASES, ADDONS, SUPPORT, RATES, get RUSH_MULT() { return RATES.rush; }, get RETAINER_DISCOUNT() { return RATES.retainer; }, eur, quote };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.Pricing = api;
 })(typeof window !== 'undefined' ? window : globalThis);
