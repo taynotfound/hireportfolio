@@ -130,6 +130,8 @@ const server = http.createServer(async (req, res) => {
     const defaults = {
       text: I.T,
       pricing: { BASES: Pr.BASES, ADDONS: Pr.ADDONS, SUPPORT: Pr.SUPPORT, RATES: Pr.RATES },
+      projects: I.PROJECTS,
+      testimonials: I.TESTIMONIALS,
     };
     return json(res, 200, { defaults, overrides: readJSON(OVERRIDES, {}) });
   }
@@ -141,6 +143,8 @@ const server = http.createServer(async (req, res) => {
     const clean = {};
     if (d.text && typeof d.text === 'object') clean.text = d.text;      // { en:{k:v}, de:{k:v} }
     if (d.pricing && typeof d.pricing === 'object') clean.pricing = d.pricing;
+    if (d.projects && typeof d.projects === 'object') clean.projects = d.projects;   // { slug: {field:val | {en,de}} }
+    if (Array.isArray(d.testimonials)) clean.testimonials = d.testimonials.slice(0, 50);
     fs.writeFileSync(OVERRIDES, JSON.stringify(clean, null, 2));
     return json(res, 200, { ok: true });
   }

@@ -92,8 +92,8 @@ a{color:inherit}
   z-index:60;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(-4px)}
 /* tabs */
-.tabs{display:flex;gap:.3rem;max-width:760px;margin:1rem auto 0;padding:0 1.1rem}
-.tabs button{flex:1;background:var(--bg2);border:1px solid var(--line);color:var(--muted);font:inherit;
+.tabs{display:flex;flex-wrap:wrap;gap:.3rem;max-width:760px;margin:1rem auto 0;padding:0 1.1rem}
+.tabs button{flex:1 1 auto;min-width:72px;background:var(--bg2);border:1px solid var(--line);color:var(--muted);font:inherit;
   font-size:.86rem;font-weight:650;padding:.6rem .5rem;border-radius:10px 10px 0 0;border-bottom:none;cursor:pointer;
   display:inline-flex;align-items:center;justify-content:center;gap:.4rem;transition:color .14s,background .14s}
 .tabs button i{font-size:.9em}
@@ -136,6 +136,12 @@ a{color:inherit}
 .savebar .st{font-size:.8rem;color:var(--dim);font-family:var(--mono)}
 .savebar .st.dirty{color:var(--gold)}
 .savebar .sp{margin-left:auto}
+/* testimonial cards */
+.wcard{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:1rem;margin-bottom:.9rem}
+.wcard .rm{float:right;background:none;border:none;color:var(--dim);cursor:pointer;font-size:.9rem;transition:color .14s}
+.wcard .rm:hover{color:var(--coral)}
+.wcard .inline{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.6rem}
+.wcard .inline input{flex:1;min-width:120px}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -162,6 +168,8 @@ a{color:inherit}
 <div class="tabs" id="tabs" hidden>
   <button data-tab="leads" aria-selected="true"><i class="fa-solid fa-inbox"></i> leads</button>
   <button data-tab="text" aria-selected="false"><i class="fa-solid fa-pen"></i> text</button>
+  <button data-tab="projects" aria-selected="false"><i class="fa-solid fa-folder-open"></i> projects</button>
+  <button data-tab="words" aria-selected="false"><i class="fa-solid fa-quote-left"></i> words</button>
   <button data-tab="pricing" aria-selected="false"><i class="fa-solid fa-tags"></i> pricing</button>
 </div>
 
@@ -201,6 +209,31 @@ a{color:inherit}
       <span class="sp"></span>
       <button class="btn btn-ghost" id="textReset"><i class="fa-solid fa-rotate-left"></i> reset edits</button>
       <button class="btn btn-primary" id="textSave"><i class="fa-solid fa-floppy-disk"></i> save</button>
+    </div>
+  </section>
+
+  <!-- PROJECTS EDITOR -->
+  <section class="panel" id="panel-projects" hidden>
+    <div class="edhint">Edit project copy, EN/DE. Screenshots, order and tags stay in code. Blank a field to keep the default.</div>
+    <div id="projGroups"></div>
+    <div class="savebar">
+      <span class="st" id="projSt">no changes</span>
+      <span class="sp"></span>
+      <button class="btn btn-ghost" id="projReset"><i class="fa-solid fa-rotate-left"></i> reset edits</button>
+      <button class="btn btn-primary" id="projSave"><i class="fa-solid fa-floppy-disk"></i> save</button>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS EDITOR -->
+  <section class="panel" id="panel-words" hidden>
+    <div class="edhint"><b>Real client quotes only</b> — never invent one. Add, edit or remove. Empty list hides the "what clients said" section.</div>
+    <div id="wordsList"></div>
+    <button class="btn btn-ghost" id="wordAdd" style="width:100%;justify-content:center;margin-bottom:1rem"><i class="fa-solid fa-plus"></i> add testimonial</button>
+    <div class="savebar">
+      <span class="st" id="wordSt">no changes</span>
+      <span class="sp"></span>
+      <button class="btn btn-ghost" id="wordReset"><i class="fa-solid fa-rotate-left"></i> reset edits</button>
+      <button class="btn btn-primary" id="wordSave"><i class="fa-solid fa-floppy-disk"></i> save</button>
     </div>
   </section>
 

@@ -97,7 +97,7 @@ async function enablePush() {
 }
 
 // ── content editor (text + pricing) ──
-let DEFAULTS = null, OV = { text: {}, pricing: {} };
+let DEFAULTS = null, OV = { text: {}, pricing: {}, projects: {}, testimonials: null };
 const deepGet = (o, ...ks) => ks.reduce((x, k) => (x == null ? x : x[k]), o);
 
 async function loadContent() {
@@ -105,8 +105,10 @@ async function loadContent() {
   const r = await api('/api/admin-content'); if (!r.ok) return;
   const d = await r.json();
   DEFAULTS = d.defaults;
-  OV = { text: (d.overrides && d.overrides.text) || {}, pricing: (d.overrides && d.overrides.pricing) || {} };
-  renderText(); renderPricing();
+  const o = d.overrides || {};
+  OV = { text: o.text || {}, pricing: o.pricing || {}, projects: o.projects || {},
+    testimonials: Array.isArray(o.testimonials) ? o.testimonials : null };
+  renderText(); renderPricing(); renderProjects(); renderWords();
 }
 
 // group text keys by prefix before first dot
@@ -218,11 +220,135 @@ function priceDirty() {
   st.classList.toggle('dirty', n > 0);
 }
 
-async function saveOverrides(which) {
+// ── projects: text fields per project, keyed by slug ──
+function projOv(slug) { return (OV.projects[slug] ||= {}); }
+function renderProjects() {
+  const host = $('#projGroups'); host.innerHTML = '';
+  DEFAULTS.projects.forEach(p => {
+    const det = document.createElement('details'); det.className = 'grp'; det.dataset.slug = p.slug;
+    det.innerHTML = `<summary>${esc(p.emoji || '')} ${esc(p.name)} <span class="badge">${esc(p.slug)}</span></summary><div class="body"></div>`;
+    const body = det.querySelector('.body');
+    const o = OV.projects[p.slug] || {};
+    // plain fields
+    body.append(pFld(p.slug, 'name', 'name', o.name != null ? o.name : p.name, p.name));
+    body.append(pFld(p.slug, 'link', 'link', o.link != null ? o.link : (p.link || ''), p.link || ''));
+    body.append(pFld(p.slug, 'year', 'year', o.year != null ? o.year : p.year, p.year));
+    // bilingual one/long
+    ['one', 'long'].forEach(f => body.append(pLang(p.slug, f, f === 'one' ? 'short blurb' : 'long description', o[f], p[f])));
+    // story (only if the project has one)
+    if (p.story) ['why', 'did', 'out'].forEach(s =>
+      body.append(pLang(p.slug, 'story.' + s, 'story · ' + s, deepGet(o, 'story', s), p.story[s])));
+    host.append(det);
+  });
+  host.querySelectorAll('#projGroups textarea,#projGroups input').forEach(inp => {
+    if (inp.tagName === 'TEXTAREA') autoGrow(inp);
+    inp.addEventListener('input', () => { if (inp.tagName === 'TEXTAREA') autoGrow(inp); markProj(inp); });
+  });
+  projDirty();
+}
+function pFld(slug, path, lbl, val, def) {
+  const d = document.createElement('div'); d.className = 'fld'; d.dataset.slug = slug; d.dataset.path = path;
+  d.innerHTML = `<label>${esc(lbl)}</label><input data-lang="_" value="${esc(val)}" placeholder="${esc(def)}">`;
+  return d;
+}
+function pLang(slug, path, lbl, cur, def) {
+  const d = document.createElement('div'); d.className = 'fld'; d.dataset.slug = slug; d.dataset.path = path;
+  const mk = L => {
+    const dv = (def && def[L]) || '';
+    const v = (cur && cur[L] != null) ? cur[L] : dv;
+    return `<div><span class="tag">${L}</span><textarea data-lang="${L}" rows="1" placeholder="${esc(dv)}">${esc(v)}</textarea></div>`;
+  };
+  d.innerHTML = `<label>${esc(lbl)}</label><div class="langrow">${mk('en')}${mk('de')}</div>`;
+  return d;
+}
+function markProj(inp) {
+  const fld = inp.closest('.fld'), slug = fld.dataset.slug, path = fld.dataset.path, L = inp.dataset.lang;
+  const o = projOv(slug), v = inp.value;
+  const def = DEFAULTS.projects.find(p => p.slug === slug);
+  if (L === '_') {                                   // plain field (name/link/year)
+    let dv = def[path]; if (path === 'year') dv = String(dv);
+    if (v === String(dv ?? '') || v === '') delete o[path];
+    else o[path] = path === 'year' ? (Number(v) || v) : v;
+  } else {                                            // bilingual, path may be "story.why"
+    const parts = path.split('.');
+    const dv = parts.length === 2 ? deepGet(def, 'story', parts[1], L) : deepGet(def, path, L);
+    let tgt = o;
+    if (parts.length === 2) { tgt = (o.story ||= {}); tgt[parts[1]] ||= {}; tgt = tgt[parts[1]]; }
+    else { o[path] ||= {}; tgt = o[path]; }
+    if (v === (dv || '') || v === '') { delete tgt[L]; }
+    else tgt[L] = v;
+    // prune empties
+    pruneEmpty(o);
+  }
+  if (!Object.keys(o).length) delete OV.projects[slug];
+  fld.classList.toggle('changed', !!OV.projects[slug] && (L === '_' ? o[path] != null : hasLang(o, path, L)));
+  projDirty();
+}
+function hasLang(o, path, L) {
+  const parts = path.split('.');
+  const node = parts.length === 2 ? deepGet(o, 'story', parts[1]) : o[path];
+  return !!(node && node[L] != null);
+}
+function pruneEmpty(o) {
+  for (const k of Object.keys(o)) {
+    const v = o[k];
+    if (v && typeof v === 'object') { pruneEmpty(v); if (!Object.keys(v).length) delete o[k]; }
+  }
+}
+function projDirty() {
+  const n = Object.keys(OV.projects).length;
+  const st = $('#projSt'); st.textContent = n ? `${n} project${n === 1 ? '' : 's'} edited` : 'no changes';
+  st.classList.toggle('dirty', n > 0);
+}
+
+// ── testimonials: full array editor ──
+function words() { return OV.testimonials != null ? OV.testimonials : DEFAULTS.testimonials.map(t => JSON.parse(JSON.stringify(t))); }
+function ensureWords() { if (OV.testimonials == null) OV.testimonials = words(); return OV.testimonials; }
+function renderWords() {
+  const list = words();
+  const host = $('#wordsList'); host.innerHTML = '';
+  list.forEach((t, i) => {
+    const c = document.createElement('div'); c.className = 'wcard'; c.dataset.i = i;
+    c.innerHTML = `<button class="rm" title="remove" data-act="rm"><i class="fa-solid fa-trash"></i></button>
+      <div class="fld"><label>quote</label><div class="langrow">
+        <div><span class="tag">en</span><textarea data-f="quote.en" rows="1">${esc(t.quote && t.quote.en || '')}</textarea></div>
+        <div><span class="tag">de</span><textarea data-f="quote.de" rows="1">${esc(t.quote && t.quote.de || '')}</textarea></div>
+      </div></div>
+      <div class="inline">
+        <input data-f="name" placeholder="name" value="${esc(t.name || '')}">
+        <input data-f="role.en" placeholder="role (EN)" value="${esc(t.role && t.role.en || '')}">
+        <input data-f="role.de" placeholder="role (DE)" value="${esc(t.role && t.role.de || '')}">
+        <input data-f="link" placeholder="link (optional)" value="${esc(t.link || '')}">
+      </div>`;
+    host.append(c);
+  });
+  host.querySelectorAll('.wcard textarea').forEach(autoGrow);
+  host.querySelectorAll('.wcard [data-f]').forEach(inp => inp.addEventListener('input', () => { if (inp.tagName === 'TEXTAREA') autoGrow(inp); markWord(inp); }));
+  host.querySelectorAll('.wcard [data-act=rm]').forEach(b => b.addEventListener('click', () => {
+    const i = +b.closest('.wcard').dataset.i; ensureWords().splice(i, 1); renderWords(); wordDirty();
+  }));
+  wordDirty();
+}
+function markWord(inp) {
+  const i = +inp.closest('.wcard').dataset.i, arr = ensureWords(), t = arr[i];
+  const [grp, sub] = inp.dataset.f.split('.');
+  if (sub) { (t[grp] ||= {})[sub] = inp.value; } else t[grp] = inp.value;
+  wordDirty();
+}
+function wordDirty() {
+  const changed = OV.testimonials != null && JSON.stringify(OV.testimonials) !== JSON.stringify(DEFAULTS.testimonials);
+  const st = $('#wordSt');
+  st.textContent = changed ? `${OV.testimonials.length} testimonial${OV.testimonials.length === 1 ? '' : 's'} (edited)` : 'no changes';
+  st.classList.toggle('dirty', changed);
+}
+
+async function saveOverrides() {
   // prune empty containers before sending
   for (const L of ['en', 'de']) if (OV.text[L] && !Object.keys(OV.text[L]).length) delete OV.text[L];
+  const payload = { text: OV.text, pricing: OV.pricing, projects: OV.projects };
+  if (OV.testimonials != null) payload.testimonials = OV.testimonials.filter(t => t && t.quote && (t.quote.en || t.quote.de) && t.name);
   const r = await api('/api/overrides', { method: 'POST', headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ text: OV.text, pricing: OV.pricing }) });
+    body: JSON.stringify(payload) });
   toast(r.ok ? 'Saved ✓ — live now' : 'Save failed');
 }
 
@@ -231,7 +357,7 @@ function autoGrow(ta) { ta.style.height = 'auto'; ta.style.height = ta.scrollHei
 // ── tabs ──
 function switchTab(name) {
   $$('#tabs button').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === name)));
-  ['leads', 'text', 'pricing'].forEach(p => $('#panel-' + p).hidden = p !== name);
+  ['leads', 'text', 'projects', 'words', 'pricing'].forEach(p => $('#panel-' + p).hidden = p !== name);
   if (name !== 'leads') loadContent();
 }
 
@@ -250,8 +376,13 @@ async function main() {
   $$('#tabs button').forEach(b => b.onclick = () => switchTab(b.dataset.tab));
   $('#textSave').onclick = () => saveOverrides('text');
   $('#priceSave').onclick = () => saveOverrides('pricing');
+  $('#projSave').onclick = () => saveOverrides('projects');
+  $('#wordSave').onclick = () => saveOverrides('words');
   $('#textReset').onclick = () => { OV.text = {}; renderText(); toast('Text edits cleared — save to apply'); };
   $('#priceReset').onclick = () => { OV.pricing = {}; renderPricing(); toast('Pricing edits cleared — save to apply'); };
+  $('#projReset').onclick = () => { OV.projects = {}; renderProjects(); toast('Project edits cleared — save to apply'); };
+  $('#wordReset').onclick = () => { OV.testimonials = null; renderWords(); toast('Testimonials reset to default — save to apply'); };
+  $('#wordAdd').onclick = () => { ensureWords().push({ quote: { en: '', de: '' }, name: '', role: { en: '', de: '' }, link: '' }); renderWords(); };
   $('#tq').addEventListener('input', e => {
     const q = e.target.value.toLowerCase().trim();
     $$('#textGroups .fld').forEach(f => {

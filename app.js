@@ -278,6 +278,19 @@ async function applyOverrides() {
       const v = ov.pricing.RATES[r]; if (typeof v === 'number' && v > 0) P.RATES[r] = v;
     }
   }
+  // projects: merge editable text fields by slug (never add/remove projects here)
+  if (ov.projects) for (const p of PROJECTS) {
+    const o = ov.projects[p.slug]; if (!o) continue;
+    for (const f of ['name', 'link', 'year']) if (o[f] != null && o[f] !== '') p[f] = o[f];
+    for (const f of ['one', 'long']) if (o[f]) for (const L of ['en', 'de']) if (o[f][L] != null && o[f][L] !== '') p[f][L] = o[f][L];
+    if (o.story && p.story) for (const s of ['why', 'did', 'out']) if (o.story[s]) for (const L of ['en', 'de'])
+      if (o.story[s][L] != null && o.story[s][L] !== '') p.story[s][L] = o.story[s][L];
+  }
+  // testimonials: full replace (mutate in place, TESTIMONIALS is a const binding)
+  if (Array.isArray(ov.testimonials)) {
+    const clean = ov.testimonials.filter(t => t && t.quote && (t.quote.en || t.quote.de) && t.name);
+    TESTIMONIALS.splice(0, TESTIMONIALS.length, ...clean);
+  }
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
