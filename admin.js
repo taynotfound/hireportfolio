@@ -116,8 +116,14 @@ async function loadContent() {
   DEFAULTS = d.defaults;
   const o = d.overrides || {};
   OV = { text: o.text || {}, pricing: o.pricing || {}, projects: o.projects || {},
-    testimonials: Array.isArray(o.testimonials) ? o.testimonials : null };
+    testimonials: Array.isArray(o.testimonials) ? o.testimonials : null,
+    projectsFull: Array.isArray(o.projectsFull) ? o.projectsFull : null,
+    pricingFull: o.pricingFull || null,
+    sections: Array.isArray(o.sections) ? o.sections : null,
+    timeline: Array.isArray(o.timeline) ? o.timeline : null,
+    blocks: Array.isArray(o.blocks) ? o.blocks : null };
   renderText(); renderPricing(); renderProjects(); renderWords();
+  if (typeof cmsAfterLoad === 'function') cmsAfterLoad();
 }
 
 // group text keys by prefix before first dot
@@ -356,6 +362,11 @@ async function saveOverrides() {
   for (const L of ['en', 'de']) if (OV.text[L] && !Object.keys(OV.text[L]).length) delete OV.text[L];
   const payload = { text: OV.text, pricing: OV.pricing, projects: OV.projects };
   if (OV.testimonials != null) payload.testimonials = OV.testimonials.filter(t => t && t.quote && (t.quote.en || t.quote.de) && t.name);
+  if (Array.isArray(OV.projectsFull)) payload.projectsFull = OV.projectsFull;
+  if (OV.pricingFull != null) payload.pricingFull = OV.pricingFull;
+  if (Array.isArray(OV.sections)) payload.sections = OV.sections;
+  if (Array.isArray(OV.timeline)) payload.timeline = OV.timeline;
+  if (Array.isArray(OV.blocks)) payload.blocks = OV.blocks;
   const r = await api('/api/overrides', { method: 'POST', headers: { 'content-type': 'application/json' },
     body: JSON.stringify(payload) });
   toast(r.ok ? 'Saved ✓ — live now' : 'Save failed');
@@ -366,7 +377,7 @@ function autoGrow(ta) { ta.style.height = 'auto'; ta.style.height = ta.scrollHei
 // ── tabs ──
 function switchTab(name) {
   $$('#tabs button').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === name)));
-  ['leads', 'text', 'projects', 'words', 'pricing'].forEach(p => $('#panel-' + p).hidden = p !== name);
+  ['leads', 'text', 'projects', 'words', 'pricing', 'build'].forEach(p => $('#panel-' + p).hidden = p !== name);
   if (name !== 'leads') loadContent();
 }
 

@@ -173,6 +173,7 @@ a{color:inherit}
   <button data-tab="projects" aria-selected="false"><i class="fa-solid fa-folder-open"></i> projects</button>
   <button data-tab="words" aria-selected="false"><i class="fa-solid fa-quote-left"></i> words</button>
   <button data-tab="pricing" aria-selected="false"><i class="fa-solid fa-tags"></i> pricing</button>
+  <button data-tab="build" aria-selected="false"><i class="fa-solid fa-cubes"></i> build</button>
 </div>
 
 <main class="wrap" id="app" hidden>
@@ -216,12 +217,13 @@ a{color:inherit}
 
   <!-- PROJECTS EDITOR -->
   <section class="panel" id="panel-projects" hidden>
-    <div class="edhint">Edit project copy, EN/DE. Screenshots, order and tags stay in code. Blank a field to keep the default.</div>
+    <div class="edhint">Full control: add, remove, reorder projects, upload a screenshot, set a "from €" price. Blank a text field to keep the built-in default. <b>Reorder</b> with the ↑↓ buttons.</div>
     <div id="projGroups"></div>
+    <button class="btn btn-ghost" id="projAdd" style="width:100%;justify-content:center;margin-bottom:1rem"><i class="fa-solid fa-plus"></i> add project</button>
     <div class="savebar">
       <span class="st" id="projSt">no changes</span>
       <span class="sp"></span>
-      <button class="btn btn-ghost" id="projReset"><i class="fa-solid fa-rotate-left"></i> reset edits</button>
+      <button class="btn btn-ghost" id="projReset"><i class="fa-solid fa-rotate-left"></i> reset all</button>
       <button class="btn btn-primary" id="projSave"><i class="fa-solid fa-floppy-disk"></i> save</button>
     </div>
   </section>
@@ -250,9 +252,41 @@ a{color:inherit}
       <button class="btn btn-primary" id="priceSave"><i class="fa-solid fa-floppy-disk"></i> save</button>
     </div>
   </section>
+
+  <!-- BUILD: sections, timeline, custom blocks -->
+  <section class="panel" id="panel-build" hidden>
+    <div class="edhint">Page structure. <b>Toggle</b> sections on/off, <b>reorder</b> them, rebuild your <b>timeline</b>, and add free <b>custom blocks</b> (heading + text + image). All live on save.</div>
+
+    <details class="grp" open>
+      <summary>sections <span class="badge" id="secCount">0</span></summary>
+      <div class="body" id="secList"></div>
+    </details>
+
+    <details class="grp" open>
+      <summary>timeline <span class="badge" id="tlCount">0</span></summary>
+      <div class="body"><div id="tlList"></div>
+        <button class="btn btn-ghost" id="tlAdd" style="width:100%;justify-content:center"><i class="fa-solid fa-plus"></i> add row</button>
+      </div>
+    </details>
+
+    <details class="grp" open>
+      <summary>custom blocks <span class="badge" id="blkCount">0</span></summary>
+      <div class="body"><div id="blkList"></div>
+        <button class="btn btn-ghost" id="blkAdd" style="width:100%;justify-content:center"><i class="fa-solid fa-plus"></i> add block</button>
+      </div>
+    </details>
+
+    <div class="savebar">
+      <span class="st" id="buildSt">no changes</span>
+      <span class="sp"></span>
+      <button class="btn btn-ghost" id="buildReset"><i class="fa-solid fa-rotate-left"></i> reset structure</button>
+      <button class="btn btn-primary" id="buildSave"><i class="fa-solid fa-floppy-disk"></i> save</button>
+    </div>
+  </section>
 </main>
 
 <div class="toast" id="toast"></div>
-<script src="/admin.js?v=5"></script>
+<script src="/admin.js?v=6"></script>
+<script src="/admin-cms.js?v=1"></script>
 </body>
 </html>
