@@ -26,8 +26,8 @@ async function login() {
   const token = $('#tok').value.trim(); if (!token) { $('#gerr').textContent = 'Enter your token.'; return; }
   $('#gerr').textContent = 'Checking…';
   let r;
-  try { r = await api('/api/login', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ token }) }); }
-  catch (e) { $('#gerr').textContent = 'Network error: ' + e.message; return; }
+  try { r = await api('/api/login', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ token }), signal: AbortSignal.timeout(8000) }); }
+  catch (e) { $('#gerr').textContent = e.name === 'TimeoutError' ? 'Timed out — old app cache? Fully close & reopen the tab.' : 'Network error: ' + e.message; return; }
   if (r.ok) { $('#gerr').textContent = ''; $('#gate').hidden = true; $('#app').hidden = false; start(); }
   else { $('#gerr').textContent = r.status === 401 ? 'Wrong token.' : 'Login failed (' + r.status + ')'; $('#tok').select(); }
 }
@@ -369,7 +369,8 @@ function switchTab(name) {
 function start() { load(); pushState(); $('#tabs').hidden = false; }
 
 async function main() {
-  if ('serviceWorker' in navigator) { try { await navigator.serviceWorker.register('/sw.js', { scope: '/admin/' }); } catch (e) { console.warn('sw', e); } }
+  // ensure any old caching service worker is gone (it stalled /api/ POSTs on mobile)
+  if ('serviceWorker' in navigator) { try { const rs = await navigator.serviceWorker.getRegistrations(); await Promise.all(rs.map(r => r.unregister())); } catch (e) { console.warn('sw cleanup', e); } }
   $('#login').onclick = login;
   $('#tok').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
   $('#q').addEventListener('input', e => render(e.target.value));
