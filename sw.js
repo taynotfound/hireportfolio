@@ -1,5 +1,5 @@
 // tay.märz admin service worker — push notifications + offline shell.
-const CACHE = 'marz-admin-v2';
+const CACHE = 'marz-admin-v3';
 const SHELL = ['/admin/', '/admin.js', '/admin.webmanifest', '/icons/icon-192.png'];
 
 self.addEventListener('install', e => {

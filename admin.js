@@ -23,10 +23,13 @@ function ago(iso) {
 async function authed() { const r = await api('/api/me'); return r.ok; }
 function showGate() { $('#gate').hidden = false; $('#app').hidden = true; $('#tabs').hidden = true; $('#tok').focus(); }
 async function login() {
-  const token = $('#tok').value.trim(); if (!token) return;
-  const r = await api('/api/login', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ token }) });
-  if (r.ok) { $('#gate').hidden = true; $('#app').hidden = false; start(); }
-  else { $('#gerr').textContent = 'Wrong token.'; $('#tok').select(); }
+  const token = $('#tok').value.trim(); if (!token) { $('#gerr').textContent = 'Enter your token.'; return; }
+  $('#gerr').textContent = 'Checking…';
+  let r;
+  try { r = await api('/api/login', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ token }) }); }
+  catch (e) { $('#gerr').textContent = 'Network error: ' + e.message; return; }
+  if (r.ok) { $('#gerr').textContent = ''; $('#gate').hidden = true; $('#app').hidden = false; start(); }
+  else { $('#gerr').textContent = r.status === 401 ? 'Wrong token.' : 'Login failed (' + r.status + ')'; $('#tok').select(); }
 }
 
 // ── leads ──
