@@ -199,11 +199,20 @@ a{color:inherit}
   </div>
 
   <div id="list"></div>
-    <section id="admin-analytics" style="margin-top: 30px;">
+    <!-- Traffic Source Analytics Section -->
+<section class="admin-card" style="margin-top: 2rem; padding: 1.5rem; background: var(--bg-card, #121212); border: 1px solid var(--border-color, #222); border-radius: 8px;">
     <h2>Traffic Source Analytics (?ref=)</h2>
-    <ul id="admin-analytics-list">
-        <li>Loading analytics...</li>
-    </ul>
+    <p class="subtitle" style="color: var(--text-muted, #888); font-size: 0.9rem; margin-bottom: 1.5rem;">Overview of traffic breakdown by campaign reference parameters.</p>
+    
+    <!-- Summary Plain Text & Stats -->
+    <div id="analytics-summary" style="margin-bottom: 1.5rem; font-size: 0.95rem;">
+        Loading traffic data...
+    </div>
+
+    <!-- Visual Bar & Proportion Charts Container -->
+    <div id="analytics-charts" style="display: flex; flex-direction: column; gap: 1rem;">
+        <!-- Dynamically rendered chart items go here -->
+    </div>
 </section>
   </section>
 
