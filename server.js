@@ -217,28 +217,62 @@ const server = http.createServer(async (req, res) => {
 
 
 
-// --- In-Memory Traffic Counter (or connect to your DB/JSON file) ---
-const trafficCounts = {};
+const fs = require('fs');
+const path = require('path');
 
-// Receive traffic hits from ?ref= links
+const OVERRIDES_FILE = path.join(__dirname, 'overrides.json');
+const ANALYTICS_FILE = path.join(__dirname, 'analytics.json');
+
+// Helper to read/write JSON
+const readJson = (file, defaultVal) => {
+    try {
+        if (fs.existsSync(file)) return JSON.parse(fs.readFileSync(file, 'utf8'));
+    } catch (e) {}
+    return defaultVal;
+};
+const writeJson = (file, data) => fs.writeFileSync(file, JSON.stringify(data, null, 2));
+
+// --- Pricing Endpoints (Using overrides.json) ---
+app.get('/api/pricing', (req, res) => {
+    const overrides = readJson(OVERRIDES_FILE, {});
+    // Fallback default pricing if not yet in overrides.json
+    const pricingItems = overrides.pricingItems || [
+        { id: 1, name: 'Single Page Website', price: 500, selected: false },
+        { id: 2, name: 'Custom UI/UX Design', price: 250, selected: false }
+    ];
+    res.json(pricingItems);
+});
+
+app.post('/api/pricing', express.json(), (req, res) => {
+    const { items } = req.body;
+    if (Array.isArray(items)) {
+        const overrides = readJson(OVERRIDES_FILE, {});
+        overrides.pricingItems = items;
+        writeJson(OVERRIDES_FILE, overrides);
+        return res.json({ success: true });
+    }
+    res.status(400).json({ error: 'Invalid items array' });
+});
+
+// --- Analytics / Tracking Endpoints ---
 app.post('/api/track', express.json(), (req, res) => {
     const { source } = req.body;
     if (source) {
-        const cleanSource = source.toLowerCase().trim();
-        trafficCounts[cleanSource] = (trafficCounts[cleanSource] || 0) + 1;
+        const counts = readJson(ANALYTICS_FILE, {});
+        const clean = source.toLowerCase().trim();
+        counts[clean] = (counts[clean] || 0) + 1;
+        writeJson(ANALYTICS_FILE, counts);
     }
     res.json({ success: true });
 });
 
-// Fetch analytics data (sorted highest to lowest traffic)
 app.get('/api/analytics', (req, res) => {
-    const sortedTraffic = Object.entries(trafficCounts)
+    const counts = readJson(ANALYTICS_FILE, {});
+    const sorted = Object.entries(counts)
         .sort(([, a], [, b]) => b - a)
-        .reduce((acc, [key, val]) => ({ ...acc, [key]: val }), {});
-    
-    res.json(sortedTraffic);
+        .reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {});
+    res.json(sorted);
 });
-
 
 server.listen(PORT, '0.0.0.0', () => {
   console.log(`portfolio on http://127.0.0.1:${PORT}`);
