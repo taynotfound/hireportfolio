@@ -4,27 +4,33 @@ const $ = s => document.querySelector(s);
 const $$ = s => document.querySelectorAll(s);
 const api = (u, opt) => fetch(u, Object.assign({ credentials: 'same-origin' }, opt));
 let LEADS = [];
-async function loadAdminAnalytics() {
+async function loadAnalyticsData() {
     try {
-        const res = await fetch('/api/analytics');
+        const res = await fetch('/api/analytics', {
+            credentials: 'same-origin' // <--- This sends your admin session cookie with the request
+        });
+        if (!res.ok) return;
         const data = await res.json();
-        const list = document.getElementById('admin-analytics-list');
+        const list = document.getElementById('analytics-stats-list');
         if (!list) return;
-        
+
         list.innerHTML = '';
         if (Object.keys(data).length === 0) {
-            list.innerHTML = '<li>No traffic parameters recorded yet.</li>';
+            list.innerHTML = '<li>No referral traffic recorded yet.</li>';
             return;
         }
 
         for (const [source, count] of Object.entries(data)) {
             const li = document.createElement('li');
-            li.innerHTML = `<strong>${source}</strong>: ${count} visitor(s)`;
+            li.innerHTML = `<strong>${source}</strong>: ${count} visit(s)`;
             list.appendChild(li);
         }
-    } catch (err) {
-        console.error('Failed to load traffic stats', err);
+    } catch (e) {
+        console.error('Failed to load analytics', e);
     }
+}
+
+document.addEventListener('DOMContentLoaded', loadAnalyticsData);
 }
 
 document.addEventListener('DOMContentLoaded', loadAdminAnalytics);
