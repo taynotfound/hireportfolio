@@ -215,7 +215,7 @@ const server = http.createServer(async (req, res) => {
   });
 });
 
-server.listen(PORT, '127.0.0.1', () => {
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`portfolio on http://127.0.0.1:${PORT}`);
   rebuild();
   setInterval(rebuild, 24 * 60 * 60 * 1000);
