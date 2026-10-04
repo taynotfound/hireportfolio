@@ -1,17 +1,20 @@
 #!/usr/bin/env python3
 """Build a self-hosted, on-brand WakaTime badge (no page-time external requests).
-Reads the API key from ~/.wakatime.cfg, fetches all-time total, writes waka-badge.svg.
+Reads the API key from the WAKATIME_API_KEY environment variable, fetches all-time total,
+writes waka-badge.svg.
 Re-run to refresh: python3 build_badge.py
 """
-import os, re, json, urllib.request, configparser
+import os, re, json, urllib.request
 
-CFG = os.path.expanduser("~/.wakatime.cfg")
 PAL = dict(bg="#1b1917", line="#443c38", coral="#ff5c66", txt="#f2ece7", dim="#8b7d74")
 
+
 def api_key():
-    cp = configparser.ConfigParser()
-    cp.read(CFG)
-    return cp["settings"]["api_key"]
+    key = os.environ.get("WAKATIME_API_KEY")
+    if not key:
+        raise RuntimeError("WAKATIME_API_KEY environment variable is not set")
+    return key
+
 
 def total_text(key):
     req = urllib.request.Request(
@@ -22,9 +25,11 @@ def total_text(key):
     start_year = d["range"]["start_date"][:4]
     return f"{hrs:,} hrs coded", f"since {start_year}"
 
+
 def _b64(s):
     import base64
     return base64.b64encode(s.encode()).decode()
+
 
 def render(main, sub):
     # monospace ~6.6px/char at 12px; measure the two text runs
@@ -44,9 +49,10 @@ def render(main, sub):
 </svg>'''
     return svg
 
+
 if __name__ == "__main__":
     key = api_key()
-    assert key.startswith("waka"), "no wakatime api key in ~/.wakatime.cfg"
+    assert key.startswith("waka"), "WAKATIME_API_KEY does not look like a WakaTime API key"
     main, sub = total_text(key)
     assert "hrs" in main and re.match(r"since \d{4}", sub)
     open("waka-badge.svg", "w").write(render(main, sub))
