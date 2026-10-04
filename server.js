@@ -123,6 +123,15 @@ const server = http.createServer(async (req, res) => {
     return res.end(JSON.stringify(readJSON(OVERRIDES, {})));
   }
 
+  // ── PUBLIC ANALYTICS (Read raw counts without needing auth) ──
+  if (url === '/api/analytics') {
+    const counts = readJSON(ANALYTICS_FILE, {});
+    const sorted = Object.entries(counts)
+      .sort(([, a], [, b]) => b - a)
+      .reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {});
+    return json(res, 200, sorted);
+  }
+
   // ── admin login: exchange token for session cookie ──
   if (req.method === 'POST' && url === '/api/login') {
     let d; try { d = JSON.parse(await body(req)); } catch { return json(res, 400, { error: 'bad json' }); }
