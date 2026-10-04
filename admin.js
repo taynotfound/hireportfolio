@@ -5,31 +5,69 @@ const $$ = s => document.querySelectorAll(s);
 const api = (u, opt) => fetch(u, Object.assign({ credentials: 'same-origin' }, opt));
 let LEADS = [];
 async function loadAnalyticsData() {
-    try {
-        const res = await fetch('/api/analytics', {
-            credentials: 'same-origin' // <--- This sends your admin session cookie with the request
-        });
-        if (!res.ok) return;
-        const data = await res.json();
-        const list = document.getElementById('analytics-stats-list');
-        if (!list) return;
+    const summaryEl = document.getElementById('analytics-summary');
+    const chartsEl = document.getElementById('analytics-charts');
+    
+    if (!summaryEl || !chartsEl) return;
 
-        list.innerHTML = '';
-        if (Object.keys(data).length === 0) {
-            list.innerHTML = '<li>No referral traffic recorded yet.</li>';
+    try {
+        const res = await fetch('/api/analytics');
+        if (!res.ok) throw new Error('Failed to fetch analytics');
+        
+        const data = await res.json();
+        const sources = Object.entries(data);
+
+        if (sources.length === 0) {
+            summaryEl.innerHTML = 'No referral traffic recorded yet. Share a link with <code>?ref=source</code> to track visitors.';
+            chartsEl.innerHTML = '';
             return;
         }
 
-        for (const [source, count] of Object.entries(data)) {
-            const li = document.createElement('li');
-            li.innerHTML = `<strong>${source}</strong>: ${count} visit(s)`;
-            list.appendChild(li);
-        }
+        // Calculate total visits for percentages
+        const totalVisits = sources.reduce((sum, [, count]) => sum + count, 0);
+        const topSource = sources[0]; // Already sorted descending by backend
+
+        // Render plain text summary
+        summaryEl.innerHTML = `
+            <strong>Total Tracked Visits:</strong> ${totalVisits} &nbsp;|&nbsp; 
+            <strong>Top Traffic Source:</strong> <span style="color: var(--accent, #3b82f6);">${topSource[0]}</span> (${topSource[1]} visits)
+        `;
+
+        // Render Bar & Proportion Visuals (matching dashboard theme)
+        chartsEl.innerHTML = '';
+        sources.forEach(([source, count], index) => {
+            const percentage = ((count / totalVisits) * 100).toFixed(1);
+            
+            const barWrapper = document.createElement('div');
+            barWrapper.style.cssText = 'display: flex; flex-direction: column; gap: 0.3rem;';
+            
+            barWrapper.innerHTML = `
+                <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+                    <span><strong>#${index + 1}</strong> &nbsp;${escapeHtml(source)}</span>
+                    <span style="color: var(--text-muted, #aaa);">${count} visit(s) (${percentage}%)</span>
+                </div>
+                <div style="width: 100%; background: rgba(255,255,255,0.05); height: 10px; border-radius: 5px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);">
+                    <div style="width: ${percentage}%; background: var(--accent, #3b82f6); height: 100%; border-radius: 5px; transition: width 0.4s ease;"></div>
+                </div>
+            `;
+            chartsEl.appendChild(barWrapper);
+        });
+
     } catch (e) {
         console.error('Failed to load analytics', e);
+        summaryEl.textContent = 'Error loading analytics data.';
+        chartsEl.innerHTML = '';
     }
 }
 
+// Simple HTML escaper for safety
+function escapeHtml(str) {
+    return str.replace(/[&<>'"]/g, 
+        tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+    );
+}
+
+// Trigger load on DOM ready
 document.addEventListener('DOMContentLoaded', loadAnalyticsData);
 
 
