@@ -10,7 +10,7 @@ const { execFile } = require('child_process');
 const webpush = require('web-push');
 
 const ROOT = __dirname;
-const PORT = process.env.PORT || 5700;
+const PORT = process.env.PORT || 2500;
 const CFG = JSON.parse(fs.readFileSync(path.join(ROOT, 'admin-config.json'), 'utf8'));
 const SUBS_FILE = path.join(ROOT, 'push-subs.json');
 const CONTACTS = path.join(ROOT, 'contacts.jsonl');
