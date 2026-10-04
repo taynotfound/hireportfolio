@@ -15,6 +15,7 @@ const CFG = JSON.parse(fs.readFileSync(path.join(ROOT, 'admin-config.json'), 'ut
 const SUBS_FILE = path.join(ROOT, 'push-subs.json');
 const CONTACTS = path.join(ROOT, 'contacts.jsonl');
 const OVERRIDES = path.join(ROOT, 'overrides.json');
+const ANALYTICS_FILE = path.join(ROOT, 'analytics.json');
 webpush.setVapidDetails(CFG.subject, CFG.vapidPublic, CFG.vapidPrivate);
 
 const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8',
@@ -23,6 +24,7 @@ const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; cha
   '.woff2': 'font/woff2', '.woff': 'font/woff', '.ttf': 'font/ttf', '.webmanifest': 'application/manifest+json' };
 
 const readJSON = (f, def) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch { return def; } };
+const writeJSON = (f, data) => fs.writeFileSync(f, JSON.stringify(data, null, 2));
 const loadSubs = () => readJSON(SUBS_FILE, []);
 const saveSubs = s => fs.writeFileSync(SUBS_FILE, JSON.stringify(s));
 
@@ -87,6 +89,18 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  // ── Traffic Tracking endpoint (?ref= listener handler) ──
+  if (req.method === 'POST' && url === '/api/track') {
+    let d; try { d = JSON.parse(await body(req)); } catch { return json(res, 400, { error: 'bad json' }); }
+    if (d && d.source) {
+      const counts = readJSON(ANALYTICS_FILE, {});
+      const clean = String(d.source).toLowerCase().trim().slice(0, 100);
+      counts[clean] = (counts[clean] || 0) + 1;
+      writeJSON(ANALYTICS_FILE, counts);
+    }
+    return json(res, 200, { ok: true });
+  }
+
   // ── public VAPID key (needed to subscribe) ──
   if (url === '/api/vapid') return json(res, 200, { key: CFG.vapidPublic });
 
@@ -109,6 +123,15 @@ const server = http.createServer(async (req, res) => {
   // ── everything below requires an admin session ──
   const adminApi = url.startsWith('/api/') && url !== '/api/vapid';
   if (adminApi && !isAuthed(req)) return json(res, 401, { error: 'auth' });
+
+  // ── admin: Analytics endpoint to read traffic counts ──
+  if (url === '/api/analytics') {
+    const counts = readJSON(ANALYTICS_FILE, {});
+    const sorted = Object.entries(counts)
+      .sort(([, a], [, b]) => b - a)
+      .reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {});
+    return json(res, 200, sorted);
+  }
 
   // ── admin: upload an image → optimize to webp under /uploads, return its path ──
   if (req.method === 'POST' && url === '/api/upload') {
@@ -190,7 +213,7 @@ const server = http.createServer(async (req, res) => {
     if (d.pricingFull && typeof d.pricingFull === 'object') clean.pricingFull = d.pricingFull; // { BASES:{}, ADDONS:{}, SUPPORT:{}, RATES:{} } full replace
     if (Array.isArray(d.sections)) clean.sections = d.sections.slice(0, 40);   // [{id, on, order}] enable + reorder
     if (Array.isArray(d.timeline)) clean.timeline = d.timeline.slice(0, 60);   // [{year, en, de, now}]
-    if (Array.isArray(d.blocks)) clean.blocks = d.blocks.slice(0, 40);         // custom page-builder blocks
+    if (Array.isArray(d.blocks)) clean.blocks = d.blocks.slice(0, 40);          // custom page-builder blocks
     fs.writeFileSync(OVERRIDES, JSON.stringify(clean, null, 2));
     return json(res, 200, { ok: true });
   }
@@ -202,7 +225,7 @@ const server = http.createServer(async (req, res) => {
   const fp = path.normalize(path.join(ROOT, p));
   if (!fp.startsWith(ROOT)) { res.writeHead(403); return res.end('nope'); }
   // never serve submissions, config, source scripts, dotfiles, node_modules
-  if (/\.(jsonl|py|cfg)$|(^|\/)\./.test(p) || /^\/(admin-config\.json|push-subs\.json|package(-lock)?\.json)$/.test(p) || p.startsWith('/node_modules')) {
+  if (/\.(jsonl|py|cfg)$\vert{}(^\vert{}\/)\./.test(p) \vert{}\vert{} /^\/(admin-config\.json\vert{}push-subs\.json\vert{}package(-lock)?\.json)$/.test(p) || p.startsWith('/node_modules')) {
     res.writeHead(404); return res.end('404');
   }
   fs.readFile(fp, (err, buf) => {
@@ -213,62 +236,6 @@ const server = http.createServer(async (req, res) => {
     res.writeHead(200, h);
     res.end(buf);
   });
-});
-
-
-
-const OVERRIDES_FILE = path.join(__dirname, 'overrides.json');
-const ANALYTICS_FILE = path.join(__dirname, 'analytics.json');
-
-// Helper to read/write JSON
-const readJson = (file, defaultVal) => {
-    try {
-        if (fs.existsSync(file)) return JSON.parse(fs.readFileSync(file, 'utf8'));
-    } catch (e) {}
-    return defaultVal;
-};
-const writeJson = (file, data) => fs.writeFileSync(file, JSON.stringify(data, null, 2));
-
-// --- Pricing Endpoints (Using overrides.json) ---
-app.get('/api/pricing', (req, res) => {
-    const overrides = readJson(OVERRIDES_FILE, {});
-    // Fallback default pricing if not yet in overrides.json
-    const pricingItems = overrides.pricingItems || [
-        { id: 1, name: 'Single Page Website', price: 500, selected: false },
-        { id: 2, name: 'Custom UI/UX Design', price: 250, selected: false }
-    ];
-    res.json(pricingItems);
-});
-
-app.post('/api/pricing', express.json(), (req, res) => {
-    const { items } = req.body;
-    if (Array.isArray(items)) {
-        const overrides = readJson(OVERRIDES_FILE, {});
-        overrides.pricingItems = items;
-        writeJson(OVERRIDES_FILE, overrides);
-        return res.json({ success: true });
-    }
-    res.status(400).json({ error: 'Invalid items array' });
-});
-
-// --- Analytics / Tracking Endpoints ---
-app.post('/api/track', express.json(), (req, res) => {
-    const { source } = req.body;
-    if (source) {
-        const counts = readJson(ANALYTICS_FILE, {});
-        const clean = source.toLowerCase().trim();
-        counts[clean] = (counts[clean] || 0) + 1;
-        writeJson(ANALYTICS_FILE, counts);
-    }
-    res.json({ success: true });
-});
-
-app.get('/api/analytics', (req, res) => {
-    const counts = readJson(ANALYTICS_FILE, {});
-    const sorted = Object.entries(counts)
-        .sort(([, a], [, b]) => b - a)
-        .reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {});
-    res.json(sorted);
 });
 
 server.listen(PORT, '0.0.0.0', () => {
