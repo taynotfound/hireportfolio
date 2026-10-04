@@ -31,8 +31,21 @@ const saveSubs = s => fs.writeFileSync(SUBS_FILE, JSON.stringify(s));
 // ── sessions (in-memory; admin logs in with the token, gets a cookie) ──
 const sessions = new Set();
 const newSession = () => { const t = crypto.randomBytes(24).toString('base64url'); sessions.add(t); return t; };
-const cookieOf = req => Object.fromEntries((req.headers.cookie || '').split(';').map(c => c.trim().split('=').map(decodeURIComponent)).filter(x => x[0]));
-const isAuthed = req => sessions.has(cookieOf(req).sid);
+const cookieOf = req => {
+    const list = {};
+    const rc = req.headers.cookie;
+    if (rc) {
+        rc.split(';').forEach(cookie => {
+            const parts = cookie.match(/(.*?)=(.*)$/);
+            if (parts) {
+                try {
+                    list[parts[1].trim()] = decodeURIComponent(parts[2].trim());
+                } catch (e) {}
+            }
+        });
+    }
+    return list;
+};const isAuthed = req => sessions.has(cookieOf(req).sid);
 // timing-safe token compare
 const tokenOK = t => { try { return crypto.timingSafeEqual(Buffer.from(String(t)), Buffer.from(CFG.adminToken)); } catch { return false; } };
 
