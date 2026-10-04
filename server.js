@@ -225,8 +225,8 @@ const server = http.createServer(async (req, res) => {
   const fp = path.normalize(path.join(ROOT, p));
   if (!fp.startsWith(ROOT)) { res.writeHead(403); return res.end('nope'); }
   // never serve submissions, config, source scripts, dotfiles, node_modules
-  if (/\.(jsonl|py|cfg)$\vert{}(^\vert{}\/)\./.test(p) \vert{}\vert{} /^\/(admin-config\.json\vert{}push-subs\.json\vert{}package(-lock)?\.json)$/.test(p) || p.startsWith('/node_modules')) {
-    res.writeHead(404); return res.end('404');
+if (/\.(jsonl|py|cfg)$|(^|\/)\./.test(p) || /^\/(admin-config\.json|push-subs\.json|analytics\.json|package(-lock)?\.json)$/.test(p) || p.startsWith('/node_modules')) {
+  res.writeHead(404); return res.end('404');
   }
   fs.readFile(fp, (err, buf) => {
     if (err) { res.writeHead(404, { 'content-type': 'text/plain' }); return res.end('404'); }
