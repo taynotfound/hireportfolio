@@ -4,7 +4,30 @@ const $ = s => document.querySelector(s);
 const $$ = s => document.querySelectorAll(s);
 const api = (u, opt) => fetch(u, Object.assign({ credentials: 'same-origin' }, opt));
 let LEADS = [];
+async function loadAdminAnalytics() {
+    try {
+        const res = await fetch('/api/analytics');
+        const data = await res.json();
+        const list = document.getElementById('admin-analytics-list');
+        if (!list) return;
+        
+        list.innerHTML = '';
+        if (Object.keys(data).length === 0) {
+            list.innerHTML = '<li>No traffic parameters recorded yet.</li>';
+            return;
+        }
 
+        for (const [source, count] of Object.entries(data)) {
+            const li = document.createElement('li');
+            li.innerHTML = `<strong>${source}</strong>: ${count} visitor(s)`;
+            list.appendChild(li);
+        }
+    } catch (err) {
+        console.error('Failed to load traffic stats', err);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', loadAdminAnalytics);
 function toast(msg) {
   const t = $('#toast'); t.textContent = msg; t.classList.add('show');
   clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('show'), 2600);
