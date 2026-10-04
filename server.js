@@ -36,7 +36,11 @@ const tokenOK = t => { try { return crypto.timingSafeEqual(Buffer.from(String(t)
 
 function rebuild() {
   for (const s of ['build_heatmap.py', 'build_badge.py']) {
-    execFile('python3', [path.join(ROOT, s)], { cwd: ROOT, timeout: 30000 }, (err, out, e) => {
+    execFile('python3', [path.join(ROOT, s)], {
+      cwd: ROOT,
+      timeout: 30000,
+      env: { ...process.env, WAKATIME_API_KEY: process.env.WAKATIME_API_KEY },
+    }, (err, out, e) => {
       console.log(`[stats] ${s}: ${err ? 'FAIL ' + (e || err.message).trim() : (out || '').trim()}`);
     });
   }
