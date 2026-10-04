@@ -217,9 +217,6 @@ const server = http.createServer(async (req, res) => {
 
 
 
-const fs = require('fs');
-const path = require('path');
-
 const OVERRIDES_FILE = path.join(__dirname, 'overrides.json');
 const ANALYTICS_FILE = path.join(__dirname, 'analytics.json');
 
