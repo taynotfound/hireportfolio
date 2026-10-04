@@ -31,7 +31,7 @@ async function loadAnalyticsData() {
 }
 
 document.addEventListener('DOMContentLoaded', loadAnalyticsData);
-}
+
 
 function toast(msg) {
   const t = $('#toast'); t.textContent = msg; t.classList.add('show');
