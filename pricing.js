@@ -11,6 +11,7 @@
     webapp:    { label: { en: 'Custom Web App / Dashboard',  de: 'Web-App / Dashboard' },          price: 900,  days: 10 },
     mobile:    { label: { en: 'Mobile App (Android/Kotlin)', de: 'Mobile App (Android/Kotlin)' },   price: 1200, days: 14 },
     ecommerce: { label: { en: 'Shop / Booking Platform',     de: 'Shop / Buchungssystem' },        price: 800,  days: 9 },
+    test: { label: { en: 'test',     de: 'tesdt' },        price: 800,  days: 9 },
   };
 
   // Add-ons. Flat prices, in the tens/low-hundreds.
