@@ -215,6 +215,31 @@ const server = http.createServer(async (req, res) => {
   });
 });
 
+
+
+// --- In-Memory Traffic Counter (or connect to your DB/JSON file) ---
+const trafficCounts = {};
+
+// Receive traffic hits from ?ref= links
+app.post('/api/track', express.json(), (req, res) => {
+    const { source } = req.body;
+    if (source) {
+        const cleanSource = source.toLowerCase().trim();
+        trafficCounts[cleanSource] = (trafficCounts[cleanSource] || 0) + 1;
+    }
+    res.json({ success: true });
+});
+
+// Fetch analytics data (sorted highest to lowest traffic)
+app.get('/api/analytics', (req, res) => {
+    const sortedTraffic = Object.entries(trafficCounts)
+        .sort(([, a], [, b]) => b - a)
+        .reduce((acc, [key, val]) => ({ ...acc, [key]: val }), {});
+    
+    res.json(sortedTraffic);
+});
+
+
 server.listen(PORT, '0.0.0.0', () => {
   console.log(`portfolio on http://127.0.0.1:${PORT}`);
   rebuild();
