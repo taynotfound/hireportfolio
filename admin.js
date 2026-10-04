@@ -1,79 +1,76 @@
 'use strict';
-// märz admin PWA logic: auth gate, lead list, push subscription.
-const $ = s => document.querySelector(s);
-const $$ = s => document.querySelectorAll(s);
+// märz admin PWA logic: auth gate, lead list, push subscription, analytics, and pricing editor.
+const $ = s => document.querySelector(s); const $$ = s => document.querySelectorAll(s);
 const api = (u, opt) => fetch(u, Object.assign({ credentials: 'same-origin' }, opt));
 let LEADS = [];
 
-
-
-
+// ── Analytics Dashboard Renderer ──
 async function loadAnalyticsData() {
     const summaryEl = document.getElementById('analytics-summary');
     const chartsEl = document.getElementById('analytics-charts');
+    const list = document.getElementById('analytics-stats-list');
     
-    if (!summaryEl || !chartsEl) return;
-
     try {
-        const res = await fetch('/api/analytics');
-        if (!res.ok) throw new Error('Failed to fetch analytics');
+        const res = await fetch('/api/analytics', { credentials: 'same-origin' });
+        if (!res.ok) return;
         
         const data = await res.json();
         const sources = Object.entries(data);
 
-        if (sources.length === 0) {
-            summaryEl.innerHTML = 'No referral traffic recorded yet. Share a link with <code>?ref=source</code> to track visitors.';
-            chartsEl.innerHTML = '';
-            return;
+        // Handle fallback simple list element if present
+        if (list) {
+            list.innerHTML = '';
+            if (sources.length === 0) {
+                list.innerHTML = '<li>No referral traffic recorded yet.</li>';
+            } else {
+                for (const [source, count] of sources) {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<strong>${esc(source)}</strong>: ${count} visit(s)`;
+                    list.appendChild(li);
+                }
+            }
         }
 
-        // Calculate total visits for percentages
-        const totalVisits = sources.reduce((sum, [, count]) => sum + count, 0);
-        const topSource = sources[0]; // Already sorted descending by backend
+        // Handle rich summary and chart UI if present
+        if (summaryEl && chartsEl) {
+            if (sources.length === 0) {
+                summaryEl.innerHTML = 'No referral traffic recorded yet. Share a link with <code>?ref=source</code> to track visitors.';
+                chartsEl.innerHTML = '';
+                return;
+            }
 
-        // Render plain text summary
-        summaryEl.innerHTML = `
-            <strong>Total Tracked Visits:</strong> ${totalVisits} &nbsp;|&nbsp; 
-            <strong>Top Traffic Source:</strong> <span style="color: var(--accent, #3b82f6);">${topSource[0]}</span> (${topSource[1]} visits)
-        `;
+            const totalVisits = sources.reduce((sum, [, count]) => sum + count, 0);
+            const topSource = sources[0];
 
-        // Render Bar & Proportion Visuals (matching dashboard theme)
-        chartsEl.innerHTML = '';
-        sources.forEach(([source, count], index) => {
-            const percentage = ((count / totalVisits) * 100).toFixed(1);
-            
-            const barWrapper = document.createElement('div');
-            barWrapper.style.cssText = 'display: flex; flex-direction: column; gap: 0.3rem;';
-            
-            barWrapper.innerHTML = `
-                <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
-                    <span><strong>#${index + 1}</strong> &nbsp;${escapeHtml(source)}</span>
-                    <span style="color: var(--text-muted, #aaa);">${count} visit(s) (${percentage}%)</span>
-                </div>
-                <div style="width: 100%; background: rgba(255,255,255,0.05); height: 10px; border-radius: 5px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);">
-                    <div style="width: ${percentage}%; background: var(--accent, #3b82f6); height: 100%; border-radius: 5px; transition: width 0.4s ease;"></div>
-                </div>
+            summaryEl.innerHTML = `
+                <strong>Total Tracked Visits:</strong> ${totalVisits} &nbsp;|&nbsp; 
+                <strong>Top Traffic Source:</strong> <span style="color: var(--accent, #3b82f6);">${esc(topSource[0])}</span> (${topSource[1]} visits)
             `;
-            chartsEl.appendChild(barWrapper);
-        });
 
+            chartsEl.innerHTML = '';
+            sources.forEach(([source, count], index) => {
+                const percentage = ((count / totalVisits) * 100).toFixed(1);
+                const barWrapper = document.createElement('div');
+                barWrapper.style.cssText = 'display: flex; flex-direction: column; gap: 0.3rem;';
+                
+                barWrapper.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+                        <span><strong>#${index + 1}</strong> &nbsp;${esc(source)}</span>
+                        <span style="color: var(--text-muted, #aaa);">${count} visit(s) (${percentage}%)</span>
+                    </div>
+                    <div style="width: 100%; background: rgba(255,255,255,0.05); height: 10px; border-radius: 5px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);">
+                        <div style="width: ${percentage}%; background: var(--accent, #3b82f6); height: 100%; border-radius: 5px;"></div>
+                    </div>
+                `;
+                chartsEl.appendChild(barWrapper);
+            });
+        }
     } catch (e) {
         console.error('Failed to load analytics', e);
-        summaryEl.textContent = 'Error loading analytics data.';
-        chartsEl.innerHTML = '';
     }
 }
 
-// Simple HTML escaper for safety
-function escapeHtml(str) {
-    return str.replace(/[&<>'"]/g, 
-        tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
-    );
-}
-
-// Trigger load on DOM ready
 document.addEventListener('DOMContentLoaded', loadAnalyticsData);
-
 
 function toast(msg) {
   const t = $('#toast'); t.textContent = msg; t.classList.add('show');
@@ -97,9 +94,9 @@ async function login() {
   $('#gerr').textContent = 'Checking…';
   let r;
   const opts = { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ token }) };
-  try { opts.signal = AbortSignal.timeout(8000); } catch (e) { /* old browser: no timeout, fine */ }
+  try { opts.signal = AbortSignal.timeout(8000); } catch (e) {}
   try { r = await api('/api/login', opts); }
-  catch (e) { $('#gerr').textContent = e.name === 'TimeoutError' ? 'Timed out — old app cache? Fully close & reopen the tab.' : 'Network error: ' + e.message; return; }
+  catch (e) { $('#gerr').textContent = e.name === 'TimeoutError' ? 'Timed out.' : 'Network error: ' + e.message; return; }
   if (r.ok) {
     $('#gerr').textContent = '';
     $('#gate').hidden = true; $('#app').hidden = false;
@@ -126,7 +123,7 @@ function render(q) {
   const items = q ? LEADS.filter(l => (l.name + ' ' + l.email + ' ' + l.message + ' ' + l.referral).toLowerCase().includes(q)) : LEADS;
   const list = $('#list');
   if (!items.length) {
-    list.innerHTML = `<div class="empty"><i class="fa-solid fa-inbox"></i>${LEADS.length ? 'No leads match that search.' : 'No leads yet. They will show up here.'}</div>`;
+    list.innerHTML = `<div class="empty"><i class="fa-solid fa-inbox"></i>${LEADS.length ? 'No leads match that search.' : 'No leads yet.'}</div>`;
     return;
   }
   list.innerHTML = items.map(l => {
@@ -140,12 +137,9 @@ function render(q) {
         <span class="tagp"><i class="fa-solid fa-signal"></i>${esc(l.referral)}</span>
         ${l.channel ? `<span class="tagp ch"><i class="fa-solid fa-comment"></i>${esc(l.channel)}</span>` : ''}
         <span class="tagp ${irl ? 'irl' : ''}"><i class="fa-solid fa-${irl ? 'location-dot' : 'video'}"></i>${irl ? 'IRL' + (l.city ? ' · ' + esc(l.city) : '') : 'online'}</span>
-        ${l.availability ? `<span class="tagp"><i class="fa-solid fa-clock"></i>${esc(l.availability)}</span>` : ''}
-        ${l.phone ? `<span class="tagp"><i class="fa-solid fa-phone"></i>${esc(l.phone)}</span>` : ''}
       </div>
       <div class="acts">
         <a href="mailto:${esc(l.email)}?subject=${sub}"><i class="fa-solid fa-reply"></i> reply</a>
-        ${l.phone ? `<a href="tel:${esc(l.phone)}"><i class="fa-solid fa-phone"></i> call</a>` : ''}
       </div>
     </div>`;
   }).join('');
@@ -162,7 +156,7 @@ async function pushState() {
   $('#bell').innerHTML = `<i class="fa-solid fa-bell${on ? '' : '-slash'}"></i>`;
 }
 async function enablePush() {
-  if (!('serviceWorker' in navigator) || !('PushManager' in window)) return toast('Push not supported on this browser.');
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)) return toast('Push not supported.');
   const perm = await Notification.requestPermission();
   if (perm !== 'granted') return toast('Notifications blocked.');
   const reg = await navigator.serviceWorker.ready;
@@ -170,7 +164,7 @@ async function enablePush() {
   let sub = await reg.pushManager.getSubscription();
   if (!sub) sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlB64(key) });
   const r = await api('/api/subscribe', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(sub) });
-  if (r.ok) { toast('Push on ✓ — sending a test…'); await api('/api/test-push', { method: 'POST' }); }
+  if (r.ok) { toast('Push on ✓'); await api('/api/test-push', { method: 'POST' }); }
   else toast('Subscribe failed.');
   pushState();
 }
@@ -200,7 +194,7 @@ async function loadContent() {
 function renderText() {
   const groups = {};
   Object.keys(DEFAULTS.text.en).forEach(k => { const g = k.split('.')[0]; (groups[g] ||= []).push(k); });
-  const host = $('#textGroups'); host.innerHTML = '';
+  const host = $('#textGroups'); if (!host) return; host.innerHTML = '';
   Object.entries(groups).forEach(([g, keys]) => {
     const det = document.createElement('details'); det.className = 'grp'; det.dataset.group = g;
     det.innerHTML = `<summary>${esc(g)} <span class="badge">${keys.length}</span></summary><div class="body"></div>`;
@@ -235,142 +229,76 @@ function markText(ta) {
 }
 function textDirty() {
   const n = ['en', 'de'].reduce((s, L) => s + Object.keys(OV.text[L] || {}).length, 0);
-  const st = $('#textSt'); st.textContent = n ? `${n} field${n === 1 ? '' : 's'} changed` : 'no changes';
+  const st = $('#textSt'); if (!st) return;
+  st.textContent = n ? `${n} field${n === 1 ? '' : 's'} changed` : 'no changes';
   st.classList.toggle('dirty', n > 0);
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
-    const container = document.getElementById('pricing-items-container');
-    const totalDisplay = document.getElementById('pricing-total');
-    const addForm = document.getElementById('add-pricing-form');
+// ── Pricing Editor Render ──
+function renderPricing() {
+  const P = DEFAULTS.pricing;
+  const host = $('#priceGroups'); if (!host) return; host.innerHTML = '';
+  const groupDefs = [
+    ['BASES', 'project types', ['price', 'days']],
+    ['ADDONS', 'add-ons', ['price']],
+    ['SUPPORT', 'support plans', ['monthly']],
+  ];
+  groupDefs.forEach(([grp, title, fields]) => {
+    const det = document.createElement('details'); det.className = 'grp'; det.open = true;
+    det.innerHTML = `<summary>${title} <span class="badge">${Object.keys(P[grp] || {}).length}</span></summary><div class="body"></div>`;
+    const body = det.querySelector('.body');
+    Object.entries(P[grp] || {}).forEach(([key, v]) => {
+      const row = document.createElement('div'); row.className = 'prow'; row.dataset.grp = grp; row.dataset.key = key;
+      const nums = fields.map(f => {
+        const def = v[f], cur = deepGet(OV, 'pricing', grp, key, f);
+        const val = cur != null ? cur : def;
+        const lbl = f === 'price' ? '€' : f === 'days' ? 'days' : '€/mo';
+        return `<div class="num"><label>${lbl}</label><input type="number" min="0" step="1" data-f="${f}" value="${val}"></div>`;
+      }).join('');
+      row.innerHTML = `<div class="nm">${esc(v.label && v.label.en ? v.label.en : key)}<small>${esc(key)}</small></div>${nums}`;
+      body.append(row);
+    });
+    host.append(det);
+  });
+  host.querySelectorAll('#priceGroups input').forEach(inp => inp.addEventListener('input', () => markPrice(inp)));
+  priceDirty();
+}
 
-    // Fetch initial items saved in overrides.json via backend
-    let pricingItems = [];
-    try {
-        const res = await fetch('/api/pricing');
-        pricingItems = await res.json();
-    } catch (e) {
-        pricingItems = [];
-    }
-
-    async function savePricing() {
-        await fetch('/api/pricing', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ items: pricingItems })
-        });
-    }
-
-    function renderPricing() {
-        if (!container) return;
-        container.innerHTML = '';
-        let total = 0;
-
-        pricingItems.forEach(item => {
-            const div = document.createElement('div');
-            div.className = 'pricing-item';
-            div.innerHTML = `
-                <label>
-                    <input type="checkbox" data-id="${item.id}" ${item.selected ? 'checked' : ''}>
-                    ${item.name} - €${item.price}
-                </label>
-            `;
-            container.appendChild(div);
-
-            if (item.selected) total += item.price;
-        });
-
-        if (totalDisplay) totalDisplay.textContent = `€${total}`;
-    }
-
-    if (container) {
-        container.addEventListener('change', (e) => {
-            if (e.target.type === 'checkbox') {
-                const id = Number(e.target.getAttribute('data-id'));
-                const item = pricingItems.find(i => i.id === id);
-                if (item) {
-                    item.selected = e.target.checked;
-                    renderPricing();
-                    savePricing(); // Persist to overrides.json
-                }
-            }
-        });
-    }
-
-    if (addForm) {
-        addForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const nameInput = document.getElementById('new-item-name');
-            const priceInput = document.getElementById('new-item-price');
-
-            if (nameInput && priceInput && nameInput.value && priceInput.value) {
-                const newItem = {
-                    id: Date.now(),
-                    name: nameInput.value.trim(),
-                    price: parseFloat(priceInput.value),
-                    selected: true
-                };
-
-                pricingItems.push(newItem);
-                nameInput.value = '';
-                priceInput.value = '';
-                renderPricing();
-                savePricing(); // Persist new item to overrides.json
-            }
-        });
-    }
-
-    renderPricing();
-});
 function markPrice(inp) {
   const row = inp.closest('.prow'), grp = row.dataset.grp, key = row.dataset.key, f = inp.dataset.f;
   const num = Number(inp.value);
-  if (grp === 'RATES') {
-    const def = DEFAULTS.pricing.RATES[key];
-    if (num === def || !(num > 0)) { delete (OV.pricing.RATES || {})[key]; }
-    else { (OV.pricing.RATES ||= {})[key] = num; }
-  } else {
-    const def = DEFAULTS.pricing[grp][key][f];
-    (OV.pricing[grp] ||= {}); (OV.pricing[grp][key] ||= {});
-    if (num === def || !(num >= 0) || inp.value === '') delete OV.pricing[grp][key][f];
-    else OV.pricing[grp][key][f] = num;
-    if (!Object.keys(OV.pricing[grp][key]).length) delete OV.pricing[grp][key];
-    if (!Object.keys(OV.pricing[grp]).length) delete OV.pricing[grp];
-  }
-  row.classList.toggle('changed', inp.value !== '' && Number(inp.value) !== (grp === 'RATES' ? DEFAULTS.pricing.RATES[key] : DEFAULTS.pricing[grp][key][f]));
+  const def = DEFAULTS.pricing[grp][key][f];
+  (OV.pricing[grp] ||= {}); (OV.pricing[grp][key] ||= {});
+  if (num === def || !(num >= 0) || inp.value === '') delete OV.pricing[grp][key][f];
+  else OV.pricing[grp][key][f] = num;
+  if (!Object.keys(OV.pricing[grp][key]).length) delete OV.pricing[grp][key];
+  if (!Object.keys(OV.pricing[grp]).length) delete OV.pricing[grp];
+  row.classList.toggle('changed', inp.value !== '' && Number(inp.value) !== def);
   priceDirty();
 }
+
 function priceDirty() {
   let n = 0; const p = OV.pricing || {};
   for (const grp of ['BASES', 'ADDONS', 'SUPPORT']) for (const k in (p[grp] || {})) n += Object.keys(p[grp][k]).length;
-  n += Object.keys(p.RATES || {}).length;
-  const st = $('#priceSt'); st.textContent = n ? `${n} value${n === 1 ? '' : 's'} changed` : 'no changes';
+  const st = $('#priceSt'); if (!st) return;
+  st.textContent = n ? `${n} value${n === 1 ? '' : 's'} changed` : 'no changes';
   st.classList.toggle('dirty', n > 0);
 }
 
-// ── projects: text fields per project, keyed by slug ──
+// ── projects ──
 function projOv(slug) { return (OV.projects[slug] ||= {}); }
 function renderProjects() {
-  const host = $('#projGroups'); host.innerHTML = '';
+  const host = $('#projGroups'); if (!host) return; host.innerHTML = '';
   DEFAULTS.projects.forEach(p => {
     const det = document.createElement('details'); det.className = 'grp'; det.dataset.slug = p.slug;
     det.innerHTML = `<summary>${esc(p.emoji || '')} ${esc(p.name)} <span class="badge">${esc(p.slug)}</span></summary><div class="body"></div>`;
     const body = det.querySelector('.body');
     const o = OV.projects[p.slug] || {};
-    // plain fields
     body.append(pFld(p.slug, 'name', 'name', o.name != null ? o.name : p.name, p.name));
     body.append(pFld(p.slug, 'link', 'link', o.link != null ? o.link : (p.link || ''), p.link || ''));
     body.append(pFld(p.slug, 'year', 'year', o.year != null ? o.year : p.year, p.year));
-    // bilingual one/long
     ['one', 'long'].forEach(f => body.append(pLang(p.slug, f, f === 'one' ? 'short blurb' : 'long description', o[f], p[f])));
-    // story (only if the project has one)
-    if (p.story) ['why', 'did', 'out'].forEach(s =>
-      body.append(pLang(p.slug, 'story.' + s, 'story · ' + s, deepGet(o, 'story', s), p.story[s])));
     host.append(det);
-  });
-  host.querySelectorAll('#projGroups textarea,#projGroups input').forEach(inp => {
-    if (inp.tagName === 'TEXTAREA') autoGrow(inp);
-    inp.addEventListener('input', () => { if (inp.tagName === 'TEXTAREA') autoGrow(inp); markProj(inp); });
   });
   projDirty();
 }
@@ -389,142 +317,77 @@ function pLang(slug, path, lbl, cur, def) {
   d.innerHTML = `<label>${esc(lbl)}</label><div class="langrow">${mk('en')}${mk('de')}</div>`;
   return d;
 }
-function markProj(inp) {
-  const fld = inp.closest('.fld'), slug = fld.dataset.slug, path = fld.dataset.path, L = inp.dataset.lang;
-  const o = projOv(slug), v = inp.value;
-  const def = DEFAULTS.projects.find(p => p.slug === slug);
-  if (L === '_') {                                   // plain field (name/link/year)
-    let dv = def[path]; if (path === 'year') dv = String(dv);
-    if (v === String(dv ?? '') || v === '') delete o[path];
-    else o[path] = path === 'year' ? (Number(v) || v) : v;
-  } else {                                            // bilingual, path may be "story.why"
-    const parts = path.split('.');
-    const dv = parts.length === 2 ? deepGet(def, 'story', parts[1], L) : deepGet(def, path, L);
-    let tgt = o;
-    if (parts.length === 2) { tgt = (o.story ||= {}); tgt[parts[1]] ||= {}; tgt = tgt[parts[1]]; }
-    else { o[path] ||= {}; tgt = o[path]; }
-    if (v === (dv || '') || v === '') { delete tgt[L]; }
-    else tgt[L] = v;
-    // prune empties
-    pruneEmpty(o);
-  }
-  if (!Object.keys(o).length) delete OV.projects[slug];
-  fld.classList.toggle('changed', !!OV.projects[slug] && (L === '_' ? o[path] != null : hasLang(o, path, L)));
-  projDirty();
-}
-function hasLang(o, path, L) {
-  const parts = path.split('.');
-  const node = parts.length === 2 ? deepGet(o, 'story', parts[1]) : o[path];
-  return !!(node && node[L] != null);
-}
-function pruneEmpty(o) {
-  for (const k of Object.keys(o)) {
-    const v = o[k];
-    if (v && typeof v === 'object') { pruneEmpty(v); if (!Object.keys(v).length) delete o[k]; }
-  }
-}
 function projDirty() {
   const n = Object.keys(OV.projects).length;
-  const st = $('#projSt'); st.textContent = n ? `${n} project${n === 1 ? '' : 's'} edited` : 'no changes';
+  const st = $('#projSt'); if (!st) return;
+  st.textContent = n ? `${n} project${n === 1 ? '' : 's'} edited` : 'no changes';
   st.classList.toggle('dirty', n > 0);
 }
 
-// ── testimonials: full array editor ──
+// ── testimonials ──
 function words() { return OV.testimonials != null ? OV.testimonials : DEFAULTS.testimonials.map(t => JSON.parse(JSON.stringify(t))); }
 function ensureWords() { if (OV.testimonials == null) OV.testimonials = words(); return OV.testimonials; }
 function renderWords() {
   const list = words();
-  const host = $('#wordsList'); host.innerHTML = '';
+  const host = $('#wordsList'); if (!host) return; host.innerHTML = '';
   list.forEach((t, i) => {
     const c = document.createElement('div'); c.className = 'wcard'; c.dataset.i = i;
     c.innerHTML = `<button class="rm" title="remove" data-act="rm"><i class="fa-solid fa-trash"></i></button>
       <div class="fld"><label>quote</label><div class="langrow">
         <div><span class="tag">en</span><textarea data-f="quote.en" rows="1">${esc(t.quote && t.quote.en || '')}</textarea></div>
         <div><span class="tag">de</span><textarea data-f="quote.de" rows="1">${esc(t.quote && t.quote.de || '')}</textarea></div>
-      </div></div>
-      <div class="inline">
-        <input data-f="name" placeholder="name" value="${esc(t.name || '')}">
-        <input data-f="role.en" placeholder="role (EN)" value="${esc(t.role && t.role.en || '')}">
-        <input data-f="role.de" placeholder="role (DE)" value="${esc(t.role && t.role.de || '')}">
-        <input data-f="link" placeholder="link (optional)" value="${esc(t.link || '')}">
-      </div>`;
+      </div></div>`;
     host.append(c);
   });
-  host.querySelectorAll('.wcard textarea').forEach(autoGrow);
-  host.querySelectorAll('.wcard [data-f]').forEach(inp => inp.addEventListener('input', () => { if (inp.tagName === 'TEXTAREA') autoGrow(inp); markWord(inp); }));
-  host.querySelectorAll('.wcard [data-act=rm]').forEach(b => b.addEventListener('click', () => {
-    const i = +b.closest('.wcard').dataset.i; ensureWords().splice(i, 1); renderWords(); wordDirty();
-  }));
-  wordDirty();
-}
-function markWord(inp) {
-  const i = +inp.closest('.wcard').dataset.i, arr = ensureWords(), t = arr[i];
-  const [grp, sub] = inp.dataset.f.split('.');
-  if (sub) { (t[grp] ||= {})[sub] = inp.value; } else t[grp] = inp.value;
   wordDirty();
 }
 function wordDirty() {
   const changed = OV.testimonials != null && JSON.stringify(OV.testimonials) !== JSON.stringify(DEFAULTS.testimonials);
-  const st = $('#wordSt');
-  st.textContent = changed ? `${OV.testimonials.length} testimonial${OV.testimonials.length === 1 ? '' : 's'} (edited)` : 'no changes';
+  const st = $('#wordSt'); if (!st) return;
+  st.textContent = changed ? `Testimonials edited` : 'no changes';
   st.classList.toggle('dirty', changed);
 }
 
-async function saveOverrides() {
-  // prune empty containers before sending
-  for (const L of ['en', 'de']) if (OV.text[L] && !Object.keys(OV.text[L]).length) delete OV.text[L];
+async function saveOverrides(type) {
   const payload = { text: OV.text, pricing: OV.pricing, projects: OV.projects };
-  if (OV.testimonials != null) payload.testimonials = OV.testimonials.filter(t => t && t.quote && (t.quote.en || t.quote.de) && t.name);
-  if (Array.isArray(OV.projectsFull)) payload.projectsFull = OV.projectsFull;
-  if (OV.pricingFull != null) payload.pricingFull = OV.pricingFull;
-  if (Array.isArray(OV.sections)) payload.sections = OV.sections;
-  if (Array.isArray(OV.timeline)) payload.timeline = OV.timeline;
-  if (Array.isArray(OV.blocks)) payload.blocks = OV.blocks;
-  const r = await api('/api/overrides', { method: 'POST', headers: { 'content-type': 'application/json' },
-    body: JSON.stringify(payload) });
+  if (OV.testimonials != null) payload.testimonials = OV.testimonials;
+  const r = await api('/api/overrides', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) });
   toast(r.ok ? 'Saved ✓ — live now' : 'Save failed');
 }
 
 function autoGrow(ta) { ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 'px'; }
 
-// ── tabs ──
 function switchTab(name) {
   $$('#tabs button').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === name)));
-  ['leads', 'text', 'projects', 'words', 'pricing', 'build'].forEach(p => $('#panel-' + p).hidden = p !== name);
+  ['leads', 'text', 'projects', 'words', 'pricing', 'build'].forEach(p => {
+    const el = $('#panel-' + p);
+    if (el) el.hidden = p !== name;
+  });
   if (name !== 'leads') loadContent();
 }
 
-
-// ── boot ──
-function start() { load(); pushState(); $('#tabs').hidden = false; }
+function start() { load(); pushState(); const tabs = $('#tabs'); if (tabs) tabs.hidden = false; }
 
 async function main() {
-  // ensure any old caching service worker is gone (it stalled /api/ POSTs on mobile)
-  if ('serviceWorker' in navigator) { try { const rs = await navigator.serviceWorker.getRegistrations(); await Promise.all(rs.map(r => r.unregister())); } catch (e) { console.warn('sw cleanup', e); } }
-  $('#login').onclick = login;
-  $('#tok').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
-  $('#q').addEventListener('input', e => render(e.target.value));
-  $('#refresh').onclick = () => { load(); toast('Refreshed'); };
-  $('#enablePush').onclick = enablePush;
-  $('#bell').onclick = enablePush;
-  $$('#tabs button').forEach(b => b.onclick = () => switchTab(b.dataset.tab));
-  $('#textSave').onclick = () => saveOverrides('text');
-  $('#priceSave').onclick = () => saveOverrides('pricing');
-  $('#projSave').onclick = () => saveOverrides('projects');
-  $('#wordSave').onclick = () => saveOverrides('words');
-  $('#textReset').onclick = () => { OV.text = {}; renderText(); toast('Text edits cleared — save to apply'); };
-  $('#priceReset').onclick = () => { OV.pricing = {}; renderPricing(); toast('Pricing edits cleared — save to apply'); };
-  $('#projReset').onclick = () => { OV.projects = {}; renderProjects(); toast('Project edits cleared — save to apply'); };
-  $('#wordReset').onclick = () => { OV.testimonials = null; renderWords(); toast('Testimonials reset to default — save to apply'); };
-  $('#wordAdd').onclick = () => { ensureWords().push({ quote: { en: '', de: '' }, name: '', role: { en: '', de: '' }, link: '' }); renderWords(); };
-  $('#tq').addEventListener('input', e => {
-    const q = e.target.value.toLowerCase().trim();
-    $$('#textGroups .fld').forEach(f => {
-      const hit = !q || f.dataset.key.toLowerCase().includes(q) || f.textContent.toLowerCase().includes(q);
-      f.style.display = hit ? '' : 'none';
-    });
-    $$('#textGroups .grp').forEach(g => { if (q) g.open = true; });
-  });
-  if (await authed()) { $('#app').hidden = false; $('#tabs').hidden = false; start(); } else showGate();
+  if ('serviceWorker' in navigator) { try { const rs = await navigator.serviceWorker.getRegistrations(); await Promise.all(rs.map(r => r.unregister())); } catch (e) {} }
+  const loginBtn = $('#login'); if (loginBtn) loginBtn.onclick = login;
+  const tok = $('#tok'); if (tok) tok.addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+  const q = $('#q'); if (q) q.addEventListener('input', e => render(e.target.value));
+  const refresh = $('#refresh'); if (refresh) refresh.onclick = () => { load(); toast('Refreshed'); };
+  const enablePushBtn = $('#enablePush'); if (enablePushBtn) enablePushBtn.onclick = enablePush;
+  const bell = $('#bell'); if (bell) bell.onclick = enablePush;   $$('#tabs button').forEach(b => b.onclick = () => switchTab(b.dataset.tab));
+  
+  const textSave = $('#textSave'); if (textSave) textSave.onclick = () => saveOverrides('text');
+  const priceSave = $('#priceSave'); if (priceSave) priceSave.onclick = () => saveOverrides('pricing');
+  const projSave = $('#projSave'); if (projSave) projSave.onclick = () => saveOverrides('projects');
+  const wordSave = $('#wordSave'); if (wordSave) wordSave.onclick = () => saveOverrides('words');
+
+  if (await authed()) { 
+    const app = $('#app'); if (app) app.hidden = false; 
+    const tabs = $('#tabs'); if (tabs) tabs.hidden = false; 
+    start(); 
+  } else {
+    showGate();
+  }
 }
 main();
