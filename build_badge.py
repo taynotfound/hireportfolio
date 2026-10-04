@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Build a self-hosted, on-brand WakaTime badge (no page-time external requests).
-Reads the API key from the WAKATIME_API_KEY environment variable, fetches all-time total,
+Reads the API key from WAKATIME_API_KEY in .env, fetches all-time total,
 writes waka-badge.svg.
 Re-run to refresh: python3 build_badge.py
 """
@@ -9,10 +9,29 @@ import os, re, json, urllib.request
 PAL = dict(bg="#1b1917", line="#443c38", coral="#ff5c66", txt="#f2ece7", dim="#8b7d74")
 
 
+def load_dotenv(path):
+    """Load simple KEY=VALUE entries without overriding existing environment values."""
+    try:
+        with open(path, encoding="utf-8") as env_file:
+            for raw_line in env_file:
+                line = raw_line.strip()
+                if not line or line.startswith("#") or "=" not in line:
+                    continue
+                name, value = line.split("=", 1)
+                name = name.strip()
+                value = value.strip()
+                if value and value[0] == value[-1] and value[0] in "'\"":
+                    value = value[1:-1]
+                os.environ.setdefault(name, value)
+    except FileNotFoundError:
+        pass
+
+
 def api_key():
+    load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
     key = os.environ.get("WAKATIME_API_KEY")
     if not key:
-        raise RuntimeError("WAKATIME_API_KEY environment variable is not set")
+        raise RuntimeError("WAKATIME_API_KEY is not set in .env or the environment")
     return key
 
 
