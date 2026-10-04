@@ -10,6 +10,25 @@ let lang = (localStorage.getItem('lang') || (navigator.language || 'en').slice(0
 const t = k => (T[lang][k] ?? T.en[k] ?? k);
 const L = o => (o && typeof o === 'object' ? (o[lang] ?? o.en) : o);
 
+// --- Traffic Source (?ref=) Listener ---
+window.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(window.location.search);
+    const ref = params.get('ref');
+
+    if (ref) {
+        // Use sessionStorage so refreshing the page doesn't spam duplicate counts
+        if (!sessionStorage.getItem('tracked_ref')) {
+            sessionStorage.setItem('tracked_ref', ref);
+            
+            fetch('/api/track', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ source: ref })
+            }).catch(err => console.error('Tracking failed:', err));
+        }
+    }
+});
+
 function applyStatic() {
   document.documentElement.lang = lang;
   $$('[data-i]').forEach(e => { e.textContent = t(e.dataset.i); });
