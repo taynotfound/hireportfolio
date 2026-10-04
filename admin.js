@@ -4,6 +4,10 @@ const $ = s => document.querySelector(s);
 const $$ = s => document.querySelectorAll(s);
 const api = (u, opt) => fetch(u, Object.assign({ credentials: 'same-origin' }, opt));
 let LEADS = [];
+
+
+
+
 async function loadAnalyticsData() {
     const summaryEl = document.getElementById('analytics-summary');
     const chartsEl = document.getElementById('analytics-charts');
@@ -235,46 +239,89 @@ function textDirty() {
   st.classList.toggle('dirty', n > 0);
 }
 
-function renderPricing() {
-  const P = DEFAULTS.pricing;
-  const host = $('#priceGroups'); host.innerHTML = '';
-  const groupDefs = [
-    ['BASES', 'project types', ['price', 'days']],
-    ['ADDONS', 'add-ons', ['price']],
-    ['SUPPORT', 'support plans', ['monthly']],
-  ];
-  groupDefs.forEach(([grp, title, fields]) => {
-    const det = document.createElement('details'); det.className = 'grp'; det.open = true;
-    det.innerHTML = `<summary>${title} <span class="badge">${Object.keys(P[grp]).length}</span></summary><div class="body"></div>`;
-    const body = det.querySelector('.body');
-    Object.entries(P[grp]).forEach(([key, v]) => {
-      const row = document.createElement('div'); row.className = 'prow'; row.dataset.grp = grp; row.dataset.key = key;
-      const nums = fields.map(f => {
-        const def = v[f], cur = deepGet(OV, 'pricing', grp, key, f);
-        const val = cur != null ? cur : def;
-        const lbl = f === 'price' ? '€' : f === 'days' ? 'days' : '€/mo';
-        return `<div class="num"><label>${lbl}</label><input type="number" min="0" step="1" data-f="${f}" value="${val}"></div>`;
-      }).join('');
-      row.innerHTML = `<div class="nm">${esc(v.label.en)}<small>${esc(key)}</small></div>${nums}`;
-      body.append(row);
-    });
-    host.append(det);
-  });
-  // rates
-  const rd = document.createElement('details'); rd.className = 'grp'; rd.open = true;
-  rd.innerHTML = `<summary>multipliers <span class="badge">2</span></summary><div class="body"></div>`;
-  const rbody = rd.querySelector('.body');
-  [['rush', 'rush ×', 'Rush delivery surcharge (1.20 = +20%)'], ['retainer', 'retainer ×', 'One-off discount w/ support plan (0.10 = 10% off)']].forEach(([r, lbl, hint]) => {
-    const def = DEFAULTS.pricing.RATES[r], cur = deepGet(OV, 'pricing', 'RATES', r);
-    const val = cur != null ? cur : def;
-    const row = document.createElement('div'); row.className = 'prow'; row.dataset.grp = 'RATES'; row.dataset.key = r;
-    row.innerHTML = `<div class="nm">${lbl}<small>${esc(hint)}</small></div><div class="num"><label>factor</label><input type="number" min="0" step="0.01" data-f="_" value="${val}"></div>`;
-    rbody.append(row);
-  });
-  host.append(rd);
-  host.querySelectorAll('#priceGroups input').forEach(inp => inp.addEventListener('input', () => markPrice(inp)));
-  priceDirty();
-}
+document.addEventListener('DOMContentLoaded', async () => {
+    const container = document.getElementById('pricing-items-container');
+    const totalDisplay = document.getElementById('pricing-total');
+    const addForm = document.getElementById('add-pricing-form');
+
+    // Fetch initial items saved in overrides.json via backend
+    let pricingItems = [];
+    try {
+        const res = await fetch('/api/pricing');
+        pricingItems = await res.json();
+    } catch (e) {
+        pricingItems = [];
+    }
+
+    async function savePricing() {
+        await fetch('/api/pricing', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ items: pricingItems })
+        });
+    }
+
+    function renderPricing() {
+        if (!container) return;
+        container.innerHTML = '';
+        let total = 0;
+
+        pricingItems.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'pricing-item';
+            div.innerHTML = `
+                <label>
+                    <input type="checkbox" data-id="${item.id}" ${item.selected ? 'checked' : ''}>
+                    ${item.name} - €${item.price}
+                </label>
+            `;
+            container.appendChild(div);
+
+            if (item.selected) total += item.price;
+        });
+
+        if (totalDisplay) totalDisplay.textContent = `€${total}`;
+    }
+
+    if (container) {
+        container.addEventListener('change', (e) => {
+            if (e.target.type === 'checkbox') {
+                const id = Number(e.target.getAttribute('data-id'));
+                const item = pricingItems.find(i => i.id === id);
+                if (item) {
+                    item.selected = e.target.checked;
+                    renderPricing();
+                    savePricing(); // Persist to overrides.json
+                }
+            }
+        });
+    }
+
+    if (addForm) {
+        addForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const nameInput = document.getElementById('new-item-name');
+            const priceInput = document.getElementById('new-item-price');
+
+            if (nameInput && priceInput && nameInput.value && priceInput.value) {
+                const newItem = {
+                    id: Date.now(),
+                    name: nameInput.value.trim(),
+                    price: parseFloat(priceInput.value),
+                    selected: true
+                };
+
+                pricingItems.push(newItem);
+                nameInput.value = '';
+                priceInput.value = '';
+                renderPricing();
+                savePricing(); // Persist new item to overrides.json
+            }
+        });
+    }
+
+    renderPricing();
+});
 function markPrice(inp) {
   const row = inp.closest('.prow'), grp = row.dataset.grp, key = row.dataset.key, f = inp.dataset.f;
   const num = Number(inp.value);
