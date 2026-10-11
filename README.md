@@ -1,28 +1,31 @@
-# Tay März — Portfolio & Sell Page
+# Tay März · Portfolio & Sell Page
 
-Single-page freelance portfolio with a live, interactive package builder.
-Zero external requests, no frameworks, no build step, no trackers.
+Single-page freelance portfolio with a live package builder, a contact form, and a small admin CMS.
+No frameworks, no build step, no trackers, zero third-party requests on the public page.
 
 ## Files
-- `index.html` — page markup + styles (system fonts, purple/dark theme)
-- `app.js` — renders content sections + wires the package builder & contact form
-- `pricing.js` — pure pricing logic (shared by page + tests)
-- `test_pricing.js` — runnable check for the money path (`node test_pricing.js`)
+- `index.html` + `style.css`: page markup and styles (`style.css` is shared with `datenschutz.html`)
+- `app.js`: renders everything, hash router (`#/p/<slug>`, `#/about`, `#/security`), builder, contact form
+- `i18n.js`: all EN/DE copy, the project list (array order = order on the page), stack, testimonials
+- `pricing.js`: pure pricing logic + default prices (shared by page, server and `node test_pricing.js`)
+- `admin.html` + `admin.js`: admin panel at `/admin` (leads, ?ref= analytics, projects, pricing, testimonials, text, layout)
+- `sw.js`: admin service worker, push notifications only (no fetch handler, never caches)
+- `server.js`: static server (whitelist), contact intake, web push, admin API
 
-## Local preview
-Any static server, e.g.:
+## Run
 ```
-python3 -m http.server 8080
-# open http://localhost:8080
+npm install
+node server.js          # PORT=2500 by default
 ```
+Needs `admin-config.json` (`subject`, `vapidPublic`, `vapidPrivate`, `adminToken`). Runtime data
+(`contacts.jsonl`, `overrides.json`, `analytics.json`, `push-subs.json`, `uploads/`) is git-ignored.
 
-## Before going live (placeholders to fill)
-1. **Prices** — all €-values live in `pricing.js` (`BASES`, `ADDONS`, `SUPPORT`). Edit freely.
-2. **Contact form** — `app.js` `wireForm()` validates but does not deliver. Point it at a
-   real endpoint (Formspree, a mailto fallback, or your own handler) where noted by the
-   `ponytail:` comment.
-3. **Projects / copy** — content arrays at the top of `app.js` (`PROJECTS`, `SERVICES`, `STEPS`).
+## How admin edits work
+Defaults live in `i18n.js` / `pricing.js`. The admin saves only what differs from them into
+`overrides.json`; the page merges that over the defaults on load. Once the project list or pricing
+has been edited in the admin, that saved list wins. Projects added to `i18n.js` later show up in
+the admin's Projects tab with an "Add them" prompt.
 
-## Notes
-- Accessibility: text contrast meets WCAG AA; respects `prefers-reduced-motion`.
-- Scroll-reveal is JS-gated (`html.js`) so the page is fully readable without JavaScript.
+## Tracking links
+Share `https://<site>/?ref=<source>`. Each source is counted once per visitor per 30 min, per day,
+with no cookies and no IPs stored. Build links in Admin → Analytics → Link builder.

@@ -4,379 +4,33 @@
 <meta charset="utf-8">
 <title>Tay März · dev for hire</title>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="Tay März · freelance full-stack dev. Web, Android, Linux and the security bits nobody wants to touch. Self-taught since 2019.">
+<meta name="description" content="Tay März · freelance full-stack dev. Web, Android, Linux and the security bits nobody wants to touch. Self-taught since 2018.">
 <meta name="theme-color" content="#12100f">
 <script>document.documentElement.classList.add('js')</script>
 <meta property="og:title" content="Tay März · dev for hire">
 <meta property="og:description" content="Freelance full-stack dev. Web, Android & security. No frameworks, no trackers, privacy first.">
 <meta property="og:image" content="shots/me.webp">
 <meta property="og:type" content="website">
-<link rel="stylesheet" href="vendor/fa/fa.min.css">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%23ff5c66'/><text x='16' y='23' font-size='19' font-family='monospace' font-weight='700' fill='%2312100f' text-anchor='middle'>t</text></svg>">
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#12100f; --bg2:#1b1917; --bg3:#241f1d; --line:#332d2a; --line2:#443c38;
-  --txt:#f2ece7; --muted:#b0a49c; --dim:#8b7d74;
-  --coral:#ff5c66; --coral2:#ff8088; --blue:#5aa9ff; --gold:#e6b34d; --ok:#5cc26a;
-  --sans:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
-  --mono:ui-monospace,'SFMono-Regular','Cascadia Code','Roboto Mono',Menlo,Consolas,monospace;
-}
-html{-webkit-text-size-adjust:100%}
-body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:17px;line-height:1.6;overflow-x:hidden}
-a{color:inherit;text-decoration:none}
-.wrap{max-width:1120px;margin:0 auto;padding:0 1.6rem}
-h1,h2,h3{line-height:1.08;letter-spacing:-.02em;font-weight:750}
-.mono{font-family:var(--mono)}
-::selection{background:var(--coral);color:var(--bg)}
-em{font-style:normal;color:var(--coral);position:relative;white-space:nowrap}
-/* hand-drawn underline squiggle on emphasised words */
-em::after{content:"";position:absolute;left:-2%;right:-2%;bottom:-.12em;height:.28em;
-  background:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='10' viewBox='0 0 120 10'><path d='M2 6 Q30 1 60 5 T118 4' stroke='%23ff5c66' stroke-width='2.4' fill='none' stroke-linecap='round'/></svg>") center/100% 100% no-repeat}
-
-/* nav */
-.nav{position:sticky;top:0;z-index:50;background:rgba(18,16,15,.88);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
-.nav .wrap{display:flex;align-items:center;gap:1.4rem;height:58px}
-.brand{font-family:var(--mono);font-weight:700;font-size:1rem}
-.brand b{color:var(--coral)}
-.nav-links{margin-left:auto;display:flex;gap:1.2rem;align-items:center;font-family:var(--mono);font-size:.9rem}
-.nav-links a{color:var(--muted)}.nav-links a:hover{color:var(--txt)}
-.nav-links a.hi{color:var(--bg);background:var(--coral);padding:.3rem .7rem;border-radius:7px;font-weight:600}
-.nav-links a.hi:hover{background:var(--coral2)}
-.lang{display:flex;border:1px solid var(--line2);border-radius:7px;overflow:hidden}
-.lang button{background:transparent;border:none;color:var(--dim);padding:.22rem .5rem;cursor:pointer;font-family:var(--mono);font-size:.82rem}
-.lang button[aria-pressed=true]{background:var(--coral);color:var(--bg);font-weight:700}
-@media(max-width:600px){.nav-links a:not(.hi){display:none}}
-
-/* hero, photo + few words */
-.hero{padding:3rem 0 3.5rem}
-.hero .wrap{display:grid;grid-template-columns:1.25fr .85fr;gap:2.5rem;align-items:center}
-@media(max-width:720px){.hero .wrap{grid-template-columns:1fr;gap:1.8rem}.hero{padding:2rem 0}}
-.hero .tag{display:inline-flex;align-items:center;gap:.45rem;font-family:var(--mono);font-size:.8rem;color:var(--ok);border:1px solid var(--line2);border-radius:20px;padding:.28rem .75rem;margin-bottom:1.4rem}
-.hero .tag::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--ok)}
-.hero h1{font-size:clamp(2.3rem,4.4vw,3.5rem);margin-bottom:1.1rem;max-width:16ch}
-.hero .sub{font-size:1.05rem;color:var(--muted);max-width:44ch;margin-bottom:1.6rem}
-.hero-cta{display:flex;gap:.8rem;flex-wrap:wrap;align-items:center}
-.btn{display:inline-flex;align-items:center;gap:.4rem;padding:.7rem 1.15rem;border-radius:9px;font-weight:650;font-size:.95rem;cursor:pointer;border:2px solid transparent;font-family:inherit;transition:transform .12s,background .15s,border-color .15s}
-.btn:active{transform:translateY(1px)}
-.btn-primary{background:var(--coral);color:var(--bg)}
-.btn-primary:hover{background:var(--coral2)}
-.btn-ghost{background:transparent;border-color:var(--line2);color:var(--txt)}
-.btn-ghost:hover{border-color:var(--coral)}
-.hero .kb{margin-top:1.6rem;font-family:var(--mono);font-size:.8rem;color:var(--dim)}
-
-/* photo with a hand-drawn frame + tape */
-.photo{position:relative;justify-self:center;width:min(270px,72vw);rotate:2.5deg}
-.photo img{display:block;width:100%;height:auto;aspect-ratio:1/1;object-fit:cover;border-radius:14px;border:3px solid var(--txt);box-shadow:8px 10px 0 rgba(255,92,102,.28)}
-.photo::before{content:"";position:absolute;inset:-9px;border:2px dashed var(--line2);border-radius:18px;rotate:-3deg;z-index:-1}
-.photo .tape{position:absolute;top:-14px;left:50%;translate:-50% 0;width:96px;height:26px;background:rgba(255,92,102,.35);border:1px dashed var(--coral2);rotate:-4deg;backdrop-filter:blur(1px)}
-.photo .sticker{position:absolute;bottom:-16px;right:-16px;background:var(--coral);color:var(--bg);font-family:var(--mono);font-weight:700;font-size:.72rem;padding:.35rem .55rem;border-radius:8px;rotate:-6deg;box-shadow:2px 2px 0 rgba(0,0,0,.3)}
-
-/* section headers, big, casual, marker-underlined */
-section{padding:3rem 0;border-top:1px dashed var(--line)}
-.sh{font-size:1.7rem;font-weight:780;margin-bottom:1.6rem;display:inline-block}
-.sh .amp{color:var(--coral);font-family:var(--mono)}
-
-/* work, playful cards */
-.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:1.3rem}
-.card{background:var(--bg2);border:2px solid var(--line);border-radius:14px;overflow:hidden;transition:transform .14s,border-color .14s;display:flex;flex-direction:column;position:relative}
-.card .cbadge{position:absolute;top:.6rem;right:.6rem;z-index:2;display:inline-flex;align-items:center;gap:.35rem;font-size:.66rem;text-transform:uppercase;letter-spacing:.05em;font-weight:600;color:#0c0b0a;background:var(--coral);padding:.28rem .6rem;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.35)}
-.card .cprice{position:absolute;top:.6rem;left:.6rem;z-index:2;font-size:.7rem;font-weight:700;color:var(--text);background:var(--bg);border:1px solid var(--line2);padding:.24rem .56rem;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.3)}
-.card .cbadge .ic{font-size:.72rem}
-.card:hover{transform:translateY(-4px) rotate(0deg)!important;border-color:var(--tint,var(--coral))}
-.card .top{aspect-ratio:16/10;overflow:hidden;background:var(--bg3);position:relative;border-bottom:2px solid var(--line)}
-.card .top img{width:100%;height:100%;object-fit:cover;object-position:top}
-.card .top.ph{display:flex;align-items:center;justify-content:center;font-size:3.4rem;filter:saturate(1.1)}
-.card .top .peek{position:absolute;bottom:0;left:0;right:0;font-family:var(--mono);font-size:.66rem;color:var(--dim);padding:.3rem .5rem;background:linear-gradient(transparent,var(--bg3))}
-.card .b{padding:1rem 1.05rem;flex:1;display:flex;flex-direction:column}
-.card .b h3{font-size:1.15rem;font-weight:720;margin-bottom:.35rem;display:flex;align-items:center;gap:.4rem}
-.card .b h3 .visit{margin-left:auto;font-size:.68rem;color:var(--dim);border:1px solid var(--line2);border-radius:20px;padding:.08rem .5rem;transition:color .14s,border-color .14s}
-.card:hover .b h3 .visit:not(.off){color:var(--tint,var(--coral));border-color:var(--tint,var(--coral))}
-.card .b h3 .visit.off{opacity:.7}
-a.card{color:inherit;text-decoration:none}
-.card{cursor:pointer}
-.card .b .more-link{margin-top:.6rem;font-size:.72rem;color:var(--dim);align-self:flex-start;transition:color .14s,transform .14s}
-.card:hover .b .more-link{color:var(--tint,var(--coral));transform:translateX(3px)}
-/* project detail dialog (native <dialog>) */
-.detail{max-width:560px;width:calc(100% - 2rem);margin:auto;border:2px solid var(--tint,var(--line2));border-radius:16px;
-  background:var(--bg2);color:var(--txt);padding:0;overflow:hidden}
-.detail::backdrop{background:rgba(8,7,6,.72);backdrop-filter:blur(3px)}
-#proj{padding:5.5rem 0 3rem}
-.ppage{max-width:760px}
-.ppage .pback{display:inline-block;color:var(--muted);margin-bottom:1.4rem;transition:color .14s,transform .14s}
-.ppage .pback:hover{color:var(--tint,var(--coral));transform:translateX(-3px)}
-.ppage .ptop{border-radius:16px;overflow:hidden;border:2px solid var(--tint,var(--line2));margin-bottom:1.6rem;background:var(--bg2)}
-.ppage .ptop img{width:100%;display:block}
-.ppage .ptop.ph{aspect-ratio:16/9;display:grid;place-items:center;font-size:3.5rem}
-.ppage h1{font-size:clamp(1.8rem,5vw,2.6rem);margin:0 0 .8rem}
-.ppage .plead{color:var(--muted);font-size:1.05rem;line-height:1.6;margin:0 0 1.6rem}
-.ppage .dstory{margin-bottom:1.6rem}
-.ppage .dacts{margin-top:1.4rem}
-.detail .dclose{position:absolute;top:.6rem;right:.6rem;z-index:2;width:34px;height:34px;border-radius:9px;
-  background:rgba(18,16,15,.7);border:1px solid var(--line2);color:var(--txt);cursor:pointer;font-size:.9rem;
-  display:flex;align-items:center;justify-content:center;transition:border-color .14s,background .14s}
-.detail .dclose:hover{border-color:var(--coral);background:var(--bg3)}
-.detail .dtop{aspect-ratio:16/9;background:var(--bg3);overflow:hidden;border-bottom:2px solid var(--line)}
-.detail .dtop img{width:100%;height:100%;object-fit:cover;object-position:top}
-.detail .dtop.ph{display:flex;align-items:center;justify-content:center;font-size:4rem}
-.detail .dbody{padding:1.3rem 1.4rem 1.5rem}
-.detail .dbody h3{font-size:1.35rem;font-weight:750;margin-bottom:.6rem;display:flex;align-items:baseline;gap:.5rem;flex-wrap:wrap}
-.detail .dyear{font-size:.8rem;color:var(--dim);font-weight:400}
-.detail .dbody p{color:var(--muted);font-size:.95rem;line-height:1.6;margin-bottom:1rem}
-.detail .dstack,.ppage .dstack{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1.2rem}
-.detail .dstory,.ppage .dstory{display:grid;gap:.7rem;margin:0 0 1.2rem;padding:.9rem 1rem;background:var(--bg2);border-radius:10px;border-left:3px solid var(--tint,var(--coral))}
-.detail .dstory>div span,.ppage .dstory>div span{display:block;font-family:var(--mono);font-size:.72rem;letter-spacing:.04em;text-transform:uppercase;color:var(--tint,var(--coral));margin-bottom:.2rem}
-.detail .dstory>div p,.ppage .dstory>div p{margin:0;font-size:.9rem;line-height:1.55;color:var(--fg)}
-.detail .dstack span,.ppage .dstack span{border:1px solid var(--line2);border-radius:999px;padding:.22rem .65rem;font-size:.78rem;font-family:var(--mono);color:var(--muted)}
-.detail .dacts,.ppage .dacts{display:flex;align-items:center;gap:1rem}
-.detail .dpriv,.ppage .dpriv{color:var(--dim);font-size:.85rem}
-#sec .sec-lead{color:var(--muted);max-width:680px;line-height:1.6;margin:0 0 1.6rem}
-#sec .sec-target{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;margin-bottom:2rem}
-#sec .sec-target .stl{color:var(--dim);font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;margin-right:.3rem}
-#sec .tchip{display:inline-flex;align-items:center;gap:.45rem;border:1px solid var(--line2);border-radius:999px;padding:.3rem .8rem;font-size:.82rem;color:var(--txt);background:var(--bg2)}
-#sec .tchip .ic{color:var(--coral);font-size:.85rem}
-#sec .findings{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-bottom:2rem}
-@media(max-width:640px){#sec .findings{grid-template-columns:1fr}}
-#sec .fcard{border:1px solid var(--line2);border-radius:14px;padding:1.2rem 1.3rem;background:var(--bg2);position:relative;overflow:hidden}
-#sec .fcard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--fc,var(--coral))}
-#sec .fcard:nth-child(1){--fc:#e0453f}#sec .fcard:nth-child(2){--fc:#f08a3c}
-#sec .fcard:nth-child(3){--fc:#e3c04a}#sec .fcard:nth-child(4){--fc:#4a9eff}
-#sec .fhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:.7rem}
-#sec .fhead .ic{font-size:1.4rem;color:var(--fc,var(--coral))}
-#sec .fbadge{font-family:var(--mono);font-size:.66rem;text-transform:uppercase;letter-spacing:.06em;padding:.22rem .55rem;border-radius:6px;font-weight:600}
-#sec .b-verified{background:#e0453f22;color:#f0918f;border:1px solid #e0453f55}
-#sec .b-fixed{background:#f08a3c22;color:#f5b478;border:1px solid #f08a3c55}
-#sec .b-hard{background:#e3c04a22;color:#ecd583;border:1px solid #e3c04a55}
-#sec .b-added{background:#4a9eff22;color:#8fc3ff;border:1px solid #4a9eff55}
-#sec .fcard h3{font-size:1.02rem;font-weight:700;margin:0 0 .45rem}
-#sec .fcard p{color:var(--muted);font-size:.9rem;line-height:1.55;margin:0}
-#sec .sec-out{display:flex;gap:1rem;align-items:flex-start;border-left:3px solid var(--coral);background:var(--bg2);border-radius:0 12px 12px 0;padding:1.1rem 1.3rem;margin-bottom:2rem;max-width:760px}
-#sec .sec-out .ic{color:var(--coral);font-size:1.5rem;margin-top:.1rem}
-#sec .sec-out p{margin:0;color:var(--fg);line-height:1.6;font-size:.98rem}
-#sec .sec-check h3{font-family:var(--mono);font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;color:var(--dim);margin:0 0 .8rem}
-#sec .sec-check ul{list-style:none;margin:0;padding:0;display:grid;gap:.55rem;max-width:680px}
-#sec .sec-check li{display:flex;gap:.7rem;align-items:baseline;color:var(--txt);font-size:.92rem;line-height:1.5}
-#sec .sec-check li .ic{color:var(--coral);font-size:.8rem;flex:none}
-.detail.imp{max-width:520px}
-.detail.imp .dbody{padding-top:2.6rem}
-.detail.imp .dbody h3{font-size:1.4rem;margin-bottom:.8rem}
-.detail.imp .dbody p{margin-bottom:.8rem}
-footer a{color:var(--coral2);border-bottom:1px solid var(--line2);cursor:pointer}
-footer a:hover{border-color:var(--coral)}
-#words .quotes{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
-#words .quotes:has(.quote:only-child){max-width:640px}
-.quote:only-child{border-left-width:4px}
-.quote{margin:0;background:var(--bg2);border:2px solid var(--line);border-left:3px solid var(--coral);border-radius:12px;padding:1.2rem 1.3rem}
-.quote blockquote{margin:0 0 .8rem;font-size:1rem;line-height:1.6;color:var(--txt)}
-.quote figcaption{font-size:.85rem;color:var(--dim)}
-.quote figcaption strong{color:var(--muted)}
-.quote figcaption a{color:var(--coral2)}
-.quote figcaption a:hover strong{color:var(--coral)}
-#how .steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;counter-reset:s}
-@media(max-width:900px){#how .steps{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:520px){#how .steps{grid-template-columns:1fr}}
-#how .steps li{position:relative;background:var(--bg2);border:2px solid var(--line);border-radius:12px;padding:1.2rem 1.2rem 1.1rem}
-#how .steps .sn{font-family:var(--mono);font-size:1.4rem;font-weight:700;color:var(--coral);display:block;margin-bottom:.5rem;line-height:1;letter-spacing:-.02em}
-#how .steps b{display:block;margin-bottom:.4rem;font-size:1rem}
-#how .steps p{margin:0;font-size:.9rem;color:var(--muted);line-height:1.55}
-@media(min-width:901px){#how .steps li:not(:last-child)::after{content:"→";position:absolute;right:-.85rem;top:50%;transform:translateY(-50%);color:var(--line2);font-size:1rem;z-index:1}}
-#path .timeline{list-style:none;margin:0;padding:0;position:relative}
-#path .timeline li{position:relative;padding:0 0 1.3rem 5.6rem;min-height:1.5rem}
-#path .timeline li:not(:last-child)::before{content:"";position:absolute;left:4.15rem;top:.55rem;bottom:-.35rem;width:2px;background:var(--line2)}
-#path .timeline li::after{content:"";position:absolute;left:3.75rem;top:.35rem;width:11px;height:11px;border-radius:50%;background:var(--bg2);border:2px solid var(--line2)}
-#path .timeline li.now::after{background:var(--coral);border-color:var(--coral)}
-#path .timeline .ty{position:absolute;left:0;top:.2rem;width:3.6rem;text-align:right;font-size:.8rem;color:var(--coral);white-space:nowrap}
-#path .timeline p{margin:0;font-size:.94rem;color:var(--muted);line-height:1.55}
-#path .timeline li.now p{color:var(--text)}
-.morecards{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
-@media(max-width:720px){.morecards{grid-template-columns:1fr}}
-.morecard{display:flex;flex-direction:column;gap:.4rem;padding:1.4rem;border:1px solid var(--line2);border-radius:10px;background:var(--bg2);transition:border-color .15s,color .15s}
-.morecard:hover{border-color:var(--coral)}
-.morecard .ic{color:var(--coral);font-size:1.3rem}
-.morecard b{font-size:1.05rem}
-.morecard span{color:var(--muted);font-size:.9rem;line-height:1.5}
-.subpage{padding-top:2rem}
-.subpage .subwrap>.pback{display:inline-block;margin-bottom:1.5rem}
-.subpage section{padding-top:0}
-.subpage section+section{margin-top:2.5rem}
-@media(prefers-reduced-motion:no-preference){.detail[open]{animation:dpop .18s ease}}
-@keyframes dpop{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
-a.card:hover{border-color:var(--tint,var(--coral));transform:translateY(-3px) rotate(0deg) !important}
-.card .b p{font-size:.9rem;color:var(--muted);flex:1;margin-bottom:.7rem}
-.card .b .tg{display:flex;gap:.35rem;flex-wrap:wrap}
-.card .b .tg span{font-family:var(--mono);font-size:.7rem;color:var(--dim);border:1px solid var(--line2);border-radius:20px;padding:.1rem .5rem}
-
-/* builder */
-.builder{border:2px solid var(--line);border-radius:16px;background:var(--bg2);display:grid;grid-template-columns:1fr 290px;overflow:hidden}
-@media(max-width:740px){.builder{grid-template-columns:1fr}}
-.bm{padding:1.4rem}
-.bg{margin-bottom:1.5rem}
-.bg:last-child{margin-bottom:0}
-.bg>.gt{display:block;font-family:var(--mono);font-size:.78rem;color:var(--dim);margin-bottom:.6rem}
-.bg>.gt b{color:var(--coral);font-weight:700}
-.orow{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:.5rem}
-.opt{position:relative;cursor:pointer}
-.opt input{position:absolute;opacity:0;pointer-events:none}
-.opt .box{border:2px solid var(--line);background:var(--bg3);border-radius:10px;padding:.55rem .65rem;height:100%;transition:border-color .12s,background .12s}
-.opt .box .t{font-weight:650;font-size:.85rem;display:flex;flex-wrap:wrap;justify-content:space-between;gap:.1rem .4rem;align-items:baseline}
-.opt .box .t .tt{flex:1 1 auto;min-width:0;overflow-wrap:anywhere;hyphens:auto}
-.opt .box .t .pr{flex:0 0 auto;color:var(--muted);font-size:.76rem;font-family:var(--mono);white-space:nowrap}
-.opt .box .d{font-size:.72rem;color:var(--dim);margin-top:.1rem;font-family:var(--mono)}
-.opt input:checked+.box{border-color:var(--coral);background:#2a1a1b}
-.opt input:checked+.box .pr{color:var(--coral2)}
-.opt input:focus-visible+.box{outline:2px solid var(--coral2);outline-offset:1px}
-.trow{display:flex;align-items:center;gap:.7rem;background:var(--bg3);border:2px solid var(--line);border-radius:10px;padding:.6rem .75rem;cursor:pointer}
-.trow input{width:17px;height:17px;accent-color:var(--coral);cursor:pointer}
-.trow .tx{font-size:.85rem}.trow .tx small{color:var(--dim);font-family:var(--mono)}.trow .tx b{color:var(--coral2)}
-.bs{background:var(--bg);border-left:2px solid var(--line);padding:1.4rem;display:flex;flex-direction:column}
-@media(max-width:740px){.bs{border-left:none;border-top:2px solid var(--line)}}
-.bs .lbl{font-family:var(--mono);font-size:.76rem;color:var(--coral);margin-bottom:.8rem}
-.sl{display:flex;justify-content:space-between;font-size:.83rem;padding:.28rem 0;color:var(--muted);gap:1rem;font-family:var(--mono)}
-.sl.dim{color:var(--dim);font-size:.76rem}.sl.disc{color:var(--ok)}
-.sitems{border-bottom:1px dashed var(--line2);padding-bottom:.45rem;margin-bottom:.45rem;min-height:1.4rem}
-.stot .sub{font-size:.74rem;color:var(--dim);font-family:var(--mono)}
-.stot .big{font-size:2.1rem;font-weight:800;letter-spacing:-.03em}
-.smo{margin-top:.4rem;font-size:.82rem;color:var(--gold);font-family:var(--mono)}
-.seta{margin-top:.35rem;font-size:.76rem;color:var(--muted);font-family:var(--mono)}
-.bs .btn{margin-top:1rem;justify-content:center;width:100%}
-.disc{font-size:.7rem;color:var(--dim);margin-top:.7rem;font-family:var(--mono);line-height:1.5}
-
-/* contact */
-.ct{display:grid;grid-template-columns:1.1fr .9fr;gap:2.2rem;align-items:start}
-@media(max-width:640px){.ct{grid-template-columns:1fr}}
-.field{margin-bottom:.8rem}
-.field label{display:block;font-family:var(--mono);font-size:.76rem;color:var(--dim);margin-bottom:.28rem}
-.field input,.field textarea,.field select{width:100%;background:var(--bg2);border:2px solid var(--line);border-radius:9px;color:var(--txt);font-family:inherit;font-size:.95rem;padding:.6rem .75rem;outline:none;transition:border-color .12s}
-.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--coral)}
-.field select{-webkit-appearance:none;appearance:none;cursor:pointer;padding-right:2.2rem;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23b0a49c' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;background-position:right .75rem center;background-size:1.1em}
-.field select option{background:var(--bg2);color:var(--txt)}
-.field textarea{resize:vertical;min-height:110px}
-.ct-aside{font-family:var(--mono);font-size:.9rem;color:var(--muted);line-height:2}
-.ct-aside a{color:var(--coral2);border-bottom:1px solid var(--line2)}
-.ct-link a{display:inline-flex;align-items:center;gap:.5rem;border-bottom:none;transition:color .14s}
-.ct-link a:hover{color:var(--coral)}
-.ct-link i{width:1.1em;text-align:center;color:var(--dim);transition:color .14s}
-.ct-link a:hover i{color:var(--coral)}
-.ct-aside .big{font-size:1.15rem;color:var(--txt);font-family:var(--sans);font-weight:700;margin-bottom:.8rem;line-height:1.3}
-.fn{font-size:.82rem;padding:.55rem .75rem;border-radius:8px;margin-top:.5rem;display:none;font-family:var(--mono)}
-.fn.ok{display:block;background:#14251a;border:1px solid #2b5030;color:#7ed491}
-.fn.err{display:block;background:#2a1416;border:1px solid #5a262a;color:#f08a8f}
-footer{border-top:1px dashed var(--line);padding:1.8rem 0;color:var(--dim);font-size:.8rem;font-family:var(--mono)}
-footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:.6rem}
-/* stats numbers */
-.statgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.9rem;margin-bottom:1.4rem}
-.statcard{border:1px solid var(--line2);border-radius:12px;padding:1rem 1.1rem;background:var(--bg2)}
-.statcard .num{font-family:var(--mono);font-weight:800;font-size:1.9rem;line-height:1;color:var(--coral)}
-.statcard .lab{font-weight:700;margin-top:.4rem}
-.statcard .sub{color:var(--dim);font-size:.8rem;margin-top:.15rem}
-/* stack */
-.stackgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1rem}
-.stackcard{border:1px solid var(--line2);border-radius:12px;padding:1rem 1.1rem;background:var(--bg2)}
-.stackcard h3{font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:var(--dim);margin-bottom:.6rem;font-family:var(--mono)}
-.stackcard .chips{display:flex;flex-wrap:wrap;gap:.4rem}
-.stackcard .chips span{border:1px solid var(--line2);border-radius:999px;padding:.2rem .6rem;font-size:.82rem;font-family:var(--mono)}
-/* meet segmented + fields */
-.seg{display:flex;width:100%;border:1px solid var(--line2);border-radius:10px;overflow:hidden;background:var(--bg2)}
-.seg .segopt{flex:1;margin:0;display:flex;align-items:center;justify-content:center;padding:.55rem 1rem;cursor:pointer;font-size:.9rem;line-height:1;color:var(--muted);transition:background .14s,color .14s;text-align:center}
-.seg .segopt+.segopt{border-left:1px solid var(--line2)}
-.seg .segopt input{display:none}
-.seg .segopt:has(input:checked){background:var(--coral);color:var(--bg);font-weight:700}
-/* collapsible "show more" */
-details.more{grid-column:1/-1;margin-top:.4rem}
-details.more>summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:.5rem;
-  font-family:var(--mono);font-size:.9rem;color:var(--txt);background:var(--bg2);
-  border:1px solid var(--line2);border-radius:999px;padding:.55rem 1.1rem;transition:.15s;user-select:none}
-details.more>summary::-webkit-details-marker{display:none}
-details.more>summary::after{content:"▾";color:var(--dim);transition:transform .15s}
-details.more[open]>summary::after{transform:rotate(180deg)}
-details.more>summary:hover{border-color:var(--coral);color:var(--coral)}
-details.more[open]>summary{margin-bottom:1.2rem}
-details.more>.cards,details.more>.stackgrid{margin-top:0}
-details.pricebuilder{margin-top:0}
-details.pricebuilder>summary{font-size:.95rem;padding:.7rem 1.3rem;border-color:var(--coral);color:var(--coral)}
-details.pricebuilder>summary::before{content:"\f155";font-family:"Font Awesome 6 Free";font-weight:900;font-size:.85rem}
-details.pricebuilder[open]>.builder{margin-top:1.4rem}
-
-/* ── polish pass: focus, motion, hover, rhythm ── */
-/* keyboard focus rings everywhere (mouse users unaffected) */
-:where(a,button,input,textarea,select,summary,.opt,.trow,.card):focus-visible{outline:2px solid var(--coral2);outline-offset:2px;border-radius:6px}
-.field input:focus-visible,.field textarea:focus-visible{outline:2px solid var(--coral2);outline-offset:1px}
-/* nav link underline grow */
-.nav-links a:not(.hi):not(.brand){position:relative}
-.nav-links a:not(.hi)::after{content:"";position:absolute;left:0;right:100%;bottom:-4px;height:2px;background:var(--coral);transition:right .18s}
-.nav-links a:not(.hi):hover::after{right:0}
-/* primary buttons lift a touch */
-.btn-primary:hover{transform:translateY(-1px)}
-/* stat + stack cards: subtle hover lift + accent border */
-.statcard,.stackcard{transition:transform .14s,border-color .14s}
-.statcard:hover,.stackcard:hover{transform:translateY(-3px);border-color:var(--coral)}
-.stackcard .chips span{transition:border-color .14s,color .14s}
-.stackcard:hover .chips span{border-color:var(--line2)}
-.card .b .tg span{transition:border-color .14s,color .14s}
-.card:hover .b .tg span{border-color:var(--tint,var(--coral));color:var(--muted)}
-/* builder options: hover feedback before selecting */
-.opt .box:hover{border-color:var(--coral2)}
-.trow{transition:border-color .12s,background .12s}
-.trow:hover{border-color:var(--coral2)}
-.seg .segopt:hover:not(:has(input:checked)){color:var(--txt);background:var(--bg3)}
-.ct-link i,.ct-link span{transition:transform .14s}
-/* ── FA icon accents via ::before (i18n-safe; data-i replaces textContent) ── */
-.fa-pre::before,.sh::before,.nav-links a:not(.hi):not(.brand)::before{
-  font-family:"Font Awesome 7 Free";font-weight:900;margin-right:.5em;color:var(--coral);
-  font-size:.85em;display:inline-block;vertical-align:baseline}
-.sh::before{margin-right:.55rem;opacity:.9}
-#work .sh::before{content:"\f0ae"}          /* list-check */
-#price .sh::before{content:"\f571"}         /* money-check-dollar */
-#stats .sh::before{content:"\e0e3"}         /* chart-simple */
-#stack .sh::before{content:"\f5fd"}         /* layer-group */
-#hi .sh::before{content:"\f0e0"}            /* envelope */
-.nav-links a:not(.hi):not(.brand)::before{font-size:.82em;margin-right:.4em;color:var(--dim);transition:color .14s}
-.nav-links a:not(.hi):hover::before{color:var(--coral)}
-.nav-links a[href="#work"]::before{content:"\f0ae"}
-.nav-links a[href="#stats"]::before{content:"\e0e3"}
-.nav-links a[href="#stack"]::before{content:"\f5fd"}
-.nav-links a[href="#path"]::before{content:"\f1b0"}
-.nav-links a[href="#price"]::before{content:"\f571"}
-/* CTA arrows/icons */
-.hero-cta .btn-primary::after{content:"\f061";font-family:"Font Awesome 7 Free";font-weight:900;font-size:.8em;margin-left:.15em}
-.hero-cta .btn-ghost::after{content:"\f30b";font-family:"Font Awesome 7 Free";font-weight:900;font-size:.8em;margin-left:.15em}
-/* stat cards + stack cards get a leading icon slot (added in JS via .ic) */
-.statcard .ic,.stackcard h3 .ic{color:var(--coral);margin-right:.45rem;font-size:.9em}
-/* consistent vertical rhythm + smooth anchor scroll offset for sticky nav */
-html{scroll-behavior:smooth}
-:where(section,footer)[id],#top{scroll-margin-top:72px}
-/* mobile rhythm: tighten section padding, single-col builder summary reads well */
-@media(max-width:600px){
-  body{font-size:16px}
-  section{padding:2.2rem 0}
-  .sh{font-size:1.45rem;margin-bottom:1.2rem}
-  .wrap{padding:0 1.15rem}
-  .hero-cta .btn{flex:1 1 auto;justify-content:center}
-  .seg{width:100%}.seg .segopt{flex:1}
-}
-@media(prefers-reduced-motion:reduce){
-  *,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
-  .card:hover,a.card:hover,.statcard:hover,.stackcard:hover,.btn-primary:hover{transform:none}
-}
-</style>
+<link rel="stylesheet" href="vendor/fa/fa.min.css">
+<link rel="stylesheet" href="style.css?v=30">
 </head>
 <body>
 
-<nav class="nav">
+<nav class="nav" id="nav">
   <div class="wrap">
-    <a class="brand" href="#top">tay<b>.</b>märz</a>
-    <div class="nav-links">
+    <a class="brand" href="#/">tay<b>.</b>märz</a>
+    <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="navLinks" aria-label="Menu"><i class="fa-solid fa-bars" aria-hidden="true"></i></button>
+    <div class="nav-links" id="navLinks">
       <a href="#work" data-i="nav.work">work</a>
       <a href="#/about" data-i="nav.about">about</a>
       <a href="#/security" data-i="nav.security">security</a>
       <a href="#price" data-i="nav.price">pricing</a>
-      <a href="#hi" class="hi" data-i="nav.hi">say hi</a>
       <div class="lang" role="group" aria-label="Language">
         <button type="button" data-lang="en" aria-pressed="true">EN</button>
         <button type="button" data-lang="de" aria-pressed="false">DE</button>
       </div>
+      <a href="#hi" class="btn btn-primary" data-i="nav.hi">say hi</a>
     </div>
   </div>
 </nav>
@@ -384,22 +38,23 @@ html{scroll-behavior:smooth}
 <main id="proj" hidden></main>
 <main id="page-about" class="subpage" hidden></main>
 <main id="page-security" class="subpage" hidden></main>
-<div id="home">
+
+<main id="home">
 <header class="hero" id="top">
   <div class="wrap">
     <div>
-      <span class="tag mono" data-i="hero.tag">available now, can start this week</span>
+      <span class="tag" data-i="hero.tag">available now, can start this week</span>
       <h1 data-i-html="hero.h"></h1>
       <p class="sub" data-i="hero.sub"></p>
       <div class="hero-cta">
-        <a class="btn btn-primary" href="#price" data-i="hero.cta1">Build me a quote</a>
-        <a class="btn btn-ghost" href="#work" data-i="hero.cta2">see the work</a>
+        <a class="btn btn-primary" href="#price"><span data-i="hero.cta1">Build me a quote</span><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+        <a class="btn btn-ghost" href="#work"><span data-i="hero.cta2">see the work</span><i class="fa-solid fa-arrow-down" aria-hidden="true"></i></a>
       </div>
-      <div class="kb mono" data-i="hero.tags"></div>
+      <div class="proof" id="proof"></div>
     </div>
     <div class="photo">
       <span class="tape"></span>
-      <img src="shots/me.webp" alt="Tay März" width="720" height="720">
+      <img src="shots/me.webp" alt="Tay März" width="720" height="720" fetchpriority="high">
       <span class="sticker">// available</span>
     </div>
   </div>
@@ -407,55 +62,57 @@ html{scroll-behavior:smooth}
 
 <section id="work">
   <div class="wrap">
-    <h2 class="sh" data-i="work.h">stuff I actually shipped</h2>
+    <h2 class="sh"><i class="ic fa-solid fa-layer-group" aria-hidden="true"></i><span data-i="work.h">stuff I actually shipped</span></h2>
+    <p class="lede" data-i="work.sub"></p>
     <div class="cards" id="cards"></div>
   </div>
 </section>
 
 <section id="words" hidden>
   <div class="wrap">
-    <h2 class="sh" data-i="words.h">what clients said</h2>
+    <h2 class="sh"><i class="ic fa-solid fa-quote-left" aria-hidden="true"></i><span data-i="words.h">what clients said</span></h2>
+    <p class="lede" data-i="words.sub"></p>
     <div class="quotes" id="quotes"></div>
   </div>
 </section>
 
 <section id="price">
   <div class="wrap">
-    <h2 class="sh" data-i="price.h">what it costs</h2>
-    <p class="sub mono" style="color:var(--muted);max-width:52ch;margin-bottom:1.5rem;font-size:.9rem" data-i="price.sub"></p>
-    <details class="more pricebuilder">
-      <summary data-i="price.open">build a quote</summary>
-      <div class="builder">
+    <h2 class="sh"><i class="ic fa-solid fa-calculator" aria-hidden="true"></i><span data-i="price.h">what it costs</span></h2>
+    <p class="lede" data-i="price.sub"></p>
+    <div class="builder">
       <div class="bm">
-        <div class="bg"><label class="gt"><b>01</b> · <span data-i="price.g1">start with</span></label><div class="orow" id="baseRow"></div></div>
-        <div class="bg"><label class="gt"><b>02</b> · <span data-i="price.g2">add</span></label><div class="orow" id="addonRow"></div></div>
-        <div class="bg"><label class="gt"><b>03</b> · <span data-i="price.g3">after launch</span></label><div class="orow" id="supRow"></div></div>
-        <div class="bg"><label class="gt"><b>04</b> · <span data-i="price.g4">in a rush?</span></label>
+        <div class="bg"><span class="gt"><b>01</b> · <span data-i="price.g1">start with</span></span><div class="orow" id="baseRow" role="radiogroup"></div></div>
+        <div class="bg"><span class="gt"><b>02</b> · <span data-i="price.g2">add</span></span><div class="orow" id="addonRow"></div></div>
+        <div class="bg"><span class="gt"><b>03</b> · <span data-i="price.g3">after launch</span></span><div class="orow" id="supRow" role="radiogroup"></div></div>
+        <div class="bg"><span class="gt"><b>04</b> · <span data-i="price.g4">in a rush?</span></span>
           <label class="trow"><input type="checkbox" id="rush"><span class="tx" data-i-html="price.rush"></span></label></div>
       </div>
       <aside class="bs">
-        <div class="lbl mono" data-i="price.est">your ballpark</div>
-        <div class="sitems" id="sitems"></div>
-        <div id="sdisc"></div>
-        <div class="stot"><div class="sub" data-i="price.from">from</div><div class="big mono" id="stot">€0</div></div>
-        <div class="smo mono" id="smo" style="display:none"></div>
-        <div class="seta mono" id="seta"></div>
-        <a class="btn btn-primary" href="#hi" id="scta" data-i="price.send">send me this →</a>
-        <div class="disc mono" data-i="price.note"></div>
+        <div class="bs-in">
+          <div class="lbl" data-i="price.est">your ballpark</div>
+          <div class="sitems" id="sitems"></div>
+          <div id="sdisc"></div>
+          <div class="stot"><div class="sub" data-i="price.from">from</div><div class="big mono" id="stot" aria-live="polite">€0</div></div>
+          <div class="smo" id="smo" hidden></div>
+          <div class="seta" id="seta"></div>
+          <a class="btn btn-primary" href="#hi" id="scta"><span data-i="price.send">send me this</span><i class="fa-solid fa-paper-plane" aria-hidden="true"></i></a>
+          <div class="note" data-i="price.note"></div>
+        </div>
       </aside>
     </div>
-    </details>
   </div>
 </section>
 
 <section id="how">
   <div class="wrap">
-    <h2 class="sh" data-i="how.h">how working with me goes</h2>
+    <h2 class="sh"><i class="ic fa-solid fa-route" aria-hidden="true"></i><span data-i="how.h">how working with me goes</span></h2>
+    <p class="lede" data-i="how.sub"></p>
     <ol class="steps">
-      <li><span class="sn">01</span><b data-i="how.s1t">you send the gist</b><p data-i="how.s1">A few lines about what you need. No login, no sales funnel. I usually reply the same day.</p></li>
-      <li><span class="sn">02</span><b data-i="how.s2t">we talk, you get a real price</b><p data-i="how.s2">A short call or chat to nail the scope, then a fixed quote and an honest timeline. No surprise invoices.</p></li>
-      <li><span class="sn">03</span><b data-i="how.s3t">I build in the open</b><p data-i="how.s3">Small, working increments you can see and try. You are never left guessing what stage it is at.</p></li>
-      <li><span class="sn">04</span><b data-i="how.s4t">launch, secured</b><p data-i="how.s4">I test my own work, harden it, hand it over self-hosted and tracker-free. Optional plan for updates and backups after.</p></li>
+      <li><span class="sn">01</span><b data-i="how.s1t"></b><p data-i="how.s1"></p></li>
+      <li><span class="sn">02</span><b data-i="how.s2t"></b><p data-i="how.s2"></p></li>
+      <li><span class="sn">03</span><b data-i="how.s3t"></b><p data-i="how.s3"></p></li>
+      <li><span class="sn">04</span><b data-i="how.s4t"></b><p data-i="how.s4"></p></li>
     </ol>
   </div>
 </section>
@@ -464,172 +121,149 @@ html{scroll-behavior:smooth}
   <div class="wrap">
     <div class="morecards">
       <a class="morecard" href="#/about">
-        <i class="ic fa-solid" aria-hidden="true">&#xf007;</i>
+        <i class="ic fa-solid fa-user" aria-hidden="true"></i>
         <b data-i="more.about.t">about me</b>
-        <span data-i="more.about.s">the path here, my stack, the numbers.</span>
+        <span data-i="more.about.s"></span>
       </a>
       <a class="morecard" href="#/security">
-        <i class="ic fa-solid" aria-hidden="true">&#xf3ed;</i>
+        <i class="ic fa-solid fa-shield-halved" aria-hidden="true"></i>
         <b data-i="more.sec.t">a security write-up</b>
-        <span data-i="more.sec.s">I pentested my own client app. Here is what I found.</span>
+        <span data-i="more.sec.s"></span>
       </a>
-    </div>
-  </div>
-</section>
-
-<section id="sec">
-  <div class="wrap">
-    <h2 class="sh" data-i="sec.h">a security write-up</h2>
-    <p class="sec-lead" data-i="sec.lead"></p>
-
-    <div class="sec-target">
-      <span class="stl mono" data-i="sec.tl">the target</span>
-      <span class="tchip"><i class="ic fa-solid" aria-hidden="true">&#xf023;</i><span data-i="sec.t1">login</span></span>
-      <span class="tchip"><i class="ic fa-solid" aria-hidden="true">&#xf0c0;</i><span data-i="sec.t2">staff-only area</span></span>
-      <span class="tchip"><i class="ic fa-solid" aria-hidden="true">&#xf007;</i><span data-i="sec.t3">real customer data</span></span>
-    </div>
-
-    <div class="findings">
-      <article class="fcard">
-        <div class="fhead"><i class="ic fa-solid" aria-hidden="true">&#xf3ed;</i><span class="fbadge b-verified" data-i="sec.b1">verified</span></div>
-        <h3 data-i="sec.f1t">hidden isn&rsquo;t protected</h3>
-        <p data-i="sec.f1"></p>
-      </article>
-      <article class="fcard">
-        <div class="fhead"><i class="ic fa-solid" aria-hidden="true">&#xf254;</i><span class="fbadge b-fixed" data-i="sec.b2">fixed</span></div>
-        <h3 data-i="sec.f2t">brute-force welcome mat</h3>
-        <p data-i="sec.f2"></p>
-      </article>
-      <article class="fcard">
-        <div class="fhead"><i class="ic fa-solid" aria-hidden="true">&#xf084;</i><span class="fbadge b-hard" data-i="sec.b3">hardened</span></div>
-        <h3 data-i="sec.f3t">auth &amp; sessions</h3>
-        <p data-i="sec.f3"></p>
-      </article>
-      <article class="fcard">
-        <div class="fhead"><i class="ic fa-solid" aria-hidden="true">&#xf06e;</i><span class="fbadge b-added" data-i="sec.b4">added</span></div>
-        <h3 data-i="sec.f4t">eyes on the door</h3>
-        <p data-i="sec.f4"></p>
-      </article>
-    </div>
-
-    <div class="sec-out">
-      <i class="ic fa-solid" aria-hidden="true">&#xf560;</i>
-      <p data-i="sec.ob"></p>
-    </div>
-
-    <div class="sec-check">
-      <h3 class="mono" data-i="sec.ch">what it became: my login checklist</h3>
-      <ul>
-        <li><i class="ic fa-solid" aria-hidden="true">&#xf00c;</i><span data-i="sec.c1"></span></li>
-        <li><i class="ic fa-solid" aria-hidden="true">&#xf00c;</i><span data-i="sec.c2"></span></li>
-        <li><i class="ic fa-solid" aria-hidden="true">&#xf00c;</i><span data-i="sec.c3"></span></li>
-        <li><i class="ic fa-solid" aria-hidden="true">&#xf00c;</i><span data-i="sec.c4"></span></li>
-        <li><i class="ic fa-solid" aria-hidden="true">&#xf00c;</i><span data-i="sec.c5"></span></li>
-      </ul>
     </div>
   </div>
 </section>
 
 <section id="hi">
   <div class="wrap">
-    <h2 class="sh" data-i="ct.h">got something to build?</h2>
+    <h2 class="sh"><i class="ic fa-solid fa-envelope" aria-hidden="true"></i><span data-i="ct.h">got something to build?</span></h2>
+    <p class="lede" data-i="ct.sub"></p>
     <div class="ct">
       <form id="cf" novalidate>
-        <div class="field"><label for="cN" data-i="ct.name">your name</label><input id="cN" name="name" autocomplete="name" required></div>
-        <div class="field"><label for="cE" data-i="ct.email">email</label><input id="cE" name="email" type="email" autocomplete="email" required></div>
-        <div class="field"><label for="cM" data-i="ct.msg">what are we building?</label><textarea id="cM" name="message" required></textarea></div>
-        <div class="field"><label for="cR" data-i="ct.ref">how did you find me?</label><input id="cR" name="referral" required></div>
-        <div class="field"><label for="cCh" data-i="ct.channel">best way to reach you?</label>
-          <select id="cCh" name="channel">
-            <option value="email" data-i="ct.ch.email">email</option>
-            <option value="discord" data-i="ct.ch.discord">discord</option>
-            <option value="signal" data-i="ct.ch.signal">signal</option>
-            <option value="phone" data-i="ct.ch.phone">phone / whatsapp</option>
-          </select>
+        <div class="frow">
+          <div class="field"><label for="cN" data-i="ct.name">your name</label><input id="cN" name="name" autocomplete="name" required></div>
+          <div class="field"><label for="cE" data-i="ct.email">email</label><input id="cE" name="email" type="email" autocomplete="email" required></div>
         </div>
-        <div class="field">
-          <label data-i="ct.meet">prefer to meet in person?</label>
-          <div class="seg" id="meetSeg">
-            <label class="segopt"><input type="radio" name="meet" value="online" checked><span data-i="ct.meet.no">online is great</span></label>
-            <label class="segopt"><input type="radio" name="meet" value="irl"><span data-i="ct.meet.yes">yes, in person</span></label>
-          </div>
-        </div>
-        <div id="meetFields" hidden>
-          <div class="field"><label for="cC" data-i="ct.city">which town?</label>
-            <select id="cC" name="city">
-              <option value="Göttingen">Göttingen</option>
-              <option value="Hannover">Hannover</option>
-              <option value="Duderstadt">Duderstadt</option>
-              <option value="Northeim">Northeim</option>
-              <option value="Nörten-Hardenberg">Nörten-Hardenberg</option>
+        <div class="field"><label for="cM" data-i="ct.msg">what are we building?</label><textarea id="cM" name="message" required data-i-ph="ct.msgph"></textarea></div>
+        <div class="frow">
+          <div class="field"><label for="cR" data-i="ct.ref">how did you find me?</label><input id="cR" name="referral" required data-i-ph="ct.refph"></div>
+          <div class="field"><label for="cCh" data-i="ct.channel">best way to reach you?</label>
+            <select id="cCh" name="channel">
+              <option value="email" data-i="ct.ch.email">email</option>
+              <option value="discord" data-i="ct.ch.discord">discord</option>
+              <option value="signal" data-i="ct.ch.signal">signal</option>
+              <option value="phone" data-i="ct.ch.phone">phone / whatsapp</option>
             </select>
           </div>
-          <div class="field"><label for="cA" data-i="ct.avail">when are you free?</label><input id="cA" name="availability"></div>
-          <div class="field"><label for="cP" data-i="ct.phone">phone number</label><input id="cP" name="phone" type="tel" autocomplete="tel"></div>
-          <p class="mono" style="color:var(--dim);font-size:.78rem;margin:.2rem 0 0" data-i="ct.meetnote"></p>
         </div>
-        <input type="text" name="company" id="cH" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
-        <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center" data-i="ct.send">send it →</button>
-        <div class="fn mono" id="fn"></div>
+        <div class="field">
+          <span class="lab" data-i="ct.meet">prefer to meet in person?</span>
+          <div class="seg" role="radiogroup">
+            <label><input type="radio" name="meet" value="online" checked><i class="fa-solid fa-video" aria-hidden="true"></i><span data-i="ct.meet.no">online is great</span></label>
+            <label><input type="radio" name="meet" value="irl"><i class="fa-solid fa-mug-hot" aria-hidden="true"></i><span data-i="ct.meet.yes">yes, in person</span></label>
+          </div>
+        </div>
+        <div class="meet-fields" id="meetFields" hidden>
+          <div class="frow">
+            <div class="field"><label for="cC" data-i="ct.city">which town?</label>
+              <select id="cC" name="city">
+                <option>Göttingen</option><option>Hannover</option><option>Duderstadt</option><option>Northeim</option><option>Nörten-Hardenberg</option>
+              </select>
+            </div>
+            <div class="field"><label for="cP" data-i="ct.phone">phone number</label><input id="cP" name="phone" type="tel" autocomplete="tel" data-i-ph="ct.phoneph"></div>
+          </div>
+          <div class="field"><label for="cA" data-i="ct.avail">when are you free?</label><input id="cA" name="availability" data-i-ph="ct.availph"></div>
+          <p class="note" data-i="ct.meetnote"></p>
+        </div>
+        <input type="text" name="company" id="cH" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <button type="submit" class="btn btn-primary"><span data-i="ct.send">send it</span><i class="fa-solid fa-paper-plane" aria-hidden="true"></i></button>
+        <div class="fn" id="fn" role="status"></div>
       </form>
       <aside class="ct-aside">
-        <div class="big" data-i="ct.sub"></div>
-        <div class="ct-link"><a href="https://discord.com/users/853265276015738890"><i class="fa-brands fa-discord" aria-hidden="true"></i> discord</a></div>
-        <div class="ct-link"><a href="mailto:tay@taymaerz.de"><i class="fa-solid fa-envelope" aria-hidden="true"></i> email</a></div>
-        <div class="ct-link"><a href="https://github.com/taynotfound"><i class="fa-brands fa-github" aria-hidden="true"></i> github</a></div>
+        <div class="big" data-i="ct.aside"></div>
+        <div class="ct-links">
+          <a href="mailto:tay@taymaerz.de"><i class="fa-solid fa-envelope" aria-hidden="true"></i><span><b>email</b><small>tay@taymaerz.de</small></span></a>
+          <a href="https://discord.com/users/853265276015738890" target="_blank" rel="noopener"><i class="fa-brands fa-discord" aria-hidden="true"></i><span><b>discord</b><small data-i="ct.dm">DM me</small></span></a>
+          <a href="https://github.com/taynotfound" target="_blank" rel="noopener"><i class="fa-brands fa-github" aria-hidden="true"></i><span><b>github</b><small>@taynotfound</small></span></a>
+        </div>
+        <div class="ct-promise">
+          <span><i class="fa-solid fa-check" aria-hidden="true"></i><span data-i="ct.p1"></span></span>
+          <span><i class="fa-solid fa-check" aria-hidden="true"></i><span data-i="ct.p2"></span></span>
+          <span><i class="fa-solid fa-check" aria-hidden="true"></i><span data-i="ct.p3"></span></span>
+        </div>
       </aside>
     </div>
   </div>
 </section>
 
-<section id="stats">
-  <div class="wrap">
-    <h2 class="sh" data-i="stats.h">by the numbers</h2>
-    <p class="mono" style="color:var(--dim);margin:-.4rem 0 1.2rem;font-size:.85rem" data-i="stats.sub">last 12 months on github · always-on since 2019</p>
-    <div class="statgrid" id="statgrid"></div>
-    <div class="heatmap-wrap" style="overflow-x:auto;border:1px dashed var(--line);border-radius:10px;padding:1rem;background:var(--bg2)">
-      <img src="heatmap.svg?v=26" alt="GitHub contribution heatmap, last year" style="display:block;min-width:760px;height:auto">
-    </div>
+<!-- the sections below are moved into the #/about and #/security subpages on load -->
+<section id="sec">
+  <h2 class="sh"><i class="ic fa-solid fa-shield-halved" aria-hidden="true"></i><span data-i="sec.h">a security write-up</span></h2>
+  <p class="lede" data-i="sec.lead"></p>
+  <div class="sec-target">
+    <span class="stl mono" data-i="sec.tl">the target</span>
+    <span class="tchip"><i class="ic fa-solid fa-lock" aria-hidden="true"></i><span data-i="sec.t1">login</span></span>
+    <span class="tchip"><i class="ic fa-solid fa-users" aria-hidden="true"></i><span data-i="sec.t2">staff-only area</span></span>
+    <span class="tchip"><i class="ic fa-solid fa-user" aria-hidden="true"></i><span data-i="sec.t3">real customer data</span></span>
   </div>
-</section>
-
-<section id="stack">
-  <div class="wrap">
-    <h2 class="sh" data-i="stack.h">my working stack</h2>
-    <p class="mono" style="color:var(--dim);margin:-.4rem 0 1.4rem;font-size:.85rem" data-i="stack.sub">what I reach for, day to day</p>
-    <div class="stackgrid" id="stackgrid"></div>
+  <div class="findings">
+    <article class="fcard"><div class="fhead"><i class="ic fa-solid fa-shield-halved" aria-hidden="true"></i><span class="fbadge" data-i="sec.b1"></span></div><h3 data-i="sec.f1t"></h3><p data-i="sec.f1"></p></article>
+    <article class="fcard"><div class="fhead"><i class="ic fa-solid fa-hourglass-half" aria-hidden="true"></i><span class="fbadge" data-i="sec.b2"></span></div><h3 data-i="sec.f2t"></h3><p data-i="sec.f2"></p></article>
+    <article class="fcard"><div class="fhead"><i class="ic fa-solid fa-key" aria-hidden="true"></i><span class="fbadge" data-i="sec.b3"></span></div><h3 data-i="sec.f3t"></h3><p data-i="sec.f3"></p></article>
+    <article class="fcard"><div class="fhead"><i class="ic fa-solid fa-eye" aria-hidden="true"></i><span class="fbadge" data-i="sec.b4"></span></div><h3 data-i="sec.f4t"></h3><p data-i="sec.f4"></p></article>
+  </div>
+  <div class="sec-out"><i class="ic fa-solid fa-flag-checkered" aria-hidden="true"></i><p data-i="sec.ob"></p></div>
+  <div class="sec-check">
+    <h3 data-i="sec.ch">what it became: my login checklist</h3>
+    <ul>
+      <li><i class="ic fa-solid fa-check" aria-hidden="true"></i><span data-i="sec.c1"></span></li>
+      <li><i class="ic fa-solid fa-check" aria-hidden="true"></i><span data-i="sec.c2"></span></li>
+      <li><i class="ic fa-solid fa-check" aria-hidden="true"></i><span data-i="sec.c3"></span></li>
+      <li><i class="ic fa-solid fa-check" aria-hidden="true"></i><span data-i="sec.c4"></span></li>
+      <li><i class="ic fa-solid fa-check" aria-hidden="true"></i><span data-i="sec.c5"></span></li>
+    </ul>
   </div>
 </section>
 
 <section id="path">
-  <div class="wrap">
-    <h2 class="sh" data-i="path.h">how I got here</h2>
-    <p class="mono" style="color:var(--dim);margin:-.4rem 0 1.4rem;font-size:.85rem" data-i="path.sub">school, training, and the self-taught bit in between</p>
-    <ol class="timeline">
-      <li><span class="ty mono" data-i="path.r1y">2018</span><p data-i="path.r1"></p></li>
-      <li><span class="ty mono" data-i="path.r2y">2021–23</span><p data-i="path.r2"></p></li>
-      <li><span class="ty mono" data-i="path.r3y">2023–24</span><p data-i="path.r3"></p></li>
-      <li><span class="ty mono" data-i="path.r4y">2024–25</span><p data-i="path.r4"></p></li>
-      <li><span class="ty mono" data-i="path.r5y">2025–26</span><p data-i="path.r5"></p></li>
-      <li class="now"><span class="ty mono" data-i="path.r6y">now</span><p data-i="path.r6"></p></li>
-    </ol>
-  </div>
+  <h2 class="sh"><i class="ic fa-solid fa-road" aria-hidden="true"></i><span data-i="path.h">how I got here</span></h2>
+  <p class="lede mono" data-i="path.sub"></p>
+  <ol class="timeline" id="timeline"></ol>
 </section>
-</div><!-- /#home -->
+
+<section id="stats">
+  <h2 class="sh"><i class="ic fa-solid fa-chart-simple" aria-hidden="true"></i><span data-i="stats.h">by the numbers</span></h2>
+  <p class="lede mono" data-i="stats.sub"></p>
+  <div class="statgrid" id="statgrid"></div>
+  <div class="heatmap"><img src="heatmap.svg" alt="GitHub contribution heatmap, last year" loading="lazy"></div>
+</section>
+
+<section id="stack">
+  <h2 class="sh"><i class="ic fa-solid fa-toolbox" aria-hidden="true"></i><span data-i="stack.h">my working stack</span></h2>
+  <p class="lede mono" data-i="stack.sub"></p>
+  <div class="stackgrid" id="stackgrid"></div>
+</section>
+</main>
 
 <footer>
   <div class="wrap">
-    <div>© <span id="yr"></span> Tay März · <a href="#" id="impressumLink" data-i="foot.impressum">Impressum</a> <a href="/datenschutz.html">Datenschutz</a></div>
-    <div data-i="foot">hand-coded · no frameworks · no trackers · privacy first</div>
+    <a class="brand" href="#/">tay<b>.</b>märz</a>
+    <div class="flinks">
+      <a href="#" id="impressumLink" data-i="foot.impressum">Impressum</a>
+      <a href="/datenschutz" data-i="foot.privacy">Datenschutz</a>
+      <a href="https://github.com/taynotfound" target="_blank" rel="noopener">GitHub</a>
+      <a href="#top" data-i="foot.top">back to top ↑</a>
+    </div>
+    <div class="tagline">© <span id="yr"></span> Tay März · <span data-i="foot">hand-coded · no frameworks · no trackers · privacy first</span></div>
   </div>
 </footer>
 
-<dialog id="impressum" class="detail imp">
-  <form method="dialog"><button class="dclose" aria-label="close" value="x">✕</button></form>
+<dialog id="impressum" class="dlg">
+  <form method="dialog"><button class="dclose" aria-label="close"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button></form>
   <div class="dbody" data-i-html="impressum.body"></div>
 </dialog>
-<script src="pricing.js?v=27"></script>
-<script src="i18n.js?v=27"></script>
-<script src="app.js?v=28"></script>
+<script src="pricing.js?v=30"></script>
+<script src="i18n.js?v=30"></script>
+<script src="app.js?v=30"></script>
 </body>
 </html>
